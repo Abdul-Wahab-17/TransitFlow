@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicles List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #36393f;
+            color: #fff;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #40444b;
+            border: 1px solid #7289da;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #7289da;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #7289da;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #36393f;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #7289da;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h1>Vehicles List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Vehicle ID</th>
+        <th>Vehicle Number</th>
+        <th>Capacity</th>
+        <th>Remaining Capacity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Use Thymeleaf to iterate over the list of vehicles and populate the table -->
+    <tr th:each="vehicle : ${vehicles}">
+        <td th:text="${vehicle.vehicleId}"></td>
+        <td th:text="${vehicle.number}"></td>
+        <td th:text="${vehicle.capacity}"></td>
+        <td th:text="${vehicle.remainingCapacity}"></td>
+    </tr>
+    </tbody>
+</table>
+<a href="/vehicles">Back to Vehicles Page</a>
+</body>
+</html>
