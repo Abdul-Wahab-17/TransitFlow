@@ -1,11 +1,12 @@
 package packages.project.Customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class CustomerController {
@@ -17,11 +18,23 @@ public class CustomerController {
         this.customerRepository = customerRepository;
     }
 
-    @GetMapping("/customers")
-    public String showCustomers(Model model) {
-        List<Customer> customers = customerRepository.findAll();
-        model.addAttribute("customers", customers);
-        return "customers";
+    @GetMapping("/customers/{loginId}")
+    public String showCustomerDashboard(@PathVariable Integer loginId, Model model) {
+        Customer customer = customerRepository.getCustomerByloginId(loginId);
+
+            model.addAttribute("customer", customer);
+            return "customer_dashboard"; // Render customer_dashboard.html template
+
+    }
+
+
+    @GetMapping("/api/customers/{loginId}")
+    public String redirectToCustomerDashboard(@PathVariable Long loginId) {
+        // Construct the redirect URL
+        String redirectUrl = "/customers/" + loginId;
+
+        // Redirect to the specified URL
+        return "redirect:" + redirectUrl;
     }
 
 }
