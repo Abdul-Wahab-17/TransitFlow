@@ -12,22 +12,35 @@ import java.sql.Time;
 public class Customer {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int customerId;
     String customerName;
+
+    int phone_no;
     String address;
+
+    @Column (name = "pick_up")
     Time pick;
+
+    @Column (name = "drop_time")
     Time drop;
+
+    String drop_loc;
+    String pick_loc;
     @ManyToOne
     @JoinColumn(name = "login_id")
     Login login;
 
-    public Customer(int customerId, String customerName, String address, Time pick, Time drop , Login login) {
+    public Customer(int customerId, String customerName, int phone_no, String address, Time pick, Time drop, String drop_loc, String pick_loc, Login login) {
         this.customerId = customerId;
         this.customerName = customerName;
+        this.phone_no = phone_no;
         this.address = address;
         this.pick = pick;
         this.drop = drop;
-        this.login=login;
+        this.drop_loc = drop_loc;
+        this.pick_loc = pick_loc;
+        this.login = login;
     }
 
     public Customer() {

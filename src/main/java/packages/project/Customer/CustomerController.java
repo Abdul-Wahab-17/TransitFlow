@@ -18,14 +18,20 @@ public class CustomerController {
         this.customerRepository = customerRepository;
     }
 
+
     @GetMapping("/customers/{loginId}")
     public String showCustomerDashboard(@PathVariable Integer loginId, Model model) {
-        Customer customer = customerRepository.getCustomerByloginId(loginId);
+        Customer customer = customerRepository.getCustomerByCustomerId(customerRepository.getCustomerIdByloginId(loginId));
 
+        if (customer != null) {
             model.addAttribute("customer", customer);
-            return "customer_dashboard"; // Render customer_dashboard.html template
-
+            return "customer_dashboard.html"; // View name without file extension
+        } else {
+            return "customer_not_found"; // Render error page if customer is not found
+        }
     }
+
+
 
 
     @GetMapping("/api/customers/{loginId}")

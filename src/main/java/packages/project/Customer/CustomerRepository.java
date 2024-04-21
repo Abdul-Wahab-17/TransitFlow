@@ -8,11 +8,10 @@ import packages.project.Driver.Driver;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
-    @Query ("SELECT c FROM Customer c WHERE c.customerId = :customerId")
-    Customer getCustomerById(Long customerId);
+    @Query("SELECT c.customerId FROM Customer c WHERE c.login.loginId = :loginId")
+    Long getCustomerIdByloginId(Integer loginId);
 
-    @Query("SELECT c FROM Customer c WHERE c.login.loginId = :loginId")
-    Customer getCustomerByloginId(Integer loginId);
-
+    Customer getCustomerByCustomerId(Long customerId);
 
 }
+
