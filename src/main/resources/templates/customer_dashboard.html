@@ -60,8 +60,8 @@
         <td th:text="${customer.customerName}"></td>
         <td th:text="${customer.phone_no}"></td>
         <td th:text="${customer.address}"></td>
-        <td th:text="${#temporals.format(customer.pick, 'HH:mm')}"></td>
-        <td th:text="${#temporals.format(customer.drop, 'HH:mm')}"></td>
+        <td th:text="${pickTimeFormatted}"></td>
+        <td th:text="${dropTimeFormatted}"></td>
         <td th:text="${customer.pick_loc}"></td>
         <td th:text="${customer.drop_loc}"></td>
     </tr>

@@ -55,6 +55,9 @@
 			<scope>provided</scope> <!-- Use 'provided' scope for GWT -->
 		</dependency>
 
+
+
+
 		<!-- GWT servlet dependencies (if using RPC or GWT-RPC) -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>

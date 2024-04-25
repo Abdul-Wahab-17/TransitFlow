@@ -9,9 +9,9 @@ import packages.project.Driver.Driver;
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Query("SELECT c.customerId FROM Customer c WHERE c.login.loginId = :loginId")
-    Long getCustomerIdByloginId(Integer loginId);
+    Integer getCustomerIdByloginId(Integer loginId);
 
-    Customer getCustomerByCustomerId(Long customerId);
+    Customer getCustomerByCustomerId(Integer customerId);
 
 }
 

@@ -13,10 +13,14 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column (name = "customer_id")
     int customerId;
+    @Column (name = "customer_name")
     String customerName;
 
+    @Column
     int phone_no;
+    @Column
     String address;
 
     @Column (name = "pick_up")
@@ -25,7 +29,10 @@ public class Customer {
     @Column (name = "drop_time")
     Time drop;
 
+    @Column
     String drop_loc;
+
+    @Column
     String pick_loc;
     @ManyToOne
     @JoinColumn(name = "login_id")

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+
 @Controller
 public class CustomerController {
 
@@ -24,8 +26,12 @@ public class CustomerController {
         Customer customer = customerRepository.getCustomerByCustomerId(customerRepository.getCustomerIdByloginId(loginId));
 
         if (customer != null) {
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             model.addAttribute("customer", customer);
-            return "customer_dashboard.html"; // View name without file extension
+            model.addAttribute("pickTimeFormatted", timeFormat.format(customer.getPick()));
+            model.addAttribute("dropTimeFormatted", timeFormat.format(customer.getDrop()));
+
+            return "customer_dashboard"; // View name without file extension
         } else {
             return "customer_not_found"; // Render error page if customer is not found
         }
