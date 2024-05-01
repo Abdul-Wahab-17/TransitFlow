@@ -28,8 +28,6 @@ public class CustomerController {
         if (customer != null) {
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             model.addAttribute("customer", customer);
-            model.addAttribute("pickTimeFormatted", timeFormat.format(customer.getPick()));
-            model.addAttribute("dropTimeFormatted", timeFormat.format(customer.getDrop()));
 
             return "customer_dashboard"; // View name without file extension
         } else {

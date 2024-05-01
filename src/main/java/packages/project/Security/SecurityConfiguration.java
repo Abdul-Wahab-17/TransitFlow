@@ -9,18 +9,25 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/**").permitAll() // Permit access to all URLs
-                .anyRequest().authenticated() // Require authentication for other URLs
                 .and()
-                .formLogin() // Enable form-based login
-                .loginPage("/login").permitAll() // Specify custom login page URL
+                .formLogin()
+                .loginPage("/login").permitAll() // Custom login page URL
+                .loginProcessingUrl("/login")    // URL to submit the login form
+                .successHandler((request, response, authentication) -> {
+                    // Customize success handler if needed
+                })
+                .failureHandler((request, response, exception) -> {
+                    // Customize failure handler if needed
+                })
                 .and()
-                .logout() // Enable logout
-                .logoutUrl("/logout").permitAll(); // Specify custom logout URL
+                .logout()
+                .logoutUrl("/logout").permitAll(); // Custom logout URL
 
         // Disable CSRF protection (not recommended for production without proper CSRF protection)
         http.csrf().disable();

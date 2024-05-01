@@ -1,7 +1,11 @@
 package packages.project.Customer;
 
 import lombok.Data;
+import packages.project.Area.Area;
+import packages.project.Fee.Fee;
 import packages.project.Login.Login;
+import packages.project.Salary.Salary;
+import packages.project.Vehicle.Vehicle;
 
 import javax.persistence.*;
 import java.sql.Time;
@@ -15,41 +19,46 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "customer_id")
     int customerId;
-    @Column (name = "customer_name")
-    String customerName;
 
-    @Column
-    int phone_no;
-    @Column
+    @Column(name = "customer_address")
     String address;
 
-    @Column (name = "pick_up")
-    Time pick;
+    @Column(name = "name")
+    String name;
 
-    @Column (name = "drop_time")
-    Time drop;
+    @Column(name = "phone_number")
+    int phone;
 
-    @Column
-    String drop_loc;
 
-    @Column
-    String pick_loc;
+    @Column(name = "email_address")
+    String email;
+
+
+    @ManyToOne
+    @JoinColumn(name = "areaId")
+    Area area;
+    @ManyToOne
+    @JoinColumn(name = "feeId")
+    Fee fee;
+    @ManyToOne
+    @JoinColumn(name = "vehicleId")
+    Vehicle vehicle;
     @ManyToOne
     @JoinColumn(name = "login_id")
     Login login;
 
-    public Customer(int customerId, String customerName, int phone_no, String address, Time pick, Time drop, String drop_loc, String pick_loc, Login login) {
-        this.customerId = customerId;
-        this.customerName = customerName;
-        this.phone_no = phone_no;
-        this.address = address;
-        this.pick = pick;
-        this.drop = drop;
-        this.drop_loc = drop_loc;
-        this.pick_loc = pick_loc;
-        this.login = login;
+    public Customer() {
     }
 
-    public Customer() {
+    public Customer(int customerId, String address, String name, int phone, String email, Area area, Fee fee, Vehicle vehicle, Login login) {
+        this.customerId = customerId;
+        this.address = address;
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.area = area;
+        this.fee = fee;
+        this.vehicle = vehicle;
+        this.login = login;
     }
 }

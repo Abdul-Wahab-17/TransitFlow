@@ -1,11 +1,11 @@
 package packages.project.Login;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -18,9 +18,13 @@ public class LoginController {
         this.loginService = loginService;
     }
 
+    @GetMapping()
+    public String getMainPage(){
+        return "main";
+    }
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login"; // This corresponds to the login.html template
+        return "login";
     }
 
     @PostMapping("/api/login/authenticate")
@@ -35,7 +39,7 @@ public class LoginController {
 
             switch (role) {
                 case "driver":
-                    redirectUrl = "/api/driver/" + loginId;
+                    redirectUrl = "/api/drivers/" + loginId;
                     break;
                 case "customer":
                     redirectUrl = "/api/customers/" + loginId;

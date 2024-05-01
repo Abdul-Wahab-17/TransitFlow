@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard</title>
+    <title>Driver Dashboard</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -40,35 +40,35 @@
     </style>
 </head>
 <body>
-<h1>Customer Dashboard</h1>
+<h1>Driver Dashboard</h1>
 <table>
     <thead>
     <tr>
-        <th>Customer ID</th>
+        <th>Driver ID</th>
         <th>Name</th>
         <th>Phone Number</th>
         <th>Email Address</th>
         <th>Address</th>
         <th>Area</th>
-        <th>Fee</th>
-        <th>Vehicle</th>
+        <th>Salary</th>
+        <th>Vehicle Number</th>
         <th>Login ID</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-        <td th:text="${customer.customerId}"></td>
-        <td th:text="${customer.name}"></td>
-        <td th:text="${customer.phone}"></td>
-        <td th:text="${customer.email}"></td>
-        <td th:text="${customer.address}"></td>
-        <td th:text="${customer.area.areaName}"></td>
-        <td th:text="${customer.fee.amount}"></td>
-        <td th:text="${customer.vehicle.number}"></td>
-        <td th:text="${customer.login.loginId}"></td>
+        <td th:text="${driver.driverId}"></td>
+        <td th:text="${driver.name}"></td>
+        <td th:text="${driver.phone}"></td>
+        <td th:text="${driver.email}"></td>
+        <td th:text="${driver.address}"></td>
+        <td th:text="${driver.area.areaName}"></td>
+        <td th:text="${driver.salary.amount}"></td>
+        <td th:text="${driver.vehicle.number}"></td>
+        <td th:text="${driver.login.loginId}"></td>
     </tr>
     </tbody>
 </table>
-<a href="/customers">Back to Customers Page</a>
+<a href="/driver">Back to Driver Page</a>
 </body>
 </html>
