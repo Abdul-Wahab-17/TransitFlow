@@ -13,10 +13,10 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "admin_id")
-    private int adminId;
+     int adminId;
 
     @Column(name = "name")
-    private int name;
+     String name;
 
     @Column(name = "phone")
     int phone;
@@ -33,7 +33,7 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(int adminId, int name, int phone, String email, String address, Login login) {
+    public Admin(int adminId, String name, int phone, String email, String address, Login login) {
         this.adminId = adminId;
         this.name = name;
         this.phone = phone;

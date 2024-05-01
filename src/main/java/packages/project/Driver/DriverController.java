@@ -15,17 +15,17 @@ import java.util.List;
 @Controller
 public class DriverController {
 
-    private final DriverRepository driverRepository;
+    private final DriverService driverService;
 
     @Autowired
-    public DriverController(DriverRepository driverRepository) {
-        this.driverRepository = driverRepository;
+    public DriverController(DriverService driverService) {
+        this.driverService = driverService;
     }
 
 
     @GetMapping("/drivers/{loginId}")
     public String showDriverDashboard(@PathVariable Integer loginId, Model model) {
-        Driver driver = driverRepository.getDriverByDriverId(driverRepository.getDriverIdbyLoginId(loginId));
+        Driver driver = driverService.getDriver(loginId);
 
         if (driver != null) {
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -49,14 +49,14 @@ public class DriverController {
     @GetMapping("/drivers/{loginId}/edit")
     public String showEditForm(@PathVariable Integer loginId , Model model) {
         // Add logic to retrieve customer information and pass it to the template
-        Driver driver = driverRepository.getDriverByDriverId(driverRepository.getDriverIdbyLoginId(loginId));
+        Driver driver = driverService.getDriver(loginId);
         model.addAttribute("driver", driver);
         return "driver_edit"; // Name of the edit form template
     }
 
     @PostMapping("/drivers/{loginId}/edit")
     public String editCustomer(@PathVariable int loginId, @ModelAttribute Driver updatedDriver) {
-        Driver existingDriver = driverRepository.getDriverByDriverId(driverRepository.getDriverIdbyLoginId(loginId));
+        Driver existingDriver = driverService.getDriver(loginId);
         if (existingDriver != null) {
             // Update the existing customer entity with the new information
             existingDriver.setName(updatedDriver.getName());
@@ -66,7 +66,7 @@ public class DriverController {
             // Similarly, update other fields as needed
 
             // Save the updated customer entity in the database
-            driverRepository.save(existingDriver);
+            driverService.save(existingDriver);
         }
         // Redirect to the customer dashboard page after editing
         return "redirect:/drivers/" + loginId;
