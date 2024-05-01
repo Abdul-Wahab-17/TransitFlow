@@ -10,65 +10,104 @@
             background-color: #36393f;
             color: #fff;
             padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #40444b;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            padding: 20px;
         }
 
         h1 {
             text-align: center;
             font-size: 24px;
             margin-bottom: 20px;
+            color: #7289da; /* Discord purple color */
         }
 
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #40444b;
-            border: 1px solid #7289da;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            color: #fff; /* Text color */
         }
 
-        th, td {
-            border: 1px solid #7289da;
+        .table th, .table td {
             padding: 10px;
+            border-bottom: 1px solid #7289da; /* Discord purple color */
+        }
+
+        .table th {
+            background-color: #40444b;
+            font-weight: bold;
             text-align: left;
         }
 
-        th {
-            background-color: #7289da;
+        .table td {
+            text-align: left;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #7289da; /* Discord purple color */
             color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #4e5d94; /* Discord dark purple color */
         }
     </style>
 </head>
 <body>
-<h1>Driver Dashboard</h1>
-<table>
-    <thead>
-    <tr>
-        <th>Driver ID</th>
-        <th>Name</th>
-        <th>Phone Number</th>
-        <th>Email Address</th>
-        <th>Address</th>
-        <th>Area</th>
-        <th>Salary</th>
-        <th>Vehicle Number</th>
-        <th>Login ID</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td th:text="${driver.driverId}"></td>
-        <td th:text="${driver.name}"></td>
-        <td th:text="${driver.phone}"></td>
-        <td th:text="${driver.email}"></td>
-        <td th:text="${driver.address}"></td>
-        <td th:text="${driver.area.areaName}"></td>
-        <td th:text="${driver.salary.amount}"></td>
-        <td th:text="${driver.vehicle.number}"></td>
-        <td th:text="${driver.login.loginId}"></td>
-    </tr>
-    </tbody>
-</table>
-<a href="/driver">Back to Driver Page</a>
+<div class="container">
+    <div class="card">
+        <h1>Driver Dashboard</h1>
+        <table class="table">
+            <tr>
+                <th>Driver ID</th>
+                <td th:text="${driver.driverId}"></td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td th:text="${driver.name}"></td>
+            </tr>
+            <tr>
+                <th>Phone Number</th>
+                <td th:text="${driver.phone}"></td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td th:text="${driver.email}"></td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td th:text="${driver.address}"></td>
+            </tr>
+            <tr>
+                <th>Salary</th>
+                <td th:text="${driver.salary.amount}"></td>
+            </tr>
+            <tr>
+                <th>Vehicle</th>
+                <td th:text="${driver.vehicle.number}"></td>
+            </tr>
+            <tr>
+                <th>Login ID</th>
+                <td th:text="${driver.login.loginId}"></td>
+            </tr>
+        </table>
+        <a th:href="@{'/drivers/' + ${driver.login.loginId} + '/edit'}" class="button">Edit Info</a>
+    </div>
+</div>
 </body>
 </html>
