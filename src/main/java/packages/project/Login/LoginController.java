@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @Controller
 public class LoginController {
 
@@ -18,10 +17,11 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @GetMapping()
-    public String getMainPage(){
+    @GetMapping("/")
+    public String getMainPage() {
         return "main";
     }
+
     @GetMapping("/login")
     public String showLoginPage() {
         return "login";
@@ -35,7 +35,7 @@ public class LoginController {
 
         if (user != null) {
             String role = user.getRole();
-            String redirectUrl = "/";
+            String redirectUrl;
 
             switch (role) {
                 case "driver":
@@ -56,6 +56,5 @@ public class LoginController {
             model.addAttribute("error", "Invalid login credentials");
             return "login"; // Redirect back to login page with error message
         }
-
     }
 }

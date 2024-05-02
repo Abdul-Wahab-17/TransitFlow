@@ -67,9 +67,11 @@
     </style>
 </head>
 <body>
+<!-- Login form -->
 <div class="login-form">
     <h2>Welcome to TMS</h2>
     <form action="/api/login/authenticate" method="post">
+        <!-- Login fields -->
         <div class="form-group">
             <label for="loginId">Login ID:</label>
             <input type="text" id="loginId" name="loginId" required>
@@ -82,7 +84,10 @@
             <button type="submit">Login</button>
         </div>
     </form>
-
+    <!-- Error message -->
+    <div th:if="${error}" class="error-message" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
 </div>
 </body>
 </html>
