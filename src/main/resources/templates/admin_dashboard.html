@@ -4,93 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #36393f;
-            color: #fff;
-            padding: 20px;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background-color: #40444b;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #7289da; /* Discord purple color */
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #fff; /* Text color */
-        }
-
-        .table th, .table td {
-            padding: 10px;
-            border-bottom: 1px solid #7289da; /* Discord purple color */
-        }
-
-        .table th {
-            background-color: #40444b;
-            font-weight: bold;
-            text-align: left;
-        }
-
-        .table td {
-            text-align: left;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #7289da; /* Discord purple color */
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            margin-right: 10px;
-        }
-
-        .button:hover {
-            background-color: #4e5d94; /* Discord dark purple color */
-        }
-
-        /* Style for the drop-down table */
-        .dropdown-table {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .dropdown-table th,
-        .dropdown-table td {
-            padding: 10px;
-            border-bottom: 1px solid #7289da;
-        }
-
-        .dropdown-table th {
-            background-color: #40444b;
-            font-weight: bold;
-            text-align: left;
-        }
-
-        .dropdown-table td {
-            text-align: left;
-        }
-    </style>
+    <!-- Link your external CSS file -->
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div class="container">
@@ -128,6 +43,8 @@
                 <a href="#" class="button" onclick="toggleDrivers()">View Drivers</a>
                 <!-- Add a button for viewing customers -->
                 <a href="#" class="button" onclick="toggleCustomers()">View Customers</a>
+                <!-- Add a button for viewing vehicles -->
+                <a href="#" class="button" onclick="toggleVehicles()">View Vehicles</a>
             </div>
         </div>
 
@@ -140,7 +57,7 @@
                 <th>Phone Number</th>
                 <th>Address</th>
                 <th>Email</th>
-                <!-- Add more columns as needed -->
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -150,7 +67,9 @@
                 <td th:text="${driver.phone}"></td>
                 <td th:text="${driver.address}"></td>
                 <td th:text="${driver.email}"></td>
-                <!-- Add more columns as needed -->
+                <td>
+                    <button onclick="removeDriver(this)">Remove</button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -163,7 +82,7 @@
                 <th>Phone Number</th>
                 <th>Address</th>
                 <th>Email</th>
-                <!-- Add more columns as needed -->
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -173,36 +92,152 @@
                 <td th:text="${customer.phone}"></td>
                 <td th:text="${customer.address}"></td>
                 <td th:text="${customer.email}"></td>
-                <!-- Add more columns as needed -->
+                <td>
+                    <button onclick="removeCustomer(this)">Remove</button>
+                </td>
             </tr>
             </tbody>
         </table>
 
-        <!-- Add a script tag to include JavaScript code -->
-        <script>
-            function toggleDrivers() {
-                var driversTable = document.getElementById("driversTable");
-                var customersTable = document.getElementById("customersTable");
-                if (driversTable.style.display === "none") {
-                    driversTable.style.display = "block";
-                    customersTable.style.display = "none"; // Hide customers table if visible
-                } else {
-                    driversTable.style.display = "none";
-                }
-            }
+        <table id="vehiclesTable" class="dropdown-table">
+            <!-- Populate the table with vehicle data -->
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Number</th>
+                <th>Maintenance Cost</th>
+                <th>Area</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Use Thymeleaf to iterate over the list of vehicles and populate the rows -->
+            <tr th:each="vehicle : ${vehicles}">
+                <td th:text="${vehicle.vehicleType}"></td>
+                <td th:text="${vehicle.number}"></td>
+                <td th:text="${vehicle.maintenanceCost}"></td>
+                <td th:text="${vehicle.area.areaName}"></td>
+                <td>
+                    <button onclick="removeVehicle(this)">Remove</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="add-form">
+        <input type="text" id="driverName" placeholder="Driver Name">
+        <input type="text" id="driverPhone" placeholder="Driver Phone">
+        <input type="text" id="driverAddress" placeholder="Driver Address">
+        <input type="text" id="driverEmail" placeholder="Driver Email">
+        <button onclick="addDriver()">Add Driver</button>
+    </div>
 
-            function toggleCustomers() {
-                var driversTable = document.getElementById("driversTable");
-                var customersTable = document.getElementById("customersTable");
-                if (customersTable.style.display === "none") {
-                    customersTable.style.display = "block";
-                    driversTable.style.display = "none"; // Hide drivers table if visible
-                } else {
-                    customersTable.style.display = "none";
-                }
-            }
-        </script>
+    <!-- Add Customer Form -->
+    <div class="add-form">
+        <input type="text" id="customerName" placeholder="Customer Name">
+        <input type="text" id="customerPhone" placeholder="Customer Phone">
+        <input type="text" id="customerAddress" placeholder="Customer Address">
+        <input type="text" id="customerEmail" placeholder="Customer Email">
+        <button onclick="addCustomer()">Add Customer</button>
     </div>
 </div>
+
+<!-- Script to handle form submissions -->
+<script>
+    function addDriver() {
+        var driverName = document.getElementById("driverName").value;
+        var driverPhone = document.getElementById("driverPhone").value;
+        var driverAddress = document.getElementById("driverAddress").value;
+        var driverEmail = document.getElementById("driverEmail").value;
+
+        // Send an AJAX request to your backend
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addDriver", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                // Process the response if needed
+                console.log(xhr.responseText);
+            }
+        };
+
+        var data = {
+            name: driverName,
+            phone: driverPhone,
+            address: driverAddress,
+            email: driverEmail
+        };
+
+        xhr.send(JSON.stringify(data));
+    }
+
+    function addCustomer() {
+        var customerName = document.getElementById("customerName").value;
+        var customerPhone = document.getElementById("customerPhone").value;
+        var customerAddress = document.getElementById("customerAddress").value;
+        var customerEmail = document.getElementById("customerEmail").value;
+
+        // Send an AJAX request to your backend
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/addCustomer", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                // Process the response if needed
+                console.log(xhr.responseText);
+            }
+        };
+
+        var data = {
+            name: customerName,
+            phone: customerPhone,
+            address: customerAddress,
+            email: customerEmail
+        };
+
+        xhr.send(JSON.stringify(data));
+    }
+
+    function toggleDrivers() {
+        var driversTable = document.getElementById("driversTable");
+        var customersTable = document.getElementById("customersTable");
+        var vehiclesTable = document.getElementById("vehiclesTable");
+        if (driversTable.style.display === "none") {
+            driversTable.style.display = "block";
+            customersTable.style.display = "none"; // Hide customers table if visible
+            vehiclesTable.style.display = "none"; // Hide vehicles table if visible
+        } else {
+            driversTable.style.display = "none";
+        }
+    }
+
+    function toggleCustomers() {
+        var driversTable = document.getElementById("driversTable");
+        var customersTable = document.getElementById("customersTable");
+        var vehiclesTable = document.getElementById("vehiclesTable");
+        if (customersTable.style.display === "none") {
+            customersTable.style.display = "block";
+            driversTable.style.display = "none"; // Hide drivers table if visible
+            vehiclesTable.style.display = "none"; // Hide vehicles table if visible
+        } else {
+            customersTable.style.display = "none";
+        }
+    }
+
+    function toggleVehicles() {
+        var driversTable = document.getElementById("driversTable");
+        var customersTable = document.getElementById("customersTable");
+        var vehiclesTable = document.getElementById("vehiclesTable");
+        if (vehiclesTable.style.display === "none") {
+            vehiclesTable.style.display = "block";
+            driversTable.style.display = "none"; // Hide drivers table if visible
+            customersTable.style.display = "none"; // Hide customers table if visible
+        } else {
+            vehiclesTable.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>

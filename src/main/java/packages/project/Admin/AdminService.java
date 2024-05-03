@@ -6,6 +6,8 @@ import packages.project.Customer.Customer;
 import packages.project.Customer.CustomerRepository;
 import packages.project.Driver.Driver;
 import packages.project.Driver.DriverRepository;
+import packages.project.Vehicle.Vehicle;
+import packages.project.Vehicle.VehicleRepository;
 
 import java.util.List;
 
@@ -35,6 +37,13 @@ public class AdminService {
 
     public List<Customer> getAllCustomers(){
         return customerRepository.findAll();
+    }
+
+    @Autowired
+    VehicleRepository vehicleRepository;
+
+    public List<Vehicle> getAllVehicles(){
+        return vehicleRepository.findAll();
     }
 
 

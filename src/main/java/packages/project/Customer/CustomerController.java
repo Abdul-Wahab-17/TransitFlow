@@ -1,9 +1,7 @@
 package packages.project.Customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,5 +66,14 @@ public class CustomerController {
         // Redirect to the specified URL
         return "redirect:" + redirectUrl;
     }
+    @PostMapping("/addcustomer")
+    public String addCustomer(@RequestBody CustomerFormData formData) {
+        // Process form data here
+        String customerName = formData.getCustomerName();
+        // Process other form fields as needed
 
+        // Add customer logic
+
+        return "Customer added successfully";
+    }
 }

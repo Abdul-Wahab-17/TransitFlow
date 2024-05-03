@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import packages.project.Customer.Customer;
+import packages.project.Customer.CustomerService;
+import packages.project.Vehicle.Vehicle;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -16,10 +18,12 @@ import java.util.List;
 public class DriverController {
 
     private final DriverService driverService;
+    private final CustomerService customerService;
 
     @Autowired
-    public DriverController(DriverService driverService) {
+    public DriverController(DriverService driverService, CustomerService customerService) {
         this.driverService = driverService;
+        this.customerService=customerService;
     }
 
 
@@ -29,11 +33,20 @@ public class DriverController {
 
         if (driver != null) {
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-            model.addAttribute("driver", driver);
+            List<Customer> customers = customerService.getCustomersForDriver(driverService.findDriverId(loginId));
 
-            return "driver_dashboard"; // View name without file extension
+            // Check if customers is null or empty
+            if (customers != null && !customers.isEmpty()) {
+                model.addAttribute("driver", driver);
+                model.addAttribute("customers", customers);
+                return "driver_dashboard"; // View name without file extension
+            } else {
+                // Handle case when no customers are found
+                model.addAttribute("driver", driver);
+                return "driver_dashboard"; // Render a specific view for this case
+            }
         } else {
-            return "driver_not_found"; // Render error page if customer is not found
+            return "driver_not_found"; // Render error page if driver is not found
         }
     }
 
