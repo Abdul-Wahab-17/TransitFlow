@@ -125,92 +125,45 @@
         </table>
     </div>
     <div class="add-form">
-        <input type="text" id="driverName" placeholder="Driver Name">
-        <input type="text" id="driverPhone" placeholder="Driver Phone">
-        <input type="text" id="driverAddress" placeholder="Driver Address">
-        <input type="text" id="driverEmail" placeholder="Driver Email">
-        <button onclick="addDriver()">Add Driver</button>
+        <h2>Add Driver</h2>
+        <form id="addDriverForm" action="/addDriver" method="post">
+            <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
+            <input type="text" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
+            <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
+            <input type="text" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+            <button type="submit">Add Driver</button>
+        </form>
     </div>
 
     <!-- Add Customer Form -->
+    <!-- Add Customer Form -->
+    <!-- Add Customer Form -->
     <div class="add-form">
-        <input type="text" id="customerName" placeholder="Customer Name">
-        <input type="text" id="customerPhone" placeholder="Customer Phone">
-        <input type="text" id="customerAddress" placeholder="Customer Address">
-        <input type="text" id="customerEmail" placeholder="Customer Email">
-        <button onclick="addCustomer()">Add Customer</button>
+        <h2>Add Customer</h2>
+        <form id="addCustomerForm" action="/addCustomer" method="post">
+            <!-- Add hidden input field for loginId -->
+            <input type="hidden" id="loginId" name="loginId" value="789">
+
+            <!-- Other input fields for customer information -->
+            <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
+            <input type="text" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
+            <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
+            <input type="text" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
+            <button type="submit">Add Customer</button>
+        </form>
     </div>
+
+
 </div>
 
 <!-- Script to handle form submissions -->
 <script>
     function addDriver() {
-        var driverName = document.getElementById("driverName").value;
-        var driverPhone = document.getElementById("driverPhone").value;
-        var driverAddress = document.getElementById("driverAddress").value;
-        var driverEmail = document.getElementById("driverEmail").value;
-
-        // Send an AJAX request to your backend
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/addDriver", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                // Process the response if needed
-                console.log(xhr.responseText);
-            }
-        };
-
-        var data = {
-            name: driverName,
-            phone: driverPhone,
-            address: driverAddress,
-            email: driverEmail
-        };
-
-        xhr.send(JSON.stringify(data));
+        // No need for AJAX, let the form submission handle it
     }
 
     function addCustomer() {
-        var customerName = document.getElementById("customerName").value;
-        var customerPhone = document.getElementById("customerPhone").value;
-        var customerAddress = document.getElementById("customerAddress").value;
-        var customerEmail = document.getElementById("customerEmail").value;
-
-        // Send an AJAX request to your backend
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/addCustomer", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                // Process the response if needed
-                console.log(xhr.responseText);
-            }
-        };
-
-        var data = {
-            name: customerName,
-            phone: customerPhone,
-            address: customerAddress,
-            email: customerEmail
-        };
-
-        xhr.send(JSON.stringify(data));
-    }
-
-    function toggleDrivers() {
-        var driversTable = document.getElementById("driversTable");
-        var customersTable = document.getElementById("customersTable");
-        var vehiclesTable = document.getElementById("vehiclesTable");
-        if (driversTable.style.display === "none") {
-            driversTable.style.display = "block";
-            customersTable.style.display = "none"; // Hide customers table if visible
-            vehiclesTable.style.display = "none"; // Hide vehicles table if visible
-        } else {
-            driversTable.style.display = "none";
-        }
+        // No need for AJAX, let the form submission handle it;
     }
 
     function toggleCustomers() {

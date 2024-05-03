@@ -82,11 +82,11 @@ public class AdminController {
         // Return the view name for the admin dashboard
         return "admin_dashboard";
     }
-    private String generateLoginId() {
+    private int generateLoginId() {
         // Generate a random number using current time as seed
         Random random = new Random(System.currentTimeMillis());
         // Convert the random number to a string and return it
-        return String.valueOf(random.nextInt(10000));
+        return Integer.parseInt(String.valueOf(random.nextInt(10000)));
     }
 
     @PostMapping("/toggleVehicles")
@@ -129,12 +129,12 @@ public class AdminController {
     }
 
     public void addCustomers(String name, String phone, String address, String email) {
-        String loginId = generateLoginId();
+        int loginId = generateLoginId();
         String pin = generatePin();
 
         // Save login information
         Login login = new Login();
-        login.setLoginId(Integer.parseInt(loginId));
+        login.setLoginId(loginId);
         login.setRole("customer");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
@@ -149,11 +149,46 @@ public class AdminController {
         customerService.save(customer);
     }
 
+    @PostMapping("/addDriver")
+    public String addDriver(@RequestParam String driverName, @RequestParam String driverPhone,
+                            @RequestParam String driverAddress, @RequestParam String driverEmail,
+                            @RequestParam Integer loginId, Model model) {
+        // Logic to add driver to the database
 
-    @PostMapping("/addCustomer")
-    public String addCustomer(@RequestParam String name, @RequestParam String phone,
-                              @RequestParam String address, @RequestParam String email) {
-        addCustomers(name, phone, address, email);
-        return "redirect:/admin-dashboard"; // Redirect to admin dashboard after adding customer
+        // Redirect to the admin dashboard with the loginId
+        return "redirect:/admin/{loginId}";
     }
+    @PostMapping("/addCustomer")
+    public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
+                              @RequestParam String customerAddress, @RequestParam String customerEmail,
+                              @RequestParam int loginId, Model model) {
+        // Generate a random PIN for the customer login
+        int generatedLoginId = generateLoginId();
+        String pin = generatePin();
+
+        // Save login information
+        Login login = new Login();
+        login.setLoginId(generatedLoginId);
+        login.setRole("customer");
+        login.setPin(Integer.parseInt(pin));
+        loginService.save(login);
+
+        // Save customer information
+        Customer customer = new Customer();
+        customer.setName(customerName);
+        customer.setPhone(Integer.parseInt(customerPhone));
+        customer.setAddress(customerAddress);
+        customer.setEmail(customerEmail);
+        customer.setLogin(login);
+        customerService.save(customer);
+
+        // Redirect to the admin dashboard with the generatedLoginId
+        return "redirect:/admin/{loginId}";
+    }
+
+
+    // Method to generate a random PIN (for demonstration purposes)
+
+
+
 }
