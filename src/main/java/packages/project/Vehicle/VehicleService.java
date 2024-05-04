@@ -19,4 +19,8 @@ public class VehicleService {
         return vehicleRepository.getVehicleByAreaId(areaId);
     }
 
+    public Vehicle getVehicle(Integer vehicleId){
+        return vehicleRepository.getVehicleByVehicleId(vehicleId);
+    }
+
 }

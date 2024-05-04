@@ -156,7 +156,7 @@ public class AdminController {
     }@PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
                               @RequestParam String customerAddress, @RequestParam String customerEmail,
-                              @RequestParam int loginId, @RequestParam int areaId, Model model) {
+                              @RequestParam int loginId, @RequestParam int areaId , @RequestParam int vehicleId, Model model) {
 
         String pin = generatePin();
 
@@ -167,6 +167,7 @@ public class AdminController {
 
         Area area = areaService.getArea(areaId);
         Fee fee = feeService.getFee(areaId);
+        Vehicle vehicle = vehicleService.getVehicle(vehicleId);
 
         Customer customer = new Customer();
         customer.setName(customerName);
@@ -176,7 +177,7 @@ public class AdminController {
         customer.setLogin(login);
         customer.setArea(area);
         customer.setFee(fee);
-
+        customer.setVehicle(vehicle);
         customerService.save(customer);
 
         String redirectUrl = "redirect:/admin/" + loginId;
