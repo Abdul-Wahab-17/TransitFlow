@@ -124,16 +124,68 @@
             </tbody>
         </table>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div class="add-form">
         <h2>Add Driver</h2>
         <form id="addDriverForm" action="/addDriver" method="post">
             <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
-            <input type="text" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
+            <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
             <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
-            <input type="text" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+            <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+            <select id="driverAreaId" name="areaId" required>
+                <option value="">Select Area</option>
+                <!-- Iterate over areas and render options -->
+                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+            </select>
+            <input type="hidden" id="driverLoginId" name="loginId" th:value="${loginId}">
             <button type="submit">Add Driver</button>
         </form>
     </div>
+
+    <div class="add-form">
+        <h2>Add Vehicle</h2>
+        <form id="addVehicleForm" action="/addVehicle" method="post">
+            <!-- Add hidden input field for loginId -->
+            <input type="hidden" id="vehicleLoginId" name="loginId" th:value="${loginId}">
+            <!-- Input fields for vehicle information -->
+            <input type="text" id="vehicleType" name="vehicleType" placeholder="Vehicle Type" required>
+            <input type="text" id="vehicleNumber" name="vehicleNumber" placeholder="Vehicle Number" required>
+            <input type="number" id="capacity" name="capacity" placeholder="Capacity" required>
+            <input type="number" id="remainingCapacity" name="remainingCapacity" placeholder="Remaining Capacity" required>
+            <select id="areaIdVehicle" name="areaId" required>
+                <option value="">Select Area</option>
+                <!-- Iterate over areas and render options -->
+                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+            </select>
+            <button type="submit">Add Vehicle</button>
+        </form>
+    </div>
+
+
 
     <!-- Add Customer Form -->
     <div class="add-form">
@@ -162,23 +214,24 @@
 
 <!-- Script to handle form submissions -->
 <script>
-    function toggleDrivers() {
-        toggleTable("driversTable");
-    }
 
-    function toggleCustomers() {
-        toggleTable("customersTable");
-    }
+function toggleDrivers() {
+toggleTable("driversTable");
+}
 
-    function toggleVehicles() {
-        toggleTable("vehiclesTable");
-    }
+function toggleCustomers() {
+toggleTable("customersTable");
+}
 
-    function toggleTable(tableId) {
-        var table = document.getElementById(tableId);
-        if (table.style.display === "none") {
-            table.style.display = "block";
-            hideOtherTables(tableId);
+function toggleVehicles() {
+toggleTable("vehiclesTable");
+}
+
+function toggleTable(tableId) {
+var table = document.getElementById(tableId);
+if (table.style.display === "none") {
+table.style.display = "block";
+hideOtherTables(tableId);
         } else {
             table.style.display = "none";
         }

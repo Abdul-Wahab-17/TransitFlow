@@ -148,12 +148,57 @@ public class AdminController {
     }
 
     @PostMapping("/addDriver")
-    public String addDriver(@RequestParam String driverName, @RequestParam String driverPhone,
+    public String addDriver(@RequestParam String driverName, @RequestParam int driverPhone,
                             @RequestParam String driverAddress, @RequestParam String driverEmail,
-                            @RequestParam Integer loginId, Model model) {
+                            @RequestParam int areaId, @RequestParam int loginId, Model model) {
 
-        return "redirect:/admin/{loginId}";
-    }@PostMapping("/addCustomer")
+        String pin = generatePin();
+
+        Login login = new Login();
+        login.setRole("driver");
+        login.setPin(Integer.parseInt(pin));
+        loginService.save(login);
+
+        Area area = areaService.getArea(areaId);
+
+        Driver driver = new Driver();
+        driver.setName(driverName);
+        driver.setPhone(driverPhone);
+        driver.setAddress(driverAddress);
+        driver.setEmail(driverEmail);
+        driver.setArea(area);
+        driver.setLogin(login);
+
+        driverService.save(driver);
+
+        String redirectUrl = "redirect:/admin/" + loginId;
+        return redirectUrl;
+    }
+
+    @PostMapping("/addVehicle")
+    public String addVehicle(@RequestParam String vehicleType, @RequestParam String vehicleNumber,
+                             @RequestParam int vehicleCapacity, @RequestParam int vehicleRemainingCapacity,
+                             @RequestParam int areaId, @RequestParam int loginId, Model model) {
+
+        Area area = areaService.getArea(areaId);
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleType(vehicleType);
+        vehicle.setNumber(vehicleNumber);
+        vehicle.setCapacity(vehicleCapacity);
+        vehicle.setRemainingCapacity(vehicleRemainingCapacity);
+        vehicle.setArea(area);
+
+        vehicleService.save(vehicle);
+
+        String redirectUrl = "redirect:/admin/" + loginId;
+        return redirectUrl;
+    }
+
+
+
+
+    @PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
                               @RequestParam String customerAddress, @RequestParam String customerEmail,
                               @RequestParam int loginId, @RequestParam int areaId , @RequestParam int vehicleId, Model model) {

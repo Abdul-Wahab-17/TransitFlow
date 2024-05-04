@@ -23,4 +23,8 @@ public class VehicleService {
         return vehicleRepository.getVehicleByVehicleId(vehicleId);
     }
 
+    public void save(Vehicle vehicle){
+        vehicleRepository.save(vehicle);
+    }
+
 }
