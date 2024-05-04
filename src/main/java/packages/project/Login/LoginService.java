@@ -18,7 +18,7 @@ public class LoginService {
     }
 
     public void save( Login loginInfo ){
-        loginRepository.save( loginInfo );
+        loginRepository.save(loginInfo);
     }
 
 }

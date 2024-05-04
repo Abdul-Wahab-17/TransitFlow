@@ -49,7 +49,7 @@
         </div>
 
         <!-- Add an ID to the tables to reference them in JavaScript -->
-        <table id="driversTable" class="dropdown-table">
+        <table id="driversTable" class="dropdown-table" style="display: none;">
             <!-- Populate the table with driver data -->
             <thead>
             <tr>
@@ -74,7 +74,7 @@
             </tbody>
         </table>
 
-        <table id="customersTable" class="dropdown-table">
+        <table id="customersTable" class="dropdown-table" style="display: none;">
             <!-- Populate the table with customer data -->
             <thead>
             <tr>
@@ -99,7 +99,7 @@
             </tbody>
         </table>
 
-        <table id="vehiclesTable" class="dropdown-table">
+        <table id="vehiclesTable" class="dropdown-table" style="display: none;">
             <!-- Populate the table with vehicle data -->
             <thead>
             <tr>
@@ -136,59 +136,90 @@
     </div>
 
     <!-- Add Customer Form -->
-    <!-- Add Customer Form -->
-    <!-- Add Customer Form -->
     <div class="add-form">
         <h2>Add Customer</h2>
         <form id="addCustomerForm" action="/addCustomer" method="post">
             <!-- Add hidden input field for loginId -->
-            <input type="hidden" id="loginId" name="loginId" value="789">
-
+            <input type="hidden" id="loginId" name="loginId" th:value="${loginId}">
             <!-- Other input fields for customer information -->
             <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
             <input type="text" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
             <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
             <input type="text" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
+            <select id="areaId" name="areaId" required onchange="updateVehicleOptions()">
+                <option value="">Select Area</option>
+                <!-- Iterate over areas and render options -->
+                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+            </select>
+            <select id="vehicleId" name="vehicleId" required>
+                <option value="">Select Vehicle</option>
+                <!-- Options will be dynamically populated based on the selected area -->
+            </select>
             <button type="submit">Add Customer</button>
         </form>
     </div>
-
-
 </div>
 
 <!-- Script to handle form submissions -->
 <script>
-    function addDriver() {
-        // No need for AJAX, let the form submission handle it
-    }
-
-    function addCustomer() {
-        // No need for AJAX, let the form submission handle it;
+    function toggleDrivers() {
+        toggleTable("driversTable");
     }
 
     function toggleCustomers() {
-        var driversTable = document.getElementById("driversTable");
-        var customersTable = document.getElementById("customersTable");
-        var vehiclesTable = document.getElementById("vehiclesTable");
-        if (customersTable.style.display === "none") {
-            customersTable.style.display = "block";
-            driversTable.style.display = "none"; // Hide drivers table if visible
-            vehiclesTable.style.display = "none"; // Hide vehicles table if visible
-        } else {
-            customersTable.style.display = "none";
-        }
+        toggleTable("customersTable");
     }
 
     function toggleVehicles() {
-        var driversTable = document.getElementById("driversTable");
-        var customersTable = document.getElementById("customersTable");
-        var vehiclesTable = document.getElementById("vehiclesTable");
-        if (vehiclesTable.style.display === "none") {
-            vehiclesTable.style.display = "block";
-            driversTable.style.display = "none"; // Hide drivers table if visible
-            customersTable.style.display = "none"; // Hide customers table if visible
+        toggleTable("vehiclesTable");
+    }
+
+    function toggleTable(tableId) {
+        var table = document.getElementById(tableId);
+        if (table.style.display === "none") {
+            table.style.display = "block";
+            hideOtherTables(tableId);
         } else {
-            vehiclesTable.style.display = "none";
+            table.style.display = "none";
+        }
+    }
+
+    function hideOtherTables(tableId) {
+        var tables = document.getElementsByClassName("dropdown-table");
+        for (var i = 0; i < tables.length; i++) {
+            if (tables[i].id !== tableId) {
+                tables[i].style.display = "none";
+            }
+        }
+    }
+
+    function updateVehicleOptions() {
+        var areaId = document.getElementById("areaId").value;
+        var vehicleDropdown = document.getElementById("vehicleId");
+
+        // Clear existing options
+        vehicleDropdown.innerHTML = "";
+
+        // Add a default option
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = "Select Vehicle";
+        vehicleDropdown.appendChild(defaultOption);
+
+        // Fetch vehicles for the selected area using AJAX
+        if (areaId !== "") {
+            fetch("/getVehiclesByArea?areaId=" + areaId)
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the dropdown with fetched vehicles
+                    data.forEach(vehicle => {
+                        var option = document.createElement("option");
+                        option.value = vehicle.vehicleId;
+                        option.text = vehicle.vehicleType + " - " + vehicle.number;
+                        vehicleDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching vehicles:', error));
         }
     }
 </script>

@@ -1,20 +1,27 @@
 package packages.project.Admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import packages.project.Area.Area;
+import packages.project.Area.AreaService;
 import packages.project.Customer.Customer;
 import packages.project.Customer.CustomerController;
 import packages.project.Customer.CustomerService;
 import packages.project.Driver.Driver;
 import packages.project.Driver.DriverService;
+import packages.project.Fee.Fee;
+import packages.project.Fee.FeeService;
 import packages.project.Login.Login;
 import packages.project.Login.LoginService;
 import packages.project.Vehicle.Vehicle;
+import packages.project.Vehicle.VehicleService;
 
 import java.util.List;
 import java.util.Random;
@@ -26,12 +33,19 @@ public class AdminController {
     private final CustomerService customerService;
     private final DriverService driverService;
     private final LoginService loginService;
+    private final AreaService areaService;
+    private final FeeService feeService;
+    private final VehicleService vehicleService;
     @Autowired
-    public AdminController(AdminService adminService, CustomerService customerService , DriverService driverService , LoginService loginService){
+    public AdminController(AdminService adminService, CustomerService customerService , DriverService driverService ,
+                           LoginService loginService , AreaService areaService , FeeService feeService , VehicleService vehicleService){
         this.adminService=adminService;
         this.customerService=customerService;
         this.driverService=driverService;
         this.loginService=loginService;
+        this.areaService=areaService;
+        this.feeService=feeService;
+        this.vehicleService=vehicleService;
     }
 
 
@@ -58,7 +72,8 @@ public class AdminController {
 
         List<Vehicle> vehicles = adminService.getAllVehicles();
         model.addAttribute("vehicles" , vehicles);
-
+        model.addAttribute("areas", areaService.getAllAreas());
+      //  model.addAttribute("loginId", loginId);
         // Initialize driversVisible attribute to false initially
         model.addAttribute("driversVisible", false);
         model.addAttribute("customersVisible" , false);
@@ -73,19 +88,14 @@ public class AdminController {
         boolean driversVisible = !(boolean) model.getAttribute("driversVisible");
         model.addAttribute("driversVisible", driversVisible);
 
-        // Fetch driver data from the database
         List<Driver> drivers = adminService.getAllDrivers();
 
-        // Pass driver data to the view
         model.addAttribute("drivers", drivers);
 
-        // Return the view name for the admin dashboard
         return "admin_dashboard";
     }
     private int generateLoginId() {
-        // Generate a random number using current time as seed
         Random random = new Random(System.currentTimeMillis());
-        // Convert the random number to a string and return it
         return Integer.parseInt(String.valueOf(random.nextInt(10000)));
     }
 
@@ -94,35 +104,25 @@ public class AdminController {
         boolean vehicleVisible = !(boolean) model.getAttribute("vehicleVisible");
         model.addAttribute("vehicleVisible", vehicleVisible);
 
-        // Fetch driver data from the database
         List<Vehicle> vehicles = adminService.getAllVehicles();
 
-        // Pass driver data to the view
         model.addAttribute("vehicles", vehicles);
 
-        // Return the view name for the admin dashboard
         return "admin_dashboard";
     }
 
     @PostMapping("/toggleCustomers")
     public String toggleCustomers(Model model) {
-        // Toggle the visibility flag for drivers table
         boolean customersVisible = !(boolean) model.getAttribute("customersVisible");
         model.addAttribute("customersVisible", customersVisible);
 
-        // Fetch driver data from the database
         List<Customer> customers = adminService.getAllCustomers();
 
-        // Pass driver data to the view
         model.addAttribute("customers", customers);
 
-        // Return the view name for the admin dashboard
         return "admin_dashboard";
     }
 
-
-
-    // Method to generate a random PIN (for demonstration purposes)
     private String generatePin() {
         Random random = new Random();
         return String.valueOf(random.nextInt(10000));
@@ -132,20 +132,18 @@ public class AdminController {
         int loginId = generateLoginId();
         String pin = generatePin();
 
-        // Save login information
         Login login = new Login();
         login.setLoginId(loginId);
         login.setRole("customer");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
-        // Save customer information
         Customer customer = new Customer();
         customer.setName(name);
         customer.setPhone(Integer.parseInt(phone));
         customer.setAddress(address);
         customer.setEmail(email);
-        customer.setLogin(login); // Set the generated login ID
+        customer.setLogin(login);
         customerService.save(customer);
     }
 
@@ -153,42 +151,47 @@ public class AdminController {
     public String addDriver(@RequestParam String driverName, @RequestParam String driverPhone,
                             @RequestParam String driverAddress, @RequestParam String driverEmail,
                             @RequestParam Integer loginId, Model model) {
-        // Logic to add driver to the database
 
-        // Redirect to the admin dashboard with the loginId
         return "redirect:/admin/{loginId}";
-    }
-    @PostMapping("/addCustomer")
+    }@PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
                               @RequestParam String customerAddress, @RequestParam String customerEmail,
-                              @RequestParam int loginId, Model model) {
-        // Generate a random PIN for the customer login
-        int generatedLoginId = generateLoginId();
+                              @RequestParam int loginId, @RequestParam int areaId, Model model) {
+
         String pin = generatePin();
 
-        // Save login information
         Login login = new Login();
-        login.setLoginId(generatedLoginId);
         login.setRole("customer");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
-        // Save customer information
+        Area area = areaService.getArea(areaId);
+        Fee fee = feeService.getFee(areaId);
+
         Customer customer = new Customer();
         customer.setName(customerName);
         customer.setPhone(Integer.parseInt(customerPhone));
         customer.setAddress(customerAddress);
         customer.setEmail(customerEmail);
         customer.setLogin(login);
+        customer.setArea(area);
+        customer.setFee(fee);
+
         customerService.save(customer);
 
-        // Redirect to the admin dashboard with the generatedLoginId
-        return "redirect:/admin/{loginId}";
+        String redirectUrl = "redirect:/admin/" + loginId;
+        return redirectUrl;
     }
 
-
-    // Method to generate a random PIN (for demonstration purposes)
-
-
+    @GetMapping("/getVehiclesByArea")
+    public ResponseEntity<?> getVehiclesByArea(@RequestParam int areaId) {
+        // Fetch vehicles by areaId
+        try {
+            List<Vehicle> vehicles = vehicleService.getVehiclesForArea(areaId);
+            return new ResponseEntity<>(vehicles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to fetch vehicles by area", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
