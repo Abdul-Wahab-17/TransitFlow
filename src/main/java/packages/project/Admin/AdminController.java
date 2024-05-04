@@ -177,7 +177,7 @@ public class AdminController {
 
     @PostMapping("/addVehicle")
     public String addVehicle(@RequestParam String vehicleType, @RequestParam String vehicleNumber,
-                             @RequestParam int vehicleCapacity, @RequestParam int vehicleRemainingCapacity,
+                             @RequestParam int capacity, @RequestParam int remainingCapacity,
                              @RequestParam int areaId, @RequestParam int loginId, Model model) {
 
         Area area = areaService.getArea(areaId);
@@ -185,8 +185,8 @@ public class AdminController {
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleType);
         vehicle.setNumber(vehicleNumber);
-        vehicle.setCapacity(vehicleCapacity);
-        vehicle.setRemainingCapacity(vehicleRemainingCapacity);
+        vehicle.setCapacity(capacity);
+        vehicle.setRemainingCapacity(remainingCapacity);
         vehicle.setArea(area);
 
         vehicleService.save(vehicle);

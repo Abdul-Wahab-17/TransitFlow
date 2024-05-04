@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class Vehicle {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int vehicleId;
 
     @Column(name = "vehicle_type")
@@ -29,11 +29,14 @@ public class Vehicle {
     @JoinColumn(name = "areaId")
     Area area;
 
-    public Vehicle(int vehicleId, String number, int capacity, int remainingCapacity) {
+    public Vehicle(int vehicleId, String vehicleType, int maintenanceCost, String number, int capacity, int remainingCapacity, Area area) {
         this.vehicleId = vehicleId;
+        this.vehicleType = vehicleType;
+        this.maintenanceCost = maintenanceCost;
         this.number = number;
         this.capacity = capacity;
         this.remainingCapacity = remainingCapacity;
+        this.area = area;
     }
 
     public Vehicle() {}
