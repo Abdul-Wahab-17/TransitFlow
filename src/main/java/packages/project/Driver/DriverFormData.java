@@ -1,14 +1,43 @@
 package packages.project.Driver;
 
+import packages.project.Area.Area;
 import packages.project.Login.Login;
+import packages.project.Salary.Salary;
 import packages.project.Vehicle.Vehicle;
 
 public class DriverFormData {
         private String name;
         private int phone;
         private String address;
+        private String email;
         private Vehicle vehicle;
         private Login login;
+        private Area area;
+        private Salary salary;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Area getArea() {
+        return area;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
+    }
+
+    public Salary getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Salary salary) {
+        this.salary = salary;
+    }
 
     public String getName() {
         return name;

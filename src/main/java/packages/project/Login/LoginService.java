@@ -3,6 +3,8 @@ package packages.project.Login;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
 public class LoginService {
 
@@ -17,8 +19,12 @@ public class LoginService {
         return loginRepository.findByLoginIdAndPin(loginId, pin);
     }
 
-    public void save( Login loginInfo ){
+    public void save(Login loginInfo) {
         loginRepository.save(loginInfo);
     }
+
+    public String getRole(Integer loginId){ return loginRepository.findRoleByLoginId(loginId);}
+
+    public Login findByLoginId(Integer loginId){ return loginRepository.findByLoginId(loginId);}
 
 }

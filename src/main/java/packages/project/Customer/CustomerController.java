@@ -1,5 +1,6 @@
 package packages.project.Customer;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ public class CustomerController {
 
 
     @GetMapping("/customers/{loginId}")
+    @RequiresRoles("customer")
     public String showCustomerDashboard(@PathVariable Integer loginId, Model model) {
         Customer customer = customerService.getCustomer(loginId);
 

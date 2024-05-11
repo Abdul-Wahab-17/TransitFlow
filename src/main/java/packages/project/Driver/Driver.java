@@ -41,13 +41,17 @@ public class Driver {
     @ManyToOne
     @JoinColumn(name = "login_id")
     Login login;
-    public Driver(int driverId, String name, int phone, String address, Vehicle vehicle , Login login) {
+
+    public Driver(int driverId, String name, int phone, String email, String address, Area area, Salary salary, Vehicle vehicle, Login login) {
         this.driverId = driverId;
         this.name = name;
         this.phone = phone;
+        this.email = email;
         this.address = address;
+        this.area = area;
+        this.salary = salary;
         this.vehicle = vehicle;
-        this.login=login;
+        this.login = login;
     }
 
     public Driver() {

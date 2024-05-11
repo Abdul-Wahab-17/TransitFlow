@@ -1,5 +1,6 @@
 package packages.project.Driver;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import packages.project.Customer.Customer;
 import packages.project.Customer.CustomerService;
 import packages.project.Vehicle.Vehicle;
 
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -26,8 +28,8 @@ public class DriverController {
         this.customerService=customerService;
     }
 
-
     @GetMapping("/drivers/{loginId}")
+    @RequiresRoles("driver")
     public String showDriverDashboard(@PathVariable Integer loginId, Model model) {
         Driver driver = driverService.getDriver(loginId);
 
@@ -49,7 +51,6 @@ public class DriverController {
             return "driver_not_found"; // Render error page if driver is not found
         }
     }
-
 
     @GetMapping("/api/drivers/{loginId}")
     public String redirectToDriverDashboard(@PathVariable Long loginId) {

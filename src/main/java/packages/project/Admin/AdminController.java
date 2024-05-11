@@ -1,5 +1,6 @@
 package packages.project.Admin;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,10 @@ public class AdminController {
         // Redirect to the specified URL
         return "redirect:" + redirectUrl;
     }
+
+
     @GetMapping("/admin/{loginId}")
+    @RequiresRoles("admin")
     public String getAdminDashboard(@PathVariable Integer loginId, Model model) {
         Admin admin = adminService.getAdmin(loginId);
         model.addAttribute("admin", admin);
