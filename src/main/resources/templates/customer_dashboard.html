@@ -9,13 +9,10 @@
 </head>
 <body>
 <div class="container">
+    <!-- Customer Information Table -->
     <div class="card">
-        <h1>Customer Dashboard</h1>
+        <h1>Customer Information</h1>
         <table class="table">
-            <tr>
-                <th>Customer ID</th>
-                <td th:text="${customer.customerId}"></td>
-            </tr>
             <tr>
                 <th>Name</th>
                 <td th:text="${customer.name}"></td>
@@ -32,24 +29,73 @@
                 <th>Address</th>
                 <td th:text="${customer.address}"></td>
             </tr>
+            <!-- Add more customer details here if needed -->
+        </table>
+        <!-- Edit button -->
+        <a th:href="@{'/customers/' + ${customer.login.loginId} + '/edit'}" class="button">Edit Info</a>
+    </div>
+
+    <!-- Driver Information Table -->
+    <div class="card">
+        <h1>Driver Information</h1>
+        <table class="table">
             <tr>
-                <th>Area</th>
-                <td th:text="${customer.area.areaName}"></td>
+                <th>Name</th>
+                <td th:text="${driver.name}"></td>
             </tr>
             <tr>
-                <th>Fee</th>
+                <th>Phone Number</th>
+                <td th:text="${driver.phone}"></td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td th:text="${driver.email}"></td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td th:text="${driver.address}"></td>
+            </tr>
+            <!-- Add more driver details here if needed -->
+        </table>
+    </div>
+
+    <!-- Vehicle Information Table -->
+    <div class="card">
+        <h1>Vehicle Information</h1>
+        <table class="table">
+            <tr>
+                <th>Vehicle Type</th>
+                <td th:text="${vehicle.vehicleType}"></td>
+            </tr>
+            <tr>
+                <th>Vehicle Number</th>
+                <td th:text="${vehicle.number}"></td>
+            </tr>
+            <tr>
+                <th>Capacity</th>
+                <td th:text="${vehicle.capacity}"></td>
+            </tr>
+            <!-- Add more vehicle details here if needed -->
+        </table>
+    </div>
+
+    <!-- Customer Fee Information -->
+    <div class="card">
+        <h1>Fee Information</h1>
+        <table class="table">
+            <tr>
+                <th>Amount</th>
                 <td th:text="${customer.fee.amount}"></td>
             </tr>
             <tr>
-                <th>Vehicle</th>
-                <td th:text="${customer.vehicle.number}"></td>
+                <th>Due Date</th>
+                <td th:text="${customer.fee.dueDate}"></td>
             </tr>
             <tr>
-                <th>Login ID</th>
-                <td th:text="${customer.login.loginId}"></td>
+                <th>Paid Status</th>
+                <td th:text="${customer.fee.paidStatus} ? 'Paid' : 'Unpaid'"></td>
             </tr>
         </table>
-        <a th:href="@{'/customers/' + ${customer.login.loginId} + '/edit'}" class="button">Edit Info</a>
     </div>
 </div>
 </body>

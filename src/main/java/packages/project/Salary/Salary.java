@@ -1,6 +1,7 @@
 package packages.project.Salary;
 
 import lombok.Data;
+import packages.project.Area.Area;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,16 +21,17 @@ public class Salary {
     @Column(name="due_date")
     Date dueDate;
 
-    @Column(name = "paid_status")
-    boolean paidStatus;
+    @ManyToOne
+    @JoinColumn(name = "areaId")
+    Area area;
 
     public Salary() {
     }
 
-    public Salary(int salaryId, int amount, Date dueDate, boolean paidStatus) {
+    public Salary(int salaryId, int amount, Date dueDate, Area area) {
         this.salaryId = salaryId;
         this.amount = amount;
         this.dueDate = dueDate;
-        this.paidStatus = paidStatus;
+        this.area = area;
     }
 }

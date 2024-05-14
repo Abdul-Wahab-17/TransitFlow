@@ -3,6 +3,7 @@ package packages.project.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import packages.project.Driver.Driver;
 
 import java.util.List;
 
@@ -14,5 +15,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
     @Query("select v from Vehicle v where v.vehicleId=:vehicleId")
     public Vehicle getVehicleByVehicleId(Integer vehicleId);
+
+    @Query("select V from Vehicle V where V.number = :number")
+    public Vehicle getVehicleByNumber(String number);
 
 }

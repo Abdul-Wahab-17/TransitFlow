@@ -1,27 +1,32 @@
 package packages.project.Customer;
 
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import packages.project.Driver.Driver;
+import packages.project.Driver.DriverService;
+import packages.project.Vehicle.Vehicle;
+import packages.project.Vehicle.VehicleService;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Controller
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final DriverService driverService;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService , DriverService driverService) {
         this.customerService = customerService;
+        this.driverService=driverService;
     }
 
 
     @GetMapping("/customers/{loginId}")
-    @RequiresRoles("customer")
     public String showCustomerDashboard(@PathVariable Integer loginId, Model model) {
         Customer customer = customerService.getCustomer(loginId);
 
@@ -29,7 +34,12 @@ public class CustomerController {
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             model.addAttribute("customer", customer);
 
-            return "customer_dashboard"; // View name without file extension
+
+            Vehicle vehicle = customerService.getVehicle(loginId);
+            Driver driver = driverService.getDriverByVehicleId(vehicle.getVehicleId());
+            model.addAttribute("vehicle", vehicle);
+            model.addAttribute("driver", driver);
+            return "customer_dashboard";
         } else {
             return "customer_not_found"; // Render error page if customer is not found
         }

@@ -1,6 +1,5 @@
 package packages.project.Driver;
 
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,9 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import packages.project.Customer.Customer;
 import packages.project.Customer.CustomerService;
-import packages.project.Vehicle.Vehicle;
 
-import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -29,7 +26,6 @@ public class DriverController {
     }
 
     @GetMapping("/drivers/{loginId}")
-    @RequiresRoles("driver")
     public String showDriverDashboard(@PathVariable Integer loginId, Model model) {
         Driver driver = driverService.getDriver(loginId);
 

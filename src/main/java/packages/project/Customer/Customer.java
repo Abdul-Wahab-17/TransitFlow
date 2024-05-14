@@ -43,6 +43,7 @@ public class Customer {
     @ManyToOne
     @JoinColumn(name = "vehicleId")
     Vehicle vehicle;
+
     @ManyToOne
     @JoinColumn(name = "login_id")
     Login login;

@@ -9,8 +9,9 @@
 </head>
 <body>
 <div class="container">
+    <!-- Driver Information Table -->
     <div class="card">
-        <h1>Driver Dashboard</h1>
+        <h1>Driver Information</h1>
         <table class="table">
             <tr>
                 <th>Driver ID</th>
@@ -45,31 +46,51 @@
                 <td th:text="${driver.login.loginId}"></td>
             </tr>
         </table>
+        <!-- Edit button -->
+        <a th:href="@{'/drivers/' + ${driver.login.loginId} + '/edit'}" class="button">Edit Info</a>
     </div>
-    <a th:href="@{'/drivers/' + ${driver.login.loginId} + '/edit'}" class="button">Edit Info</a>
-</div>
-<h2>Customers that you drop</h2>
-<table class="table">
-    <thead>
-    <tr>
-        <th>Customer ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-        <!-- Add more columns as needed -->
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Loop through the list of customers -->
-    <tr th:each="customer : ${customers}">
-        <td th:text="${customer.customerId}"></td>
-        <td th:text="${customer.name}"></td>
-        <td th:text="${customer.email}"></td>
-        <td th:text="${customer.phone}"></td>
-        <!-- Add more columns as needed -->
-    </tr>
-    </tbody>
-</table>
+
+    <!-- Vehicle Information Table -->
+    <div class="card">
+        <h1>Vehicle Information</h1>
+        <table class="table">
+            <tr>
+                <th>Vehicle ID</th>
+                <td th:text="${driver.vehicle.vehicleId}"></td>
+            </tr>
+            <tr>
+                <th>Vehicle Type</th>
+                <td th:text="${driver.vehicle.vehicleType}"></td>
+            </tr>
+            <tr>
+                <th>Vehicle Number</th>
+                <td th:text="${driver.vehicle.number}"></td>
+            </tr>
+            <tr>
+                <th>Capacity</th>
+                <td th:text="${driver.vehicle.capacity}"></td>
+            </tr>
+            <tr>
+                <th>Remaining Capacity</th>
+                <td th:text="${driver.vehicle.remainingCapacity}"></td>
+            </tr>
+            <!-- Add more vehicle details here if needed -->
+        </table>
+    </div>
+
+    <!-- Dropdown menu for customers in the driver's vehicle -->
+    <div class="card">
+        <h1>Customers in Your Vehicle</h1>
+        <select class="dropdown">
+            <option>Select Customer</option>
+            <!-- Loop through the list of customers -->
+            <option th:each="customer : ${customers}" th:value="${customer.customerId}">
+                <span th:text="${customer.name}"></span> (<span th:text="${customer.email}"></span>)
+            </option>
+        </select>
+        <!-- Add a button to view customer details -->
+        <button class="button">View Customer Details</button>
+    </div>
 </div>
 </body>
 </html>

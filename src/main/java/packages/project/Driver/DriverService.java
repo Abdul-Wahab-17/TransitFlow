@@ -31,4 +31,8 @@ public class DriverService {
         Vehicle vehicle = driverRepository.getVehicleByDriverId(driverId);
         return vehicle;
     }
+
+    public Driver getDriverByVehicleId(Integer vehicleId){
+        return driverRepository.getDriverByVehicleId(vehicleId);
+    }
 }

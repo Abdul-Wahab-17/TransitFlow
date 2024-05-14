@@ -1,27 +1,21 @@
 package packages.project.Login;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import packages.project.Security.AuthenticationService;
-
-import javax.servlet.http.HttpSession;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LoginController {
 
     private final LoginService loginService;
-    private final AuthenticationService authenticationService;
 
     @Autowired
-    public LoginController(LoginService loginService, AuthenticationService authenticationService) {
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
-        this.authenticationService = authenticationService;
     }
 
     @GetMapping("/")
@@ -36,27 +30,33 @@ public class LoginController {
 
     @PostMapping("/api/login/authenticate")
     public String authenticate(@RequestParam("loginId") Integer loginId,
-                               @RequestParam("password") Integer password,
+                               @RequestParam("password") String password,
                                Model model,
-                               HttpSession session) {
-        try {
-            // Authenticate user
-            Subject currentUser = authenticationService.login(String.valueOf(loginId), String.valueOf(password));
-            if (currentUser.isAuthenticated()) {
-                // Store user ID in session
-                session.setAttribute("loggedInUserId", loginId);
+                               RedirectAttributes redirectAttributes) {
+        Login user = loginService.authenticateUser(loginId, Integer.parseInt(password));
+        String redirectUrl = "error"; // Default redirect URL in case of failure
 
-                // Redirect to appropriate URL based on role
-                String role = loginService.getRole(loginId).toLowerCase();
-                String redirectUrl = "/api/" + role + "/" + loginId;
-                return "redirect:" + redirectUrl;
-            } else {
-                model.addAttribute("error", "Invalid login credentials");
-                return "login";
+        if (user != null) {
+            String role = user.getRole();
+
+            switch (role) {
+                case "driver":
+                    redirectUrl = "/api/drivers/" + loginId;
+                    break;
+                case "customer":
+                    redirectUrl = "/api/customers/" + loginId;
+                    break;
+                case "admin":
+                    redirectUrl = "/api/admin/" + loginId;
+                    break;
+                default:
+                    redirectAttributes.addFlashAttribute("error", "Unknown user role");
+                    return "redirect:/login"; // Redirect to the login page with an error message
             }
-        } catch (AuthenticationException e) {
-            model.addAttribute("error", "Invalid login credentials");
-            return "login";
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Authentication failed");
         }
+
+        return "redirect:" + redirectUrl;
     }
 }

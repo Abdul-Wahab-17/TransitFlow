@@ -12,4 +12,8 @@ public class SalaryService {
     public SalaryService(SalaryRepository salaryRepository) {
         this.salaryRepository = salaryRepository;
     }
+
+    public Salary getSalaryForArea(Integer areaId){
+        return salaryRepository.getSalaryFromArea(areaId);
+    }
 }

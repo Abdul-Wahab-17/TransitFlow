@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Driver</title>
+    <!-- Link your external CSS file -->
+    <link rel="stylesheet" href="/styles.css">
+
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>Driver Information</h1>
+        <div id="viewMode">
+            <table>
+                <tr>
+                    <th>Name:</th>
+                    <td><span th:text="${driver.name}"></span></td>
+                </tr>
+                <tr>
+                    <th>Phone:</th>
+                    <td><span th:text="${driver.phone}"></span></td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td><span th:text="${driver.email}"></span></td>
+                </tr>
+                <tr>
+                    <th>Address:</th>
+                    <td><span th:text="${driver.address}"></span></td>
+                </tr>
+                <tr>
+                    <th>Area:</th>
+                    <td><span th:text="${driver.area.areaName}"></span></td>
+                </tr>
+            </table>
+            <button onclick="toggleEditMode()">Edit</button>
+        </div>
+        <div id="editMode" style="display: none;">
+            <form id="editDriverForm" action="/editDriver" method="post">
+                <input type="hidden" id="loginId" name="loginId" th:value="${driver.login.loginId}">
+                <table>
+                    <tr>
+                        <th><label for="driverName">Name:</label></th>
+                        <td><input type="text" id="driverName" name="driverName" th:value="${driver.name}" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="driverPhone">Phone:</label></th>
+                        <td><input type="text" id="driverPhone" name="driverPhone" th:value="${driver.phone}" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="driverEmail">Email:</label></th>
+                        <td><input type="email" id="driverEmail" name="driverEmail" th:value="${driver.email}" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="driverAddress">Address:</label></th>
+                        <td><input type="text" id="driverAddress" name="driverAddress" th:value="${driver.address}" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="driverArea">Area:</label></th>
+                        <td><input type="text" id="driverArea" name="driverArea" th:value="${driver.area.areaName}" required></td>
+                    </tr>
+                </table>
+                <button type="button" onclick="cancelEdit()">Cancel</button>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleEditMode() {
+        document.getElementById("viewMode").style.display = "none";
+        document.getElementById("editMode").style.display = "block";
+    }
+
+    function cancelEdit() {
+        document.getElementById("viewMode").style.display = "block";
+        document.getElementById("editMode").style.display = "none";
+    }
+</script>
+</body>
+</html>

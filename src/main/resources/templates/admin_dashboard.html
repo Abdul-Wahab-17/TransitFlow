@@ -6,6 +6,36 @@
     <title>Admin Dashboard</title>
     <!-- Link your external CSS file -->
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Style for tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .table th, .table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+        }
+
+        /* Style for search bars */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -36,156 +66,39 @@
                 </tr>
             </table>
         </div>
-        <div>
-            <h2>Actions</h2>
+        <div class="search-bar">
+            <h2>Search</h2>
             <div>
-                <!-- Add an onclick event to the button to toggle visibility -->
-                <a href="#" class="button" onclick="toggleDrivers()">View Drivers</a>
-                <!-- Add a button for viewing customers -->
-                <a href="#" class="button" onclick="toggleCustomers()">View Customers</a>
-                <!-- Add a button for viewing vehicles -->
-                <a href="#" class="button" onclick="toggleVehicles()">View Vehicles</a>
+                <!-- Search bar for drivers -->
+                <input type="text" id="driverSearchBar" placeholder="Search Drivers by Login ID" onkeydown="searchDrivers(event)">
+                <!-- Search bar for customers -->
+                <input type="text" id="customerSearchBar" placeholder="Search Customers by Login ID" onkeydown="searchCustomers(event)">
+                <!-- Search bar for vehicles -->
+                <input type="text" id="vehicleSearchBar" placeholder="Search Vehicles by Vehicle Number" onkeydown="searchVehicles(event)">
             </div>
         </div>
-
-        <!-- Add an ID to the tables to reference them in JavaScript -->
-        <table id="driversTable" class="dropdown-table" style="display: none;">
-            <!-- Populate the table with driver data -->
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone Number</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Use Thymeleaf to iterate over the list of drivers and populate the rows -->
-            <tr th:each="driver : ${drivers}">
-                <td th:text="${driver.name}"></td>
-                <td th:text="${driver.phone}"></td>
-                <td th:text="${driver.address}"></td>
-                <td th:text="${driver.email}"></td>
-                <td>
-                    <button onclick="removeDriver(this)">Remove</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <table id="customersTable" class="dropdown-table" style="display: none;">
-            <!-- Populate the table with customer data -->
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone Number</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Use Thymeleaf to iterate over the list of customers and populate the rows -->
-            <tr th:each="customer : ${customers}">
-                <td th:text="${customer.name}"></td>
-                <td th:text="${customer.phone}"></td>
-                <td th:text="${customer.address}"></td>
-                <td th:text="${customer.email}"></td>
-                <td>
-                    <button onclick="removeCustomer(this)">Remove</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <table id="vehiclesTable" class="dropdown-table" style="display: none;">
-            <!-- Populate the table with vehicle data -->
-            <thead>
-            <tr>
-                <th>Type</th>
-                <th>Number</th>
-                <th>Maintenance Cost</th>
-                <th>Area</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Use Thymeleaf to iterate over the list of vehicles and populate the rows -->
-            <tr th:each="vehicle : ${vehicles}">
-                <td th:text="${vehicle.vehicleType}"></td>
-                <td th:text="${vehicle.number}"></td>
-                <td th:text="${vehicle.maintenanceCost}"></td>
-                <td th:text="${vehicle.area.areaName}"></td>
-                <td>
-                    <button onclick="removeVehicle(this)">Remove</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class="add-form">
-        <h2>Add Driver</h2>
-        <form id="addDriverForm" action="/addDriver" method="post">
-            <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
-            <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
-            <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
-            <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
-            <select id="driverAreaId" name="areaId" required>
-                <option value="">Select Area</option>
-                <!-- Iterate over areas and render options -->
-                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
-            </select>
-            <input type="hidden" id="driverLoginId" name="loginId" th:value="${loginId}">
-            <button type="submit">Add Driver</button>
-        </form>
-    </div>
-
-    <div class="add-form">
-        <h2>Add Vehicle</h2>
-        <form id="addVehicleForm" action="/addVehicle" method="post">
-            <!-- Add hidden input field for loginId -->
-            <input type="hidden" id="vehicleLoginId" name="loginId" th:value="${loginId}">
-            <!-- Input fields for vehicle information -->
-            <input type="text" id="vehicleType" name="vehicleType" placeholder="Vehicle Type" required>
-            <input type="text" id="vehicleNumber" name="vehicleNumber" placeholder="Vehicle Number" required>
-            <input type="number" id="capacity" name="capacity" placeholder="Capacity" required>
-            <input type="number" id="remainingCapacity" name="remainingCapacity" placeholder="Remaining Capacity" required>
-            <select id="areaIdVehicle" name="areaId" required>
-                <option value="">Select Area</option>
-                <!-- Iterate over areas and render options -->
-                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
-            </select>
-            <button type="submit">Add Vehicle</button>
-        </form>
-    </div>
-
-
+<!-- Add Driver Form -->
+<div class="add-form">
+    <h2>Add Driver</h2>
+    <form id="addDriverForm" action="/addDriver" method="post">
+        <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
+        <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
+        <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
+        <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+        <select id="driverAreaId" name="areaId" required onchange="updateVehicleOptionsForDriver()">
+            <option value="">Select Area</option>
+            <!-- Iterate over areas and render options -->
+            <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+        </select>
+        <select id="driverVehicleId" name="vehicleId" required>
+            <option value="">Select Vehicle</option>
+            <!-- Options will be dynamically populated based on the selected area -->
+        </select>
+        <input type="hidden" id="driverLoginId" name="loginId" th:value="${loginId}">
+        <button type="submit">Add Driver</button>
+    </form>
+</div>
 
     <!-- Add Customer Form -->
     <div class="add-form">
@@ -195,9 +108,9 @@
             <input type="hidden" id="loginId" name="loginId" th:value="${loginId}">
             <!-- Other input fields for customer information -->
             <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
-            <input type="text" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
+            <input type="number" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
             <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
-            <input type="text" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
+            <input type="email" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
             <select id="areaId" name="areaId" required onchange="updateVehicleOptions()">
                 <option value="">Select Area</option>
                 <!-- Iterate over areas and render options -->
@@ -210,39 +123,45 @@
             <button type="submit">Add Customer</button>
         </form>
     </div>
+
+    <h2>Actions</h2>
+    <div>
+        <!-- Dropdown menu for selecting entity -->
+        <select id="entitySelect" onchange="redirectToSelectedPage()">
+            <option value="">Select Entity</option>
+            <option value="customers">Customers</option>
+            <option value="drivers">Drivers</option>
+            <option value="vehicles">Vehicles</option>
+        </select>
+    </div>
 </div>
 
-<!-- Script to handle form submissions -->
 <script>
-
-function toggleDrivers() {
-toggleTable("driversTable");
-}
-
-function toggleCustomers() {
-toggleTable("customersTable");
-}
-
-function toggleVehicles() {
-toggleTable("vehiclesTable");
-}
-
-function toggleTable(tableId) {
-var table = document.getElementById(tableId);
-if (table.style.display === "none") {
-table.style.display = "block";
-hideOtherTables(tableId);
-        } else {
-            table.style.display = "none";
+    function redirectToSelectedPage() {
+        var selectedEntity = document.getElementById("entitySelect").value;
+        if (selectedEntity) {
+            window.location.href = "/admin/{loginId}/" + selectedEntity;
         }
     }
 
-    function hideOtherTables(tableId) {
-        var tables = document.getElementsByClassName("dropdown-table");
-        for (var i = 0; i < tables.length; i++) {
-            if (tables[i].id !== tableId) {
-                tables[i].style.display = "none";
-            }
+    function searchDrivers(event) {
+        if (event.key === 'Enter') {
+            var loginId = document.getElementById("driverSearchBar").value;
+            window.location.href = "/editDriver?loginId=" + loginId;
+        }
+    }
+
+    function searchCustomers(event) {
+        if (event.key === 'Enter') {
+            var loginId = document.getElementById("customerSearchBar").value;
+            window.location.href = "/editCustomer?loginId=" + loginId;
+        }
+    }
+
+    function searchVehicles(event) {
+        if (event.key === 'Enter') {
+            var vehicleNumber = document.getElementById("vehicleSearchBar").value;
+            window.location.href = "/editVehicle?vehicleNumber=" + vehicleNumber;
         }
     }
 

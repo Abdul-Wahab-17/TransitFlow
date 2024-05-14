@@ -7,6 +7,7 @@ import org.springframework.boot.logging.logback.LogbackLoggingSystem;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import packages.project.Admin.Admin;
+import packages.project.Vehicle.Vehicle;
 
 import java.util.List;
 
@@ -27,19 +28,18 @@ public class CustomerService {
 
     public void save(Customer existingCustomer) {
         try {
-            // Attempt to insert the customer record
             customerRepository.save(existingCustomer);
         } catch (DataIntegrityViolationException e) {
-            // Handle the constraint violation exception
-            // For example, provide a meaningful error message to the user
             logger.error("Failed to save customer record: " + e.getMessage());
-            // Or rollback the transaction if necessary
-            // transactionManager.rollback(transactionStatus);
         }
 
     }
 
     public List<Customer> getCustomersForDriver(Integer driverId) {
         return customerRepository.findCustomersByDriverId(driverId);
+    }
+
+    public Vehicle getVehicle(Integer loginId) {
+        return customerRepository.getVehicleByLoginId(loginId);
     }
 }

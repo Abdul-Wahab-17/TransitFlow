@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Vehicle</title>
+    <!-- Link your external CSS file -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>Vehicle Information</h1>
+        <div>
+            <p><strong>Type:</strong> <span th:text="${vehicle.vehicleType}"></span></p>
+            <p><strong>Number:</strong> <span th:text="${vehicle.number}"></span></p>
+            <p><strong>Maintenance Cost:</strong> <span th:text="${vehicle.maintenanceCost}"></span></p>
+            <p><strong>Area:</strong> <span th:text="${vehicle.area.areaName}"></span></p>
+        </div>
+        <a href="/editVehicle?vehicleNumber=${vehicle.vehicleNumber}" class="button">Edit</a>
+    </div>
+</div>
+</body>
+</html>

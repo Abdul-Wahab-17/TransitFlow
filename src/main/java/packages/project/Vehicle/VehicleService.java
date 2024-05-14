@@ -23,8 +23,8 @@ public class VehicleService {
         return vehicleRepository.getVehicleByVehicleId(vehicleId);
     }
 
-    public void save(Vehicle vehicle){
-        vehicleRepository.save(vehicle);
-    }
+    public void save(Vehicle vehicle){vehicleRepository.save(vehicle);}
+
+    public Vehicle getVehicleByNumber(String number){ return vehicleRepository.getVehicleByNumber(number);}
 
 }

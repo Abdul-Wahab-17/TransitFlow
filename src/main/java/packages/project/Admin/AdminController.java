@@ -1,19 +1,15 @@
 package packages.project.Admin;
 
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import packages.project.Area.Area;
 import packages.project.Area.AreaService;
 import packages.project.Customer.Customer;
-import packages.project.Customer.CustomerController;
 import packages.project.Customer.CustomerService;
 import packages.project.Driver.Driver;
 import packages.project.Driver.DriverService;
@@ -21,9 +17,11 @@ import packages.project.Fee.Fee;
 import packages.project.Fee.FeeService;
 import packages.project.Login.Login;
 import packages.project.Login.LoginService;
+import packages.project.Salary.SalaryService;
 import packages.project.Vehicle.Vehicle;
 import packages.project.Vehicle.VehicleService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -37,9 +35,10 @@ public class AdminController {
     private final AreaService areaService;
     private final FeeService feeService;
     private final VehicleService vehicleService;
+    private final SalaryService salaryService;
     @Autowired
     public AdminController(AdminService adminService, CustomerService customerService , DriverService driverService ,
-                           LoginService loginService , AreaService areaService , FeeService feeService , VehicleService vehicleService){
+                           LoginService loginService , AreaService areaService , FeeService feeService , VehicleService vehicleService , SalaryService salaryService){
         this.adminService=adminService;
         this.customerService=customerService;
         this.driverService=driverService;
@@ -47,11 +46,13 @@ public class AdminController {
         this.areaService=areaService;
         this.feeService=feeService;
         this.vehicleService=vehicleService;
+        this.salaryService=salaryService;
     }
 
 
 
     @GetMapping("/api/admin/{loginId}")
+    @PreAuthorize("hasRole('admin')")
     public String redirectToAdminDashboard(@PathVariable Long loginId) {
         // Construct the redirect URL
         String redirectUrl = "/admin/" + loginId;
@@ -62,7 +63,7 @@ public class AdminController {
 
 
     @GetMapping("/admin/{loginId}")
-    @RequiresRoles("admin")
+    @PreAuthorize("hasRole('admin')")
     public String getAdminDashboard(@PathVariable Integer loginId, Model model) {
         Admin admin = adminService.getAdmin(loginId);
         model.addAttribute("admin", admin);
@@ -72,17 +73,82 @@ public class AdminController {
         model.addAttribute("drivers", drivers);
 
         List<Customer> customers = adminService.getAllCustomers();
-        model.addAttribute("customers" , customers);
+        model.addAttribute("customers", customers);
 
         List<Vehicle> vehicles = adminService.getAllVehicles();
-        model.addAttribute("vehicles" , vehicles);
+        model.addAttribute("vehicles", vehicles);
         model.addAttribute("areas", areaService.getAllAreas());
-      //  model.addAttribute("loginId", loginId);
-        // Initialize driversVisible attribute to false initially
         model.addAttribute("driversVisible", false);
-        model.addAttribute("customersVisible" , false);
-        model.addAttribute("vehiclesVisible" , false);
+        model.addAttribute("customersVisible", false);
+        model.addAttribute("vehiclesVisible", false);
         return "admin_dashboard";
+    }
+
+    @GetMapping("/searchDrivers")
+    public String searchDrivers(@RequestParam String loginId, Model model) {
+        try {
+            List<Driver> drivers = (List<Driver>) driverService.getDriver(Integer.parseInt(loginId));
+            model.addAttribute("drivers", drivers);
+            return "admin_dashboard";
+        } catch (NumberFormatException e) {
+            // Handle invalid input
+            return "redirect:/admin/{loginId}";
+        }
+    }
+
+    @GetMapping("/searchCustomers")
+    public String searchCustomers(@RequestParam String loginId, Model model) {
+        try {
+            List<Customer> customers = (List<Customer>) customerService.getCustomer(Integer.parseInt(loginId));
+            model.addAttribute("customers", customers);
+            return "admin_dashboard";
+        } catch (NumberFormatException e) {
+            // Handle invalid input
+            return "redirect:/admin/{loginId}";
+        }
+    }
+
+    @GetMapping("/editDriver")
+    public String editDriver(@RequestParam String loginId, Model model) {
+        // Retrieve driver information by loginId
+        Driver driver = driverService.getDriver(Integer.parseInt(loginId));
+        // Pass driver object to the view for admin editing
+        model.addAttribute("driver", driver);
+        return "admin_driver";
+    }
+
+    @GetMapping("/editCustomer")
+    public String editCustomer(@RequestParam String loginId, Model model) {
+        // Retrieve customer information by loginId
+        Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
+        // Pass customer object to the view for admin editing
+        model.addAttribute("customer", customer);
+        return "admin_customer";
+    }
+
+    @GetMapping("/editVehicle")
+    public String editVehicle(@RequestParam String vehicleNumber, Model model) {
+        // Retrieve vehicle information by vehicleNumber
+        Vehicle vehicle = vehicleService.getVehicleByNumber(vehicleNumber);
+        // Pass vehicle object to the view for admin editing
+        model.addAttribute("vehicle", vehicle);
+        return "admin_vehicle";
+    }
+
+    @GetMapping("/searchVehicles")
+    public String searchVehicles(@RequestParam String vehicleNumber, Model model) {
+        try {
+            Vehicle vehicle = vehicleService.getVehicleByNumber(vehicleNumber);
+            List<Vehicle> vehicles = new ArrayList<>();
+            if(vehicle != null) {
+                vehicles.add(vehicle);
+            }
+            model.addAttribute("vehicles", vehicles);
+            return "admin_dashboard";
+        } catch (Exception e) {
+            // Handle exception
+            return "redirect:/admin/{loginId}";
+        }
     }
 
 
@@ -154,7 +220,8 @@ public class AdminController {
     @PostMapping("/addDriver")
     public String addDriver(@RequestParam String driverName, @RequestParam int driverPhone,
                             @RequestParam String driverAddress, @RequestParam String driverEmail,
-                            @RequestParam int areaId, @RequestParam int loginId, Model model) {
+                            @RequestParam int areaId, @RequestParam int loginId, 
+                            @RequestParam int vehicleId, Model model) {
 
         String pin = generatePin();
 
@@ -164,6 +231,7 @@ public class AdminController {
         loginService.save(login);
 
         Area area = areaService.getArea(areaId);
+        Vehicle vehicle = vehicleService.getVehicle(vehicleId);
 
         Driver driver = new Driver();
         driver.setName(driverName);
@@ -171,6 +239,8 @@ public class AdminController {
         driver.setAddress(driverAddress);
         driver.setEmail(driverEmail);
         driver.setArea(area);
+        driver.setVehicle(vehicle);
+        driver.setSalary(salaryService.getSalaryForArea(area.getAreaId()));
         driver.setLogin(login);
 
         driverService.save(driver);

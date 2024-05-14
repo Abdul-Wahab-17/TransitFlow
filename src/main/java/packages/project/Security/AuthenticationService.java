@@ -1,35 +1,34 @@
 package packages.project.Security;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.subject.Subject;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+import packages.project.Login.Login;
+import packages.project.Login.LoginService;
 
-@Service
+@Component
 public class AuthenticationService {
 
-    public Subject login(String username, String password) {
-        Subject currentUser = SecurityUtils.getSubject();
-        if (!currentUser.isAuthenticated()) {
-            UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-            token.setRememberMe(true); // if desired, enable 'remember me' functionality
-            try {
-                currentUser.login(token);
-                // Authentication successful
-            } catch (IncorrectCredentialsException ice) {
-                // Invalid password
-            } catch (UnknownAccountException uae) {
-                // Unknown username
-            } catch (LockedAccountException lae) {
-                // Locked account
-            } catch (AuthenticationException ae) {
-                // Other authentication error
-            }
-        }
-        return currentUser;
-    }
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-    public void logout() {
-        SecurityUtils.getSubject().logout();
+    @Autowired
+    LoginService loginService;
+
+
+    public String authenticateUser(String username, String password) {
+        Login user = loginService.findByLoginId(Integer.parseInt(username));
+        if (user == null || !(user.getPin()==(Integer.parseInt(password)))) {
+            throw new UsernameNotFoundException("not found");
+        }
+
+        // Assuming the user has a role stored in the database
+        String role = user.getRole();
+
+        // Generate a JWT token
+        return jwtTokenUtil.generateToken(username, role);
     }
 }
+

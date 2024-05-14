@@ -17,4 +17,7 @@ public interface DriverRepository extends JpaRepository <Driver , Integer> {
     @Query("SELECT d.vehicle from Driver d where d.driverId = :driverId")
     Vehicle getVehicleByDriverId(Integer driverId);
 
+    @Query("select D from Driver D where D.vehicle.vehicleId = :vehicleId")
+    Driver getDriverByVehicleId(Integer vehicleId);
+
 }

@@ -1,14 +1,17 @@
 package packages.project.Login;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
 @Data
 @Entity
+@AllArgsConstructor
 @Table(name = "login")
 public class Login {
     @Id
@@ -22,12 +25,9 @@ public class Login {
     @Column(name = "role")
     private String role;
 
+
     public Login() {
     }
 
-    public Login(int pin, int loginId, String role ) {
-        this.pin = pin;
-        this.loginId = loginId;
-        this.role = role;
-    }
+
 }
