@@ -13,6 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import packages.project.Security.AuthenticationService;
 import packages.project.Security.JwtTokenUtil;
 
+import java.net.URI;
+
 @Controller
 public class LoginController {
 
@@ -38,24 +40,40 @@ public class LoginController {
 
     @PostMapping("/api/login/authenticate")
     public ResponseEntity<?> authenticate(@RequestParam("loginId") Integer loginId,
-                                          @RequestParam("password") int password) {
+                                          @RequestParam("password") int password,
+                                          RedirectAttributes redirectAttributes) {
         // Authenticate the user
         Login user = loginService.authenticateUser(loginId, password);
 
         if (user != null) {
             String role = user.getRole();
-            String token =authenticationService.authenticateUser( String.format(""+loginId) , String.format(""+password));// Generate JWT token here using your token generation logic
+            String token = authenticationService.authenticateUser(String.valueOf(loginId) , String.format("" + password));
+            // Generate JWT token here using your token generation logic
 
             // Return the JWT token in the response headers
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-            return ResponseEntity.ok()
+            // Add user information to the redirect attributes
+            redirectAttributes.addFlashAttribute("user", user);
+
+            // Redirect to a different endpoint along with the JWT token
+            String redirectUrl = "/" + role + "/" + loginId;
+            HttpHeaders redirectHeaders = new HttpHeaders();
+            redirectHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+                     /*  return ResponseEntity.ok()
                     .headers(headers)
-                    .body(user); // Return the authenticated user or any relevant data
+                    .body(user);
+*/
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .headers(redirectHeaders)
+                    .location(URI.create(redirectUrl)) // Redirect to the success endpoint
+                    .build();
         } else {
             // If authentication fails, return unauthorized status
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
     }
 }

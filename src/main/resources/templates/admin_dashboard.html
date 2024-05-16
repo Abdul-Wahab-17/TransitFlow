@@ -78,27 +78,27 @@
             </div>
         </div>
     </div>
-<!-- Add Driver Form -->
-<div class="add-form">
-    <h2>Add Driver</h2>
-    <form id="addDriverForm" action="/addDriver" method="post">
-        <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
-        <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
-        <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
-        <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
-        <select id="driverAreaId" name="areaId" required onchange="updateVehicleOptionsForDriver()">
-            <option value="">Select Area</option>
-            <!-- Iterate over areas and render options -->
-            <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
-        </select>
-        <select id="driverVehicleId" name="vehicleId" required>
-            <option value="">Select Vehicle</option>
-            <!-- Options will be dynamically populated based on the selected area -->
-        </select>
-        <input type="hidden" id="driverLoginId" name="loginId" th:value="${loginId}">
-        <button type="submit">Add Driver</button>
-    </form>
-</div>
+    <!-- Add Driver Form -->
+    <div class="add-form">
+        <h2>Add Driver</h2>
+        <form id="addDriverForm" action="/addDriver" method="post">
+            <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
+            <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
+            <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
+            <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+            <select id="driverAreaId" name="areaId" required onchange="updateVehicleOptionsForDriver()">
+                <option value="">Select Area</option>
+                <!-- Iterate over areas and render options -->
+                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+            </select>
+            <select id="driverVehicleId" name="vehicleId" required>
+                <option value="">Select Vehicle</option>
+                <!-- Options will be dynamically populated based on the selected area -->
+            </select>
+            <input type="hidden" id="driverLoginId" name="loginId" th:value="${loginId}">
+            <button type="submit">Add Driver</button>
+        </form>
+    </div>
 
     <!-- Add Customer Form -->
     <div class="add-form">
@@ -139,8 +139,12 @@
 <script>
     function redirectToSelectedPage() {
         var selectedEntity = document.getElementById("entitySelect").value;
-        if (selectedEntity) {
-            window.location.href = "/admin/{loginId}/" + selectedEntity;
+        var loginId = document.getElementById("loginId").value; // Assuming you have a hidden input field for loginId
+
+        if (selectedEntity && loginId) {
+            // Include the JWT token as a query parameter
+            var jwtToken = getJwtToken(); // Function to get the JWT token
+            window.location.href = "/admin/" + loginId + "/" + selectedEntity + "?token=" + jwtToken;
         }
     }
 
@@ -194,6 +198,23 @@
                 .catch(error => console.error('Error fetching vehicles:', error));
         }
     }
+
+    function getJwtToken() {
+        // Retrieve the JWT token from a cookie
+        var cookieName = "jwtToken=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieArray = decodedCookie.split(';');
+
+        for (var i = 0; i < cookieArray.length; i++) {
+            var cookie = cookieArray[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length);
+            }
+        }
+
+        return null; // Return null if the token is not found in cookies
+    }
+
 </script>
 </body>
 </html>

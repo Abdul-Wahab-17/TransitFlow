@@ -31,4 +31,3 @@ public class AuthenticationService {
         return jwtTokenUtil.generateToken(username, role);
     }
 }
-

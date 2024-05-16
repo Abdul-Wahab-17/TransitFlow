@@ -1,10 +1,13 @@
 package packages.project.Security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,50 +22,61 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    LoginService loginService;
+    private LoginService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        final String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        // Exclude public endpoints from filtering
-        if (path.equals("/login") || path.equals("/api/login/authenticate")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String requestTokenHeader = request.getHeader("Authorization");
 
         String username = null;
-        String jwt = null;
+        String jwtToken = null;
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            // If Authorization header is missing or invalid
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Missing or invalid Authorization header");
-            return;
+        // Check if the request contains Authorization header with a valid JWT token
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7); // Extract the token after "Bearer "
+            try {
+                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+            } catch (IllegalArgumentException e) {
+                logger.error("Unable to get JWT Token");
+            } catch (ExpiredJwtException e) {
+                logger.error("JWT Token has expired");
+            }
+        } else {
+            logger.warn("JWT Token is missing or does not begin with Bearer String");
         }
 
-        jwt = authorizationHeader.substring(7);
-        username = jwtTokenUtil.getUsernameFromToken(jwt);
-
+        // Once we have the token and username, validate the token and set authentication
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Fetch user details from the userDetailsService
-            UserDetails userDetails = loginService.loadUserByUsername(username);
 
-            if (jwtTokenUtil.validateToken(jwt)) {
-                // Create authentication object
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            UserDetails userDetails;
+            try {
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch (UsernameNotFoundException e) {
+                logger.error("User not found: " + username);
+                chain.doFilter(request, response);
+                return;
+            }
+
+            // Validate token
+            if (jwtTokenUtil.validateToken(jwtToken)) {
+
+                // Create authentication token
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // Set authentication in SecurityContext
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        chain.doFilter(request, response);
+        chain.doFilter(request, response); // Proceed with the filter chain
     }
 }

@@ -48,11 +48,8 @@ public class AdminController {
         this.vehicleService=vehicleService;
         this.salaryService=salaryService;
     }
-
-
-
-    @GetMapping("/api/admin/{loginId}")
-    @PreAuthorize("hasRole('admin')")
+    @PostMapping("/api/admin/{loginId}")
+   @PreAuthorize("hasRole('admin')")
     public String redirectToAdminDashboard(@PathVariable Long loginId) {
         // Construct the redirect URL
         String redirectUrl = "/admin/" + loginId;
@@ -63,7 +60,7 @@ public class AdminController {
 
 
     @GetMapping("/admin/{loginId}")
-    @PreAuthorize("hasRole('admin')")
+   @PreAuthorize("hasRole('admin')")
     public String getAdminDashboard(@PathVariable Integer loginId, Model model) {
         Admin admin = adminService.getAdmin(loginId);
         model.addAttribute("admin", admin);
