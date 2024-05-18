@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Customer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav>
+  <a href="/" th:href="@{/}">Home</a>
+  <a href="/about" th:href="@{/about}">About Us</a>
+  <a href="/contact" th:href="@{/contact}">Contact Us</a>
+  <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+</nav>
+<header>
+  <h1>Add Customer</h1>
+</header>
+<div class="container">
+  <div class="card">
+    <h2>Add Customer</h2>
+    <form action="/admin/addCustomer" method="post">
+      <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
+      <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
+      <input type="tel" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
+      <input type="email" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
+      <label>Fees Paid:</label>
+      <label for="paidStatusTrue">True</label>
+      <input type="radio" id="paidStatusTrue" name="paidStatus" value="true" required>
+      <label for="paidStatusFalse">False</label>
+      <input type="radio" id="paidStatusFalse" name="paidStatus" value="false" required>
+      <select id="areaId" name="areaId" required onchange="updateVehicleOptions(this)">
+        <option value="">Select Area</option>
+        <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+      </select>
+      <select id="vehicleId" name="vehicleId" required>
+        <option value="">Select Vehicle</option>
+      </select>
+      <button type="submit">Add Customer</button>
+    </form>
+  </div>
+  <script>
+    function updateVehicleOptions(selectElement) {
+      var areaId = selectElement.value;
+      var vehicleDropdown = document.getElementById("vehicleId");
+      vehicleDropdown.innerHTML = "";
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.text = "Select Vehicle";
+      vehicleDropdown.appendChild(defaultOption);
+      if (areaId !== "") {
+        fetch("/getVehiclesByArea?areaId=" + areaId)
+                .then(response => response.json())
+                .then(data => {
+                  data.forEach(vehicle => {
+                    var option = document.createElement("option");
+                    option.value = vehicle.vehicleId;
+                    option.text = vehicle.vehicleType + " - " + vehicle.number;
+                    vehicleDropdown.appendChild(option);
+                  });
+                })
+                .catch(error => console.error('Error fetching vehicles:', error));
+      }
+    }
+  </script>
+</div>
+</body>
+</html>

@@ -1,6 +1,8 @@
+/*
 package packages.project.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +30,11 @@ public class AuthenticationService {
         String role = user.getRole();
 
         // Generate a JWT token
-        return jwtTokenUtil.generateToken(username, role);
+        String token = jwtTokenUtil.generateToken(username, role);
+        System.out.println("The token12345: " + token );
+
+        // Include the token in the response
+        return token;
     }
 }
+*/

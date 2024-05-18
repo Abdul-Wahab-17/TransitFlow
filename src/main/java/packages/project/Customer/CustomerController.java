@@ -78,14 +78,5 @@ public class CustomerController {
         // Redirect to the specified URL
         return "redirect:" + redirectUrl;
     }
-    @PostMapping("/addcustomer")
-    public String addCustomer(@RequestBody CustomerFormData formData) {
-        // Process form data here
-        String customerName = formData.getCustomerName();
-        // Process other form fields as needed
 
-        // Add customer logic
-
-        return "Customer added successfully";
-    }
 }

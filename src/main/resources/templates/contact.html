@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - NUST Transport Services</title>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      background-color: #36393f; /* Dark Discord-like background */
+      margin: 0;
+      padding: 0;
+      color: #fff; /* Text color */
+    }
+    header {
+      background-color: #40444b; /* Discord theme color */
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background-color: #7289da; /* Discord theme color */
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #40444b; /* Discord theme color */
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .content {
+      padding: 20px;
+      text-align: center;
+    }
+    .u-section-1 {
+      background-color: #36393f; /* Dark Discord-like background */
+      padding: 50px 0;
+    }
+    .u-section-1 .u-text-1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #fff; /* Text color */
+    }
+    .u-section-1 .u-text-2 {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #fff; /* Text color */
+    }
+    .u-backlink {
+      background-color: #40444b; /* Discord theme color */
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .u-backlink .u-link {
+      color: #fff;
+      text-decoration: none;
+    }
+    .u-backlink .u-link:hover {
+      text-decoration: underline;
+    }
+    footer {
+      background-color: #7289da; /* Discord theme color */
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    footer p {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>NUST Transport Services</h1>
+</header>
+<nav>
+  <a href="/" th:href="@{/}">Home</a>
+  <a href="/about" th:href="@{/about}">About Us</a>
+  <a href="/contact" th:href="@{/contact}" class="active">Contact Us</a>
+</nav>
+<section class="u-clearfix u-section-1" id="sec-fcea">
+  <div class="u-clearfix u-sheet u-sheet-1">
+    <div class="container">
+      <div class="content">
+        <h2 class="u-text u-text-default u-text-1">Contact Us</h2>
+        <div class="u-text u-text-default u-text-2">
+          <h3>Abdul Wahab</h3>
+          <p>awahab.bscs13@seecs.edu.pk</p>
+          <h3>Abdul Mueed</h3>
+          <p>awaheed.bscs13@seecs.edu.pk</p>
+        </div>
+      </div>
+    </div>rcmd
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2024 NUST Transport Services. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

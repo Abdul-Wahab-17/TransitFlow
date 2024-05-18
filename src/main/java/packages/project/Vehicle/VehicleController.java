@@ -16,10 +16,5 @@ public class VehicleController {
         this.vehicleRepository = vehicleRepository;
     }
 
-    @GetMapping("/vehicles")
-    public String showVehicles(Model model) {
-        List<Vehicle> vehicles = vehicleRepository.findAll();
-        model.addAttribute("vehicles", vehicles);
-        return "vehicles";
-    }
+
 }

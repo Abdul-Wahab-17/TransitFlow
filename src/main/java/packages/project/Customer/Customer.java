@@ -48,10 +48,13 @@ public class Customer {
     @JoinColumn(name = "login_id")
     Login login;
 
+    @Column(name = "paid_status")
+    boolean paidStatus;
+
     public Customer() {
     }
 
-    public Customer(int customerId, String address, String name, int phone, String email, Area area, Fee fee, Vehicle vehicle, Login login) {
+    public Customer(int customerId, String address, String name, int phone, String email, Area area, Fee fee, Vehicle vehicle, Login login , boolean paidStatus) {
         this.customerId = customerId;
         this.address = address;
         this.name = name;
@@ -61,5 +64,6 @@ public class Customer {
         this.fee = fee;
         this.vehicle = vehicle;
         this.login = login;
+        this.paidStatus=paidStatus;
     }
 }

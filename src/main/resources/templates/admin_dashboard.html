@@ -1,151 +1,68 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <!-- Link your external CSS file -->
+    <title>NUST Transport Services - Admin Dashboard</title>
     <link rel="stylesheet" href="/styles.css">
-    <style>
-        /* Style for tables */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .table th, .table td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        .table th {
-            background-color: #f2f2f2;
-        }
-
-        /* Style for search bars */
-        .search-bar {
-            margin-bottom: 20px;
-        }
-
-        .search-bar input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 <body>
+<nav>
+    <a href="/" th:href="@{/}">Home</a>
+    <a href="/about" th:href="@{/about}">About Us</a>
+    <a href="/contact" th:href="@{/contact}">Contact Us</a>
+</nav>
+<header>
+    <h1>NUST Transport Services - Admin Dashboard</h1>
+</header>
 <div class="container">
     <div class="card">
-        <h1>Admin Dashboard</h1>
-        <div>
-            <h2>Admin Info</h2>
-            <table class="table">
-                <tr>
-                    <th>Admin ID</th>
-                    <td th:text="${admin.adminId}"></td>
-                </tr>
-                <tr>
-                    <th>Name</th>
-                    <td th:text="${admin.name}"></td>
-                </tr>
-                <tr>
-                    <th>Phone</th>
-                    <td th:text="${admin.phone}"></td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td th:text="${admin.email}"></td>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <td th:text="${admin.address}"></td>
-                </tr>
-            </table>
-        </div>
+        <h2>Admin Info</h2>
+        <table class="table">
+            <tr>
+                <th>Admin ID</th>
+                <td th:text="${admin.adminId}"></td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td th:text="${admin.name}"></td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td th:text="${admin.phone}"></td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td th:text="${admin.email}"></td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td th:text="${admin.address}"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="card">
+        <h2>Search</h2>
         <div class="search-bar">
-            <h2>Search</h2>
-            <div>
-                <!-- Search bar for drivers -->
-                <input type="text" id="driverSearchBar" placeholder="Search Drivers by Login ID" onkeydown="searchDrivers(event)">
-                <!-- Search bar for customers -->
-                <input type="text" id="customerSearchBar" placeholder="Search Customers by Login ID" onkeydown="searchCustomers(event)">
-                <!-- Search bar for vehicles -->
-                <input type="text" id="vehicleSearchBar" placeholder="Search Vehicles by Vehicle Number" onkeydown="searchVehicles(event)">
-            </div>
+            <input type="text" id="driverSearchBar" placeholder="Search Drivers by Login ID" onkeydown="searchDrivers(event)">
+            <input type="text" id="customerSearchBar" placeholder="Search Customers by Login ID" onkeydown="searchCustomers(event)">
+            <input type="text" id="vehicleSearchBar" placeholder="Search Vehicles by Vehicle Number" onkeydown="searchVehicles(event)">
         </div>
     </div>
-    <!-- Add Driver Form -->
-    <div class="add-form">
-        <h2>Add Driver</h2>
-        <form id="addDriverForm" action="/addDriver" method="post">
-            <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
-            <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
-            <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
-            <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
-            <select id="driverAreaId" name="areaId" required onchange="updateVehicleOptionsForDriver()">
-                <option value="">Select Area</option>
-                <!-- Iterate over areas and render options -->
-                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
-            </select>
-            <select id="driverVehicleId" name="vehicleId" required>
-                <option value="">Select Vehicle</option>
-                <!-- Options will be dynamically populated based on the selected area -->
-            </select>
-            <input type="hidden" id="driverLoginId" name="loginId" th:value="${loginId}">
-            <button type="submit">Add Driver</button>
-        </form>
-    </div>
-
-    <!-- Add Customer Form -->
-    <div class="add-form">
-        <h2>Add Customer</h2>
-        <form id="addCustomerForm" action="/addCustomer" method="post">
-            <!-- Add hidden input field for loginId -->
-            <input type="hidden" id="loginId" name="loginId" th:value="${loginId}">
-            <!-- Other input fields for customer information -->
-            <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
-            <input type="number" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
-            <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
-            <input type="email" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
-            <select id="areaId" name="areaId" required onchange="updateVehicleOptions()">
-                <option value="">Select Area</option>
-                <!-- Iterate over areas and render options -->
-                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
-            </select>
-            <select id="vehicleId" name="vehicleId" required>
-                <option value="">Select Vehicle</option>
-                <!-- Options will be dynamically populated based on the selected area -->
-            </select>
-            <button type="submit">Add Customer</button>
-        </form>
-    </div>
-
-    <h2>Actions</h2>
-    <div>
-        <!-- Dropdown menu for selecting entity -->
-        <select id="entitySelect" onchange="redirectToSelectedPage()">
-            <option value="">Select Entity</option>
-            <option value="customers">Customers</option>
-            <option value="drivers">Drivers</option>
-            <option value="vehicles">Vehicles</option>
-        </select>
+    <div class="card">
+        <h2>Manage Records</h2>
+        <div class="actions">
+            <button onclick="redirectToPage('/admin/adddriver')">Add Driver</button>
+            <button onclick="redirectToPage('/admin/addcustomer')">Add Customer</button>
+            <button onclick="redirectToPage('/admin/addvehicle')">Add Vehicle</button>
+        </div>
     </div>
 </div>
-
 <script>
-    function redirectToSelectedPage() {
-        var selectedEntity = document.getElementById("entitySelect").value;
-        var loginId = document.getElementById("loginId").value; // Assuming you have a hidden input field for loginId
+    function redirectToPage(url) {
 
-        if (selectedEntity && loginId) {
-            // Include the JWT token as a query parameter
-            var jwtToken = getJwtToken(); // Function to get the JWT token
-            window.location.href = "/admin/" + loginId + "/" + selectedEntity + "?token=" + jwtToken;
-        }
+            window.location.href = url;
+
     }
 
     function searchDrivers(event) {
@@ -168,53 +85,6 @@
             window.location.href = "/editVehicle?vehicleNumber=" + vehicleNumber;
         }
     }
-
-    function updateVehicleOptions() {
-        var areaId = document.getElementById("areaId").value;
-        var vehicleDropdown = document.getElementById("vehicleId");
-
-        // Clear existing options
-        vehicleDropdown.innerHTML = "";
-
-        // Add a default option
-        var defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.text = "Select Vehicle";
-        vehicleDropdown.appendChild(defaultOption);
-
-        // Fetch vehicles for the selected area using AJAX
-        if (areaId !== "") {
-            fetch("/getVehiclesByArea?areaId=" + areaId)
-                .then(response => response.json())
-                .then(data => {
-                    // Populate the dropdown with fetched vehicles
-                    data.forEach(vehicle => {
-                        var option = document.createElement("option");
-                        option.value = vehicle.vehicleId;
-                        option.text = vehicle.vehicleType + " - " + vehicle.number;
-                        vehicleDropdown.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching vehicles:', error));
-        }
-    }
-
-    function getJwtToken() {
-        // Retrieve the JWT token from a cookie
-        var cookieName = "jwtToken=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var cookieArray = decodedCookie.split(';');
-
-        for (var i = 0; i < cookieArray.length; i++) {
-            var cookie = cookieArray[i].trim();
-            if (cookie.indexOf(cookieName) === 0) {
-                return cookie.substring(cookieName.length);
-            }
-        }
-
-        return null; // Return null if the token is not found in cookies
-    }
-
 </script>
 </body>
 </html>

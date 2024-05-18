@@ -3,7 +3,6 @@ package packages.project.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
-public class AdminController {
+class AdminController {
+  //  @Autowired
+   // JwtTokenUtil jwtTokenUtil;
 
     private final AdminService adminService;
     private final CustomerService customerService;
@@ -36,6 +39,10 @@ public class AdminController {
     private final FeeService feeService;
     private final VehicleService vehicleService;
     private final SalaryService salaryService;
+
+//    private final JwtTokenUtil jwtTokenUtil;
+
+
     @Autowired
     public AdminController(AdminService adminService, CustomerService customerService , DriverService driverService ,
                            LoginService loginService , AreaService areaService , FeeService feeService , VehicleService vehicleService , SalaryService salaryService){
@@ -48,8 +55,9 @@ public class AdminController {
         this.vehicleService=vehicleService;
         this.salaryService=salaryService;
     }
-    @PostMapping("/api/admin/{loginId}")
-   @PreAuthorize("hasRole('admin')")
+
+
+    @GetMapping("/api/admin/{loginId}")
     public String redirectToAdminDashboard(@PathVariable Long loginId) {
         // Construct the redirect URL
         String redirectUrl = "/admin/" + loginId;
@@ -57,10 +65,7 @@ public class AdminController {
         // Redirect to the specified URL
         return "redirect:" + redirectUrl;
     }
-
-
     @GetMapping("/admin/{loginId}")
-   @PreAuthorize("hasRole('admin')")
     public String getAdminDashboard(@PathVariable Integer loginId, Model model) {
         Admin admin = adminService.getAdmin(loginId);
         model.addAttribute("admin", admin);
@@ -70,16 +75,57 @@ public class AdminController {
         model.addAttribute("drivers", drivers);
 
         List<Customer> customers = adminService.getAllCustomers();
-        model.addAttribute("customers", customers);
+        model.addAttribute("customers" , customers);
 
         List<Vehicle> vehicles = adminService.getAllVehicles();
-        model.addAttribute("vehicles", vehicles);
-        model.addAttribute("areas", areaService.getAllAreas());
+        model.addAttribute("vehicles" , vehicles);
+
+        //  model.addAttribute("loginId", loginId);
+        // Initialize driversVisible attribute to false initially
         model.addAttribute("driversVisible", false);
-        model.addAttribute("customersVisible", false);
-        model.addAttribute("vehiclesVisible", false);
+        model.addAttribute("customersVisible" , false);
+        model.addAttribute("vehiclesVisible" , false);
         return "admin_dashboard";
     }
+
+/*
+
+ @GetMapping("/admin/{loginId}")
+ @PreAuthorize("hasRole('admin')")
+ public String getAdminDashboard(@PathVariable Integer loginId, Model model, HttpServletRequest request) {
+ 
+     String token = jwtTokenUtil.resolveToken(request);
+     System.out.println("The token12345 is: "+ token);
+     if (token != null && jwtTokenUtil.validateToken(token)) {
+         // Token is valid, set up authentication
+         UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(token);
+         SecurityContextHolder.getContext().setAuthentication(authentication);
+ 
+         Admin admin = adminService.getAdmin(loginId);
+         model.addAttribute("admin", admin);
+ 
+         // Fetch driver data from the database
+         List<Driver> drivers = adminService.getAllDrivers();
+         model.addAttribute("drivers", drivers);
+ 
+         List<Customer> customers = adminService.getAllCustomers();
+         model.addAttribute("customers", customers);
+ 
+         List<Vehicle> vehicles = adminService.getAllVehicles();
+         model.addAttribute("vehicles", vehicles);
+         model.addAttribute("areas", areaService.getAllAreas());
+         model.addAttribute("driversVisible", false);
+         model.addAttribute("customersVisible", false);
+         model.addAttribute("vehiclesVisible", false);
+         return "admin_dashboard";
+     } else {
+         // Token is invalid, handle accordingly (e.g., return unauthorized error)
+         return "redirect:/unauthorized";
+     }
+ }
+*/
+
+
 
     @GetMapping("/searchDrivers")
     public String searchDrivers(@RequestParam String loginId, Model model) {
@@ -195,30 +241,13 @@ public class AdminController {
         return String.valueOf(random.nextInt(10000));
     }
 
-    public void addCustomers(String name, String phone, String address, String email) {
-        int loginId = generateLoginId();
-        String pin = generatePin();
 
-        Login login = new Login();
-        login.setLoginId(loginId);
-        login.setRole("customer");
-        login.setPin(Integer.parseInt(pin));
-        loginService.save(login);
-
-        Customer customer = new Customer();
-        customer.setName(name);
-        customer.setPhone(Integer.parseInt(phone));
-        customer.setAddress(address);
-        customer.setEmail(email);
-        customer.setLogin(login);
-        customerService.save(customer);
-    }
 
     @PostMapping("/addDriver")
     public String addDriver(@RequestParam String driverName, @RequestParam int driverPhone,
                             @RequestParam String driverAddress, @RequestParam String driverEmail,
                             @RequestParam int areaId, @RequestParam int loginId, 
-                            @RequestParam int vehicleId, Model model) {
+                            @RequestParam int vehicleId,@RequestParam boolean salaryStatus,  Model model) {
 
         String pin = generatePin();
 
@@ -236,6 +265,7 @@ public class AdminController {
         driver.setAddress(driverAddress);
         driver.setEmail(driverEmail);
         driver.setArea(area);
+        driver.setSalaryStatus(salaryStatus);
         driver.setVehicle(vehicle);
         driver.setSalary(salaryService.getSalaryForArea(area.getAreaId()));
         driver.setLogin(login);
@@ -267,12 +297,22 @@ public class AdminController {
     }
 
 
+   /* @GetMapping("/addCustomer/{loginId}")
+    public String addCustomerPage(){
+        return "a"
+
+    }*/
+
 
 
     @PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
                               @RequestParam String customerAddress, @RequestParam String customerEmail,
-                              @RequestParam int loginId, @RequestParam int areaId , @RequestParam int vehicleId, Model model) {
+                              @RequestParam int loginId, @RequestParam int areaId , @RequestParam int vehicleId ,@RequestParam boolean paidStatus, Model model) {
+
+
+
+
 
         String pin = generatePin();
 
@@ -293,6 +333,7 @@ public class AdminController {
         customer.setLogin(login);
         customer.setArea(area);
         customer.setFee(fee);
+        customer.setPaidStatus(paidStatus);
         customer.setVehicle(vehicle);
         customerService.save(customer);
 
@@ -311,4 +352,29 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/getPendingFeeCustomers")
+    public ResponseEntity<?> pendingFeeCustomers(){
+        try {
+            List<Customer> customers =  customerService.findCustomersWithPendingFee();
+            return new ResponseEntity<>(customers , HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to fetch customers", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/admin/addcustomer")
+    public String getAddCustomerPage(Model model){
+        model.addAttribute("areas", areaService.getAllAreas());
+        return "addcustomer";
+    }
+    @GetMapping("/admin/adddriver")
+    public String getAddDriverPage(Model model){
+        model.addAttribute("areas", areaService.getAllAreas());
+        return "adddriver";
+    }
+    @GetMapping("/admin/addVehicle")
+    public String getAddVehiclePage(Model model){
+        model.addAttribute("areas", areaService.getAllAreas());
+        return "addvehicle";
+    }
 }

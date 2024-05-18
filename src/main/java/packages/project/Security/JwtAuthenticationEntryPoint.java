@@ -1,3 +1,4 @@
+/*
 package packages.project.Security;
 
 import org.slf4j.Logger;
@@ -22,3 +23,4 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 }
+*/

@@ -1,18 +1,14 @@
 package packages.project.Login;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class LoginService implements UserDetailsService {
+public class LoginService/* implements UserDetailsService */{
 
     private final LoginRepository loginRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+   // private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
 
     public Login authenticateUser(int loginId, int pin) {
@@ -30,7 +26,7 @@ public class LoginService implements UserDetailsService {
 
     public Login findByLoginId(Integer loginId){ return loginRepository.findByLoginId(loginId);}
 
-    @Override
+/*    @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         // Load user details from the database based on the login ID
         Login login = loginRepository.findByLoginId(Integer.parseInt(loginId));
@@ -40,5 +36,5 @@ public class LoginService implements UserDetailsService {
                 .password(String.valueOf(login.getPin()))
                 .roles(login.getRole())
                 .build();
-    }
+    }*/
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Driver</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav>
+  <a href="/" th:href="@{/}">Home</a>
+  <a href="/about" th:href="@{/about}">About Us</a>
+  <a href="/contact" th:href="@{/contact}">Contact Us</a>
+  <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+</nav>
+<header>
+  <h1>Add Driver</h1>
+</header>
+<div class="container">
+  <div class="card">
+    <h2>Add Driver</h2>
+    <form id="addDriverForm" action="/addDriver" method="post">
+      <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
+      <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
+      <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
+      <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+      <label>Salary Paid:</label>
+      <label for="salaryStatusTrue">True</label>
+      <input type="radio" id="salaryStatusTrue" name="salaryStatus" value="true" required>
+      <label for="salaryStatusFalse">False</label>
+      <input type="radio" id="salaryStatusFalse" name="salaryStatus" value="false" required>
+
+      <select id="driverAreaId" name="areaId" required onchange="updateVehicleOptionsForDriver()">
+        <option value="">Select Area</option>
+        <!-- Iterate over areas and render options -->
+        <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
+      </select>
+      <select id="driverVehicleId" name="vehicleId" required>
+        <option value="">Select Vehicle</option>
+        <!-- Options will be dynamically populated based on the selected area -->
+      </select>
+      <button type="submit">Add Driver</button>
+    </form>
+  </div>
+  <script>
+    function updateVehicleOptionsForDriver() {
+      var areaId = document.getElementById("driverAreaId").value;
+      var vehicleDropdown = document.getElementById("driverVehicleId");
+      vehicleDropdown.innerHTML = "";
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.text = "Select Vehicle";
+      vehicleDropdown.appendChild(defaultOption);
+      if (areaId !== "") {
+        fetch("/getVehiclesByArea?areaId=" + areaId)
+                .then(response => response.json())
+                .then(data => {
+                  data.forEach(vehicle => {
+                    var option = document.createElement("option");
+                    option.value = vehicle.vehicleId;
+                    option.text = vehicle.vehicleType + " - " + vehicle.number;
+                    vehicleDropdown.appendChild(option);
+                  });
+                })
+                .catch(error => console.error('Error fetching vehicles:', error));
+      }
+    }
+  </script>
+</div>
+</body>
+</html>

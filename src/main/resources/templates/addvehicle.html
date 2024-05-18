@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Vehicle</title>
+  <link rel="stylesheet" href="/styles.css">
+
+</head>
+<body>
+<nav>
+  <a href="/" th:href="@{/}">Home</a>
+  <a href="/about" th:href="@{/about}">About Us</a>
+  <a href="/contact" th:href="@{/contact}">Contact Us</a>
+  <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+</nav>
+<header>
+  <h1>Add Vehicle</h1>
+</header>
+<div class="container">
+  <div class="card">
+    <h2>Add Vehicle</h2>
+    <form action="/admin/addVehicle" method="post">
+      <input type="text" id="vehicleNumber" name="vehicleNumber" placeholder="Vehicle Number" required>
+      <input type="text" id="vehicleType" name="vehicleType" placeholder="Vehicle Type" required>
+      <input type="number" id="capacity" name="capacity" placeholder="Capacity" required>
+      <input type="text" id="areaId" name="areaId" placeholder="Area ID" required>
+      <button type="submit">Add Vehicle</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

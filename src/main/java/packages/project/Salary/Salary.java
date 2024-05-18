@@ -16,10 +16,10 @@ public class Salary {
     @Column(name = "salary_id")
     int salaryId;
 
+    @Column(name = "amount")
     int amount;
 
-    @Column(name="due_date")
-    Date dueDate;
+
 
     @ManyToOne
     @JoinColumn(name = "areaId")
@@ -28,10 +28,9 @@ public class Salary {
     public Salary() {
     }
 
-    public Salary(int salaryId, int amount, Date dueDate, Area area) {
+    public Salary(int salaryId, int amount, Area area) {
         this.salaryId = salaryId;
         this.amount = amount;
-        this.dueDate = dueDate;
         this.area = area;
     }
 }

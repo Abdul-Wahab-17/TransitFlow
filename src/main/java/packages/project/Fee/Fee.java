@@ -18,8 +18,6 @@ public class Fee {
     int amount;
     @Column(name="due_date")
     Date dueDate;
-    @Column(name = "paid_status")
-    boolean paidStatus;
 
     @ManyToOne
     @JoinColumn(name = "area_id")
@@ -29,11 +27,10 @@ public class Fee {
     public Fee() {
     }
 
-    public Fee(int feeId, int amount, Date dueDate, boolean paidStatus, Area area) {
+    public Fee(int feeId, int amount, Date dueDate, Area area) {
         this.feeId = feeId;
         this.amount = amount;
         this.dueDate = dueDate;
-        this.paidStatus = paidStatus;
         this.area = area;
     }
 }

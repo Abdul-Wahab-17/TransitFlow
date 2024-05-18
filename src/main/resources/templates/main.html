@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,13 +58,12 @@
 </head>
 <body>
 <header>
-    <h1>Transport Management System</h1>
+    <h1>NUST Transport Services</h1>
 </header>
 <nav>
-    <a href="#">Home</a>
-    <a href="#">Services</a>
-    <a href="#">About Us</a>
-    <a href="#">Contact Us</a>
+    <a href="/" th:href="@{/}">Home</a>
+    <a href="/about" th:href="@{/about}">About Us</a>
+    <a href="/contact" th:href="@{/contact}">Contact Us</a>
 </nav>
 <div class="container">
     <div class="content">
@@ -74,7 +73,7 @@
     </div>
 </div>
 <footer>
-    <p>&copy; 2024 Transport Management System. All rights reserved.</p>
+    <p>&copy; 2024 NUST Transport Services. All rights reserved.</p>
 </footer>
 </body>
 </html>

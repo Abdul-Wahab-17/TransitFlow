@@ -27,6 +27,9 @@ public class Driver {
     @Column(name = "email_address")
     String email;
 
+    @Column(name = "salary_status")
+    boolean salaryStatus;
+
     @Column(name = "driver_address")
     String address;
     @ManyToOne
@@ -42,7 +45,7 @@ public class Driver {
     @JoinColumn(name = "login_id")
     Login login;
 
-    public Driver(int driverId, String name, int phone, String email, String address, Area area, Salary salary, Vehicle vehicle, Login login) {
+    public Driver(int driverId, String name, int phone, String email, String address, Area area, Salary salary, Vehicle vehicle,boolean salaryStatus, Login login) {
         this.driverId = driverId;
         this.name = name;
         this.phone = phone;
@@ -51,6 +54,7 @@ public class Driver {
         this.area = area;
         this.salary = salary;
         this.vehicle = vehicle;
+        this.salaryStatus=salaryStatus;
         this.login = login;
     }
 

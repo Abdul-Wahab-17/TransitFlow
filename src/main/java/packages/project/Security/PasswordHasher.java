@@ -109,4 +109,28 @@ public class PasswordHasher {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+jwt.secret=mySecretKey
+jwt.expiration=3600
+logging.level.org.springframework=INFO
+logging.level.packages.project=INFO
+logging.file=logs/project.log
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n
+logging.level.root=DEBUG
+
 */

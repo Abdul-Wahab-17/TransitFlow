@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import packages.project.Security.AuthenticationService;
-import packages.project.Security.JwtTokenUtil;
 
 import java.net.URI;
 
@@ -19,26 +17,34 @@ import java.net.URI;
 public class LoginController {
 
     private final LoginService loginService;
-    private final AuthenticationService authenticationService;
+   // private final AuthenticationService authenticationService;
 
     @Autowired
-    public LoginController(LoginService loginService,AuthenticationService authenticationService) {
+    public LoginController(LoginService loginService/*,AuthenticationService authenticationService*/) {
         this.loginService = loginService;
-        this.authenticationService=authenticationService;
+      //  this.authenticationService=authenticationService;
     }
 
     @GetMapping("/")
-    public String getMainPage() {
+    public String getHomePage() {
         return "main";
     }
 
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login";
+        return "Login";
     }
 
+    @GetMapping("/about")
+    public String getAboutPage(){
+        return "about";
+    }
+    @GetMapping("/contact")
+    public String getContactPage(){
+        return "contact";
+    }
 
-    @PostMapping("/api/login/authenticate")
+   /* @PostMapping("/api/login/authenticate")
     public ResponseEntity<?> authenticate(@RequestParam("loginId") Integer loginId,
                                           @RequestParam("password") int password,
                                           RedirectAttributes redirectAttributes) {
@@ -47,9 +53,9 @@ public class LoginController {
 
         if (user != null) {
             String role = user.getRole();
-            String token = authenticationService.authenticateUser(String.valueOf(loginId) , String.format("" + password));
+            String token = authenticationService.authenticateUser(String.valueOf(loginId), String.format("" + password));
             // Generate JWT token here using your token generation logic
-
+            System.out.println(token);
             // Return the JWT token in the response headers
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -59,21 +65,47 @@ public class LoginController {
 
             // Redirect to a different endpoint along with the JWT token
             String redirectUrl = "/" + role + "/" + loginId;
-            HttpHeaders redirectHeaders = new HttpHeaders();
-            redirectHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-                     /*  return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(user);
-*/
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .headers(redirectHeaders)
+                    .headers(headers)
                     .location(URI.create(redirectUrl)) // Redirect to the success endpoint
                     .build();
         } else {
             // If authentication fails, return unauthorized status
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .build();
+        }
+    }
+*/
+
+
+    @PostMapping("/api/login/authenticate")
+    public String authenticate(@RequestParam("loginId") Integer loginId,
+                               @RequestParam("password") String password,
+                               Model model) {
+        Login user = loginService.authenticateUser(loginId, Integer.parseInt(password));
+
+        if (user != null) {
+            String role = user.getRole();
+            String redirectUrl;
+
+            switch (role) {
+                case "driver":
+                    redirectUrl = "/api/drivers/" + loginId;
+                    break;
+                case "customer":
+                    redirectUrl = "/api/customers/" + loginId;
+                    break;
+                case "admin":
+                    redirectUrl = "/api/admin/" + loginId;
+                    break;
+                default:
+                    return "error"; // Handle unknown role
+            }
+            return "redirect:" + redirectUrl;
+        } else {
+            model.addAttribute("error", "Invalid login credentials");
+            return "Login"; // Redirect back to login page with error message
         }
     }
 }

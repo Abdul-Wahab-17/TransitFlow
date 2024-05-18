@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - NUST Transport Services</title>
+    <style>
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            background-color: #36393f; /* Dark Discord-like background */
+            margin: 0;
+            padding: 0;
+            color: #fff; /* Text color */
+        }
+        header {
+            background-color: #40444b; /* Discord theme color */
+            padding: 10px;
+            text-align: center;
+        }
+        nav {
+            background-color: #7289da; /* Discord theme color */
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #40444b; /* Discord theme color */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .u-section-1 {
+            background-color: #36393f; /* Dark Discord-like background */
+            padding: 50px 0;
+        }
+        .u-section-1 .u-text-1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #fff; /* Text color */
+        }
+        .u-section-1 .u-text-2 {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #fff; /* Text color */
+        }
+        .u-backlink {
+            background-color: #40444b; /* Discord theme color */
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .u-backlink .u-link {
+            color: #fff;
+            text-decoration: none;
+        }
+        .u-backlink .u-link:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background-color: #7289da; /* Discord theme color */
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>NUST Transport Services</h1>
+</header>
+<nav>
+    <a href="/" th:href="@{/}">Home</a>
+    <a href="/about" th:href="@{/about}" class="active">About Us</a>
+    <a href="/contact" th:href="@{/contact}">Contact Us</a>
+</nav>
+<section class="u-clearfix u-section-1" id="sec-fcea">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="container">
+            <div class="content">
+                <h2 class="u-text u-text-default u-text-1">About Us</h2>
+                <p class="u-text u-text-default u-text-2">
+                    At NUST Transportation Services, we are dedicated to providing safe, reliable, and efficient transportation solutions for the students of NUST University. Our mission is to ensure that every student can commute to and from campus with ease and comfort. With a fleet of modern buses and a team of professional drivers, we prioritize punctuality and safety above all. Our services are designed to accommodate the diverse needs of our students, offering flexible schedules and convenient routes that cover all major areas. We are committed to enhancing the student experience by making daily travel worry-free, allowing students to focus on their academic and extracurricular pursuits.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2024 NUST Transport Services. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

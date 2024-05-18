@@ -39,6 +39,14 @@ public class CustomerService {
         return customerRepository.findCustomersByDriverId(driverId);
     }
 
+    public List<Customer> findAll() {
+        return customerRepository.findAll();
+    }
+
+    public List<Customer> findCustomersWithPendingFee(){
+        return customerRepository.getCustomerByPendingFee();
+    }
+
     public Vehicle getVehicle(Integer loginId) {
         return customerRepository.getVehicleByLoginId(loginId);
     }
