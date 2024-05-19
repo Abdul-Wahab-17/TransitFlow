@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import packages.project.Area.Area;
 import packages.project.Area.AreaService;
 import packages.project.Customer.Customer;
@@ -296,6 +297,23 @@ class AdminController {
     //    String redirectUrl = "redirect:/admin/" + loginId;
         return "redirect:/admin/addvehicle";
     }
+
+
+
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestParam int loginId, RedirectAttributes redirectAttributes , Model model) {
+        String newPassword = generatePin();
+        Login login = loginService.findByLoginId(loginId);
+        login.setPin(Integer.parseInt(newPassword));
+        loginService.save(login);
+        redirectAttributes.addFlashAttribute("newPassword", newPassword);
+        model.addAttribute("newPassword", newPassword);
+        model.addAttribute("loginId", loginId);
+        return "resetPasswordSuccess";
+    }
+
+
 
     @PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,

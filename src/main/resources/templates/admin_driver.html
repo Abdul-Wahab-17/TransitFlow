@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Driver</title>
-    <!-- Link your external CSS file -->
     <link rel="stylesheet" href="/styles.css">
-
 </head>
 <body>
 <div class="container">
@@ -34,37 +32,49 @@
                     <th>Area:</th>
                     <td><span th:text="${driver.area.areaName}"></span></td>
                 </tr>
+                <tr>
+                    <th>Vehicle:</th>
+                    <td><span th:text="${driver.vehicle.vehicleType}"></span></td>
+                </tr>
+                <tr>
+                    <th>Salary:</th>
+                    <td><span th:text="${driver.salary}"></span></td>
+                </tr>
             </table>
             <button onclick="toggleEditMode()">Edit</button>
+            <button onclick="confirmPasswordReset()">Reset Password</button>
         </div>
         <div id="editMode" style="display: none;">
             <form id="editDriverForm" action="/editDriver" method="post">
                 <input type="hidden" id="loginId" name="loginId" th:value="${driver.login.loginId}">
                 <table>
                     <tr>
-                        <th><label for="driverName">Name:</label></th>
-                        <td><input type="text" id="driverName" name="driverName" th:value="${driver.name}" required></td>
-                    </tr>
-                    <tr>
-                        <th><label for="driverPhone">Phone:</label></th>
-                        <td><input type="text" id="driverPhone" name="driverPhone" th:value="${driver.phone}" required></td>
-                    </tr>
-                    <tr>
-                        <th><label for="driverEmail">Email:</label></th>
-                        <td><input type="email" id="driverEmail" name="driverEmail" th:value="${driver.email}" required></td>
-                    </tr>
-                    <tr>
-                        <th><label for="driverAddress">Address:</label></th>
-                        <td><input type="text" id="driverAddress" name="driverAddress" th:value="${driver.address}" required></td>
-                    </tr>
-                    <tr>
                         <th><label for="driverArea">Area:</label></th>
-                        <td><input type="text" id="driverArea" name="driverArea" th:value="${driver.area.areaName}" required></td>
+                        <td>
+                            <select id="driverArea" name="areaId" required>
+                                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}" th:selected="${area.areaId == driver.area.areaId}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="driverVehicle">Vehicle:</label></th>
+                        <td>
+                            <select id="driverVehicle" name="vehicleId" required>
+                                <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.vehicleType}" th:selected="${vehicle.vehicleId == driver.vehicle.vehicleId}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="driverSalary">Salary:</label></th>
+                        <td><input type="number" id="driverSalary" name="salary" th:value="${driver.salary}" required></td>
                     </tr>
                 </table>
                 <button type="button" onclick="cancelEdit()">Cancel</button>
                 <button type="submit">Save</button>
             </form>
+        </div>
+        <div th:if="${newPassword}">
+            <p><strong>New Password:</strong> <span th:text="${newPassword}"></span></p>
         </div>
     </div>
 </div>
@@ -78,6 +88,23 @@
     function cancelEdit() {
         document.getElementById("viewMode").style.display = "block";
         document.getElementById("editMode").style.display = "none";
+    }
+
+    function confirmPasswordReset() {
+        if (confirm("Are you sure you want to reset the password?")) {
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/resetPassword";
+
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "loginId";
+            input.value = document.getElementById("loginId").value;
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
 </script>
 </body>
