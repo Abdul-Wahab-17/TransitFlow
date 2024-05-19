@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Added</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav>
+    <a href="/" th:href="@{/}">Home</a>
+    <a href="/about" th:href="@{/about}">About Us</a>
+    <a href="/contact" th:href="@{/contact}">Contact Us</a>
+    <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+</nav>
+<header>
+    <h1>Customer Added</h1>
+</header>
+<div class="container">
+    <div class="card">
+        <h2>Customer Added Successfully</h2>
+        <p>Login ID: <span th:text="${loginId}"></span></p>
+        <p>Password: <span th:text="${password}"></span></p>
+        <a href="/admin/addcustomer">Add Another Customer</a>
+    </div>
+</div>
+</body>
+</html>

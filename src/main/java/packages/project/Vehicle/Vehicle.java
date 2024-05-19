@@ -19,7 +19,11 @@ public class Vehicle {
 
     @Column(name = "maintenance_costs")
     int maintenanceCost;
+
+    @Column(name= "number")
     String number;
+    
+    @Column(name="capacity")
     int capacity;
 
     @Column(name = "rem_cap")

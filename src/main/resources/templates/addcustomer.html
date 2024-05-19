@@ -19,7 +19,7 @@
 <div class="container">
   <div class="card">
     <h2>Add Customer</h2>
-    <form action="/admin/addCustomer" method="post">
+    <form id="addCustomerForm" action="/addCustomer" method="post">
       <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
       <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
       <input type="tel" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
@@ -29,7 +29,7 @@
       <input type="radio" id="paidStatusTrue" name="paidStatus" value="true" required>
       <label for="paidStatusFalse">False</label>
       <input type="radio" id="paidStatusFalse" name="paidStatus" value="false" required>
-      <select id="areaId" name="areaId" required onchange="updateVehicleOptions(this)">
+      <select id="areaId" name="areaId" required onchange="updateVehicleOptionsForCustomer()">
         <option value="">Select Area</option>
         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
       </select>
@@ -40,8 +40,8 @@
     </form>
   </div>
   <script>
-    function updateVehicleOptions(selectElement) {
-      var areaId = selectElement.value;
+    function updateVehicleOptionsForCustomer() {
+      var areaId = document.getElementById("areaId").value;
       var vehicleDropdown = document.getElementById("vehicleId");
       vehicleDropdown.innerHTML = "";
       var defaultOption = document.createElement("option");

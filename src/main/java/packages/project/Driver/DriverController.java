@@ -3,12 +3,11 @@ package packages.project.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import packages.project.Customer.Customer;
 import packages.project.Customer.CustomerService;
+import packages.project.Login.Login;
+import packages.project.Login.LoginService;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -18,11 +17,13 @@ public class DriverController {
 
     private final DriverService driverService;
     private final CustomerService customerService;
+    private final LoginService loginService;
 
     @Autowired
-    public DriverController(DriverService driverService, CustomerService customerService) {
+    public DriverController(DriverService driverService, CustomerService customerService,LoginService loginService) {
         this.driverService = driverService;
         this.customerService=customerService;
+        this.loginService=loginService;
     }
 
     @GetMapping("/drivers/{loginId}")
@@ -65,21 +66,32 @@ public class DriverController {
     }
 
     @PostMapping("/drivers/{loginId}/edit")
-    public String editCustomer(@PathVariable int loginId, @ModelAttribute Driver updatedDriver) {
-        Driver existingDriver = driverService.getDriver(loginId);
-        if (existingDriver != null) {
-            // Update the existing customer entity with the new information
-            existingDriver.setName(updatedDriver.getName());
-            existingDriver.setPhone(updatedDriver.getPhone());
-            existingDriver.setEmail(updatedDriver.getEmail());
-            existingDriver.setAddress(updatedDriver.getAddress());
-            // Similarly, update other fields as needed
+    public String editDriverInfo(@PathVariable int loginId,
+                                 @RequestParam String name,
+                                 @RequestParam String phone,
+                                 @RequestParam String email,
+                                 @RequestParam String address,
+                                 @RequestParam int pin,
+                                 Model model) {
 
-            // Save the updated customer entity in the database
-            driverService.save(existingDriver);
-        }
-        // Redirect to the customer dashboard page after editing
+        // Retrieve the driver and login objects
+        Driver driver = driverService.getDriver(loginId);
+        Login login = driver.getLogin();
+
+        // Update driver information
+        driver.setName(name);
+        driver.setPhone(Integer.parseInt(phone));
+        driver.setEmail(email);
+        driver.setAddress(address);
+
+        // Update login PIN
+        login.setPin(pin);
+        loginService.save(login);
+
+        // Save updated driver
+        driverService.save(driver);
+
+        // Redirect to the driver details page
         return "redirect:/drivers/" + loginId;
     }
-
 }

@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Info</title>
-    <!-- Link your external CSS file -->
+    <title>Edit Driver Information</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -28,11 +27,13 @@
                 <label for="address">Address:</label>
                 <input type="text" id="address" name="address" th:value="${driver.address}" required>
             </div>
-            <!-- Add input fields for other customer attributes as needed -->
+            <div>
+                <label for="pin">PIN:</label>
+                <input type="text" id="pin" name="pin" th:value="${driver.login.pin}" required>
+            </div>
             <button type="submit" class="button">Save Changes</button>
-            <a th:href="@{'/drivers/' + ${driver.login.loginId}}"  class="button">Cancel</a>
+            <a th:href="@{'/drivers/' + ${driver.login.loginId}}" class="button">Cancel</a>
         </form>
-
     </div>
 </div>
 </body>

@@ -246,7 +246,7 @@ class AdminController {
     @PostMapping("/addDriver")
     public String addDriver(@RequestParam String driverName, @RequestParam int driverPhone,
                             @RequestParam String driverAddress, @RequestParam String driverEmail,
-                            @RequestParam int areaId, @RequestParam int loginId, 
+                            @RequestParam int areaId,
                             @RequestParam int vehicleId,@RequestParam boolean salaryStatus,  Model model) {
 
         String pin = generatePin();
@@ -271,15 +271,16 @@ class AdminController {
         driver.setLogin(login);
 
         driverService.save(driver);
-
-        String redirectUrl = "redirect:/admin/" + loginId;
-        return redirectUrl;
+        model.addAttribute("loginId", login.getLoginId());
+        model.addAttribute("password", pin);
+      //  String redirectUrl = "redirect:/admin/" + loginId;
+        return "driverAdded";
     }
 
     @PostMapping("/addVehicle")
     public String addVehicle(@RequestParam String vehicleType, @RequestParam String vehicleNumber,
                              @RequestParam int capacity, @RequestParam int remainingCapacity,
-                             @RequestParam int areaId, @RequestParam int loginId, Model model) {
+                             @RequestParam int areaId, Model model) {
 
         Area area = areaService.getArea(areaId);
 
@@ -292,23 +293,13 @@ class AdminController {
 
         vehicleService.save(vehicle);
 
-        String redirectUrl = "redirect:/admin/" + loginId;
-        return redirectUrl;
+    //    String redirectUrl = "redirect:/admin/" + loginId;
+        return "redirect:/admin/addvehicle";
     }
-
-
-   /* @GetMapping("/addCustomer/{loginId}")
-    public String addCustomerPage(){
-        return "a"
-
-    }*/
-
-
 
     @PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
-                              @RequestParam String customerAddress, @RequestParam String customerEmail,
-                              @RequestParam int loginId, @RequestParam int areaId , @RequestParam int vehicleId ,@RequestParam boolean paidStatus, Model model) {
+                              @RequestParam String customerAddress, @RequestParam String customerEmail, @RequestParam int areaId , @RequestParam int vehicleId ,@RequestParam boolean paidStatus, Model model) {
 
 
 
@@ -322,7 +313,7 @@ class AdminController {
         loginService.save(login);
 
         Area area = areaService.getArea(areaId);
-        Fee fee = feeService.getFee(areaId);
+        Fee fee = feeService.getFee(area.getAreaId());
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
 
         Customer customer = new Customer();
@@ -336,9 +327,10 @@ class AdminController {
         customer.setPaidStatus(paidStatus);
         customer.setVehicle(vehicle);
         customerService.save(customer);
-
-        String redirectUrl = "redirect:/admin/" + loginId;
-        return redirectUrl;
+        model.addAttribute("loginId", login.getLoginId()  );
+        model.addAttribute("password", pin);
+       // String redirectUrl = "redirect:/admin/" + loginId;
+        return "customerAdded";
     }
 
     @GetMapping("/getVehiclesByArea")
@@ -372,7 +364,7 @@ class AdminController {
         model.addAttribute("areas", areaService.getAllAreas());
         return "adddriver";
     }
-    @GetMapping("/admin/addVehicle")
+    @GetMapping("/admin/addvehicle")
     public String getAddVehiclePage(Model model){
         model.addAttribute("areas", areaService.getAllAreas());
         return "addvehicle";

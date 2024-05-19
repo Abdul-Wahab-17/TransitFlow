@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import packages.project.Driver.Driver;
 import packages.project.Driver.DriverService;
+import packages.project.Login.Login;
+import packages.project.Login.LoginService;
 import packages.project.Vehicle.Vehicle;
 import packages.project.Vehicle.VehicleService;
 
@@ -18,11 +20,13 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final DriverService driverService;
+    private final LoginService loginService;
 
     @Autowired
-    public CustomerController(CustomerService customerService , DriverService driverService) {
+    public CustomerController(CustomerService customerService , DriverService driverService,LoginService loginService) {
         this.customerService = customerService;
         this.driverService=driverService;
+        this.loginService=loginService;
     }
 
 
@@ -54,22 +58,35 @@ public class CustomerController {
     }
 
     @PostMapping("/customers/{loginId}/edit")
-    public String editCustomer(@PathVariable int loginId, @ModelAttribute Customer updatedCustomer) {
-        Customer existingCustomer = customerService.getCustomer(loginId);
-        if (existingCustomer != null) {
-            // Update the existing customer entity with the new information
-            existingCustomer.setName(updatedCustomer.getName());
-            existingCustomer.setPhone(updatedCustomer.getPhone());
-            existingCustomer.setEmail(updatedCustomer.getEmail());
-            existingCustomer.setAddress(updatedCustomer.getAddress());
-            // Similarly, update other fields as needed
+    public String editCustomerInfo(@PathVariable int loginId,
+                                   @RequestParam String name,
+                                   @RequestParam String phone,
+                                   @RequestParam String email,
+                                   @RequestParam String address,
+                                   @RequestParam int pin,
+                                   Model model) {
 
-            // Save the updated customer entity in the database
-            customerService.save(existingCustomer);
-        }
-        // Redirect to the customer dashboard page after editing
+        // Retrieve the customer and login objects
+        Customer customer = customerService.getCustomer(loginId);
+        Login login = customer.getLogin();
+
+        // Update customer information
+        customer.setName(name);
+        customer.setPhone(Integer.parseInt(phone));
+        customer.setEmail(email);
+        customer.setAddress(address);
+
+        // Update login PIN
+        login.setPin(pin);
+        loginService.save(login);
+
+        // Save updated customer
+        customerService.save(customer);
+
+        // Redirect to the customer details page
         return "redirect:/customers/" + loginId;
     }
+
     @GetMapping("/api/customers/{loginId}")
     public String redirectToCustomerDashboard(@PathVariable Long loginId) {
         // Construct the redirect URL
