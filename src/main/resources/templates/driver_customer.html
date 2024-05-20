@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver's Customers Schedule</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles.css"> <!-- Assuming styles.css is in your resources/static folder -->
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #36393f;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #40444b;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            width: 100%; /* Adjusted to take full width */
+            overflow: hidden;
+        }
+
+        .card-content {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #7289da; /* Discord purple color */
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff; /* Text color */
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 10px;
+            border-bottom: 1px solid #7289da; /* Discord purple color */
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #40444b;
+            font-weight: bold;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            background-color: #36393f; /* Matching login page background */
+            margin: 0;
+            padding: 0;
+            color: #fff; /* Text color */
+        }
+        header {
+            background-color: #40444b;
+            padding: 10px;
+            text-align: center;
+        }
+        nav {
+            background-color: #7289da;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: #40444b;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+        }
+        .card-content {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff; /* Text color */
+            margin-top: 20px;
+        }
+        .table th,
+        .table td {
+            padding: 10px;
+            border-bottom: 1px solid #7289da; /* Discord purple color */
+            text-align: center;
+        }
+        .table th {
+            background-color: #40444b;
+            font-weight: bold;
+        }
+        .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>NUST Transport Services</h1>
+</header>
+<nav>
+    <a href="/" th:href="@{/}">Home</a>
+    <a href="/about" th:href="@{/about}">About Us</a>
+    <a href="/contact" th:href="@{/contact}">Contact Us</a>
+</nav>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-content">
+            <h2>Driver's Schedule</h2>
+            <p><strong>Driver Name:</strong> <span th:text="${driver.name}"></span></p>
+
+            <h3>Customers</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Monday Morning</th>
+                    <th>Monday Evening</th>
+                    <th>Tuesday Morning</th>
+                    <th>Tuesday Evening</th>
+                    <th>Wednesday Morning</th>
+                    <th>Wednesday Evening</th>
+                    <th>Thursday Morning</th>
+                    <th>Thursday Evening</th>
+                    <th>Friday Morning</th>
+                    <th>Friday Evening</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="customer : ${customers}">
+                    <td th:text="${customer.name}"></td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.mondayMorning}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.mondayMorning}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.mondayEvening}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.mondayEvening}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.tuesdayMorning}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.tuesdayMorning}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.tuesdayEvening}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.tuesdayEvening}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.wednesdayMorning}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.wednesdayMorning}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.wednesdayEvening}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.wednesdayEvening}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.thursdayMorning}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.thursdayMorning}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.thursdayEvening}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.thursdayEvening}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.fridayMorning}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.fridayMorning}" th:text="'Not Going'"></span>
+                    </td>
+                    <td>
+                        <span th:if="${customer.schedule != null && customer.schedule.fridayEvening}" th:text="'Going'"></span>
+                        <span th:if="${customer.schedule != null && !customer.schedule.fridayEvening}" th:text="'Not Going'"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<footer>
+    <p>&copy; 2024 NUST Transport Services. All rights reserved.</p>
+</footer>
+</body>
+</html>

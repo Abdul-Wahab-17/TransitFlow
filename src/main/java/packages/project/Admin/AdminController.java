@@ -18,6 +18,8 @@ import packages.project.Fee.FeeService;
 import packages.project.Login.Login;
 import packages.project.Login.LoginService;
 import packages.project.Salary.SalaryService;
+import packages.project.Schedule.Schedule;
+import packages.project.Schedule.ScheduleService;
 import packages.project.Vehicle.Vehicle;
 import packages.project.Vehicle.VehicleService;
 
@@ -25,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.annotation.WebServlet;
 
 @Controller
 class AdminController {
-  //  @Autowired
-   // JwtTokenUtil jwtTokenUtil;
+  // @Autowired
+   //JwtTokenUtil jwtTokenUtil;
 
     private final AdminService adminService;
     private final CustomerService customerService;
@@ -40,13 +42,14 @@ class AdminController {
     private final FeeService feeService;
     private final VehicleService vehicleService;
     private final SalaryService salaryService;
+    private final ScheduleService scheduleService;
 
-//    private final JwtTokenUtil jwtTokenUtil;
 
 
     @Autowired
     public AdminController(AdminService adminService, CustomerService customerService , DriverService driverService ,
-                           LoginService loginService , AreaService areaService , FeeService feeService , VehicleService vehicleService , SalaryService salaryService){
+                           LoginService loginService , AreaService areaService , FeeService feeService , VehicleService vehicleService ,
+                           SalaryService salaryService , ScheduleService scheduleService){
         this.adminService=adminService;
         this.customerService=customerService;
         this.driverService=driverService;
@@ -55,6 +58,7 @@ class AdminController {
         this.feeService=feeService;
         this.vehicleService=vehicleService;
         this.salaryService=salaryService;
+        this.scheduleService=scheduleService;
     }
 
 
@@ -95,13 +99,13 @@ class AdminController {
  @PreAuthorize("hasRole('admin')")
  public String getAdminDashboard(@PathVariable Integer loginId, Model model, HttpServletRequest request) {
  
-     String token = jwtTokenUtil.resolveToken(request);
-     System.out.println("The token12345 is: "+ token);
-     if (token != null && jwtTokenUtil.validateToken(token)) {
-         // Token is valid, set up authentication
-         UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(token);
-         SecurityContextHolder.getContext().setAuthentication(authentication);
- 
+    String token = jwtTokenUtil.resolveToken(request);
+   System.out.println("The token12345 is: "+ token);
+    if (token != null && jwtTokenUtil.validateToken(token)) {
+       // Token is valid, set up authentication
+        UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
          Admin admin = adminService.getAdmin(loginId);
          model.addAttribute("admin", admin);
  
@@ -122,10 +126,10 @@ class AdminController {
      } else {
          // Token is invalid, handle accordingly (e.g., return unauthorized error)
          return "redirect:/unauthorized";
-     }
+    }
  }
-*/
 
+*/
 
 
     @GetMapping("/searchDrivers")
@@ -345,10 +349,38 @@ class AdminController {
         customer.setPaidStatus(paidStatus);
         customer.setVehicle(vehicle);
         customerService.save(customer);
-        model.addAttribute("loginId", login.getLoginId()  );
-        model.addAttribute("password", pin);
-       // String redirectUrl = "redirect:/admin/" + loginId;
-        return "customerAdded";
+        try {
+            // Ensure that the customer is saved properly and has a valid ID
+            if (customer.getCustomerId() + "" != null) {
+                Schedule schedule = new Schedule();
+                schedule.setCustomer(customer); // Link schedule to the customer
+                // Set default values, adjust as necessary
+                schedule.setMondayMorning(false);
+                schedule.setMondayEvening(false);
+                schedule.setTuesdayMorning(false);
+                schedule.setTuesdayEvening(false);
+                schedule.setWednesdayMorning(false);
+                schedule.setWednesdayEvening(false);
+                schedule.setThursdayMorning(false);
+                schedule.setThursdayEvening(false);
+                schedule.setFridayMorning(false);
+                schedule.setFridayEvening(false);
+                scheduleService.save(schedule); // Save the schedule
+
+                // Step 5: Add attributes for the view
+                model.addAttribute("loginId", login.getLoginId());
+                model.addAttribute("password", pin);
+
+                // Step 6: Redirect to the customer added page
+                return "customerAdded";
+            } else {
+                throw new IllegalStateException("Customer ID is null after saving customer.");
+            }
+        } catch (Exception ex) {
+            // Handle exception
+            ex.printStackTrace(); // Print exception for debugging
+            return "errorPage"; // Return an error page or message
+        }
     }
 
     @GetMapping("/getVehiclesByArea")
@@ -387,4 +419,7 @@ class AdminController {
         model.addAttribute("areas", areaService.getAllAreas());
         return "addvehicle";
     }
+
+
+
 }

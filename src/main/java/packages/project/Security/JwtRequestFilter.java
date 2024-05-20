@@ -16,10 +16,11 @@ import packages.project.Login.LoginService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@WebServlet
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -34,7 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
+//        System.out.println(request.getHeader("authorization").toUpperCase());
         final String requestTokenHeader = request.getHeader("Authorization");
 
         String username = null;

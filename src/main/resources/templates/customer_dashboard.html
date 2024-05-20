@@ -31,7 +31,7 @@
             </tr>
             <!-- Add more customer details here if needed -->
         </table>
-        <!-- Edit button -->
+        <a th:href="@{'/customers/' + ${customer.login.loginId} + '/schedule'}" class="button">Edit Schedule</a>
         <a th:href="@{'/customers/' + ${customer.login.loginId} + '/edit'}" class="button">Edit Info</a>
     </div>
 

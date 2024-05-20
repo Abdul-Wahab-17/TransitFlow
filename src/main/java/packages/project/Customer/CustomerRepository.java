@@ -26,5 +26,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Query("select c from Customer c where c.paidStatus=false")
     List<Customer> getCustomerByPendingFee();
 
+    @Query("select C.login.loginId from Customer C where C.customerId = :customerId" )
+    Integer getCustomerLoginId(int customerId);
+
 }
 

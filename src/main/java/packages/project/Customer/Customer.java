@@ -5,6 +5,7 @@ import packages.project.Area.Area;
 import packages.project.Fee.Fee;
 import packages.project.Login.Login;
 import packages.project.Salary.Salary;
+import packages.project.Schedule.Schedule;
 import packages.project.Vehicle.Vehicle;
 
 import javax.persistence.*;
@@ -51,10 +52,13 @@ public class Customer {
     @Column(name = "paid_status")
     boolean paidStatus;
 
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    private Schedule schedule;
+
     public Customer() {
     }
 
-    public Customer(int customerId, String address, String name, int phone, String email, Area area, Fee fee, Vehicle vehicle, Login login , boolean paidStatus) {
+    public Customer(int customerId, String address, String name, int phone, String email, Area area, Fee fee, Vehicle vehicle, Login login, boolean paidStatus, Schedule schedule) {
         this.customerId = customerId;
         this.address = address;
         this.name = name;
@@ -64,6 +68,7 @@ public class Customer {
         this.fee = fee;
         this.vehicle = vehicle;
         this.login = login;
-        this.paidStatus=paidStatus;
+        this.paidStatus = paidStatus;
+        this.schedule = schedule;
     }
 }

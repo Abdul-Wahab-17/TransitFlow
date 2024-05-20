@@ -1,28 +1,24 @@
 package packages.project.Login;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.net.URI;
 
 @Controller
 public class LoginController {
-
+   // @Autowired
+  //  JwtTokenUtil jwtTokenUtil;
     private final LoginService loginService;
    // private final AuthenticationService authenticationService;
 
     @Autowired
     public LoginController(LoginService loginService/*,AuthenticationService authenticationService*/) {
         this.loginService = loginService;
-      //  this.authenticationService=authenticationService;
+       /*this.authenticationService=authenticationService;*/
     }
 
     @GetMapping("/")
@@ -44,7 +40,8 @@ public class LoginController {
         return "contact";
     }
 
-   /* @PostMapping("/api/login/authenticate")
+/*
+    @PostMapping("/api/login/authenticate")
     public ResponseEntity<?> authenticate(@RequestParam("loginId") Integer loginId,
                                           @RequestParam("password") int password,
                                           RedirectAttributes redirectAttributes) {
@@ -53,7 +50,7 @@ public class LoginController {
 
         if (user != null) {
             String role = user.getRole();
-            String token = authenticationService.authenticateUser(String.valueOf(loginId), String.format("" + password));
+            String token =jwtTokenUtil.generateToken(String.valueOf(loginId), String.format("" + password));
             // Generate JWT token here using your token generation logic
             System.out.println(token);
             // Return the JWT token in the response headers
@@ -79,9 +76,10 @@ public class LoginController {
 */
 
 
-    @PostMapping("/api/login/authenticate")
+
+   @PostMapping("/api/login/authenticate")
     public String authenticate(@RequestParam("loginId") Integer loginId,
-                               @RequestParam("password") String password,
+                              @RequestParam("password") String password,
                                Model model) {
         Login user = loginService.authenticateUser(loginId, Integer.parseInt(password));
 
@@ -90,22 +88,22 @@ public class LoginController {
             String redirectUrl;
 
             switch (role) {
-                case "driver":
+               case "driver":
                     redirectUrl = "/api/drivers/" + loginId;
                     break;
-                case "customer":
+               case "customer":
                     redirectUrl = "/api/customers/" + loginId;
                     break;
-                case "admin":
-                    redirectUrl = "/api/admin/" + loginId;
-                    break;
-                default:
-                    return "error"; // Handle unknown role
-            }
-            return "redirect:" + redirectUrl;
+               case "admin":
+                   redirectUrl = "/api/admin/" + loginId;
+                   break;
+               default:
+                   return "error"; // Handle unknown role
+           }
+           return "redirect:" + redirectUrl;
         } else {
-            model.addAttribute("error", "Invalid login credentials");
+           model.addAttribute("error", "Invalid login credentials");
             return "Login"; // Redirect back to login page with error message
         }
-    }
+  }
 }

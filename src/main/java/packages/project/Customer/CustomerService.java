@@ -26,6 +26,11 @@ public class CustomerService {
         return customer;
     }
 
+
+    public int getloginId(int customerId){
+        return customerRepository.getCustomerLoginId(customerId);
+    }
+
     public void save(Customer existingCustomer) {
         try {
             customerRepository.save(existingCustomer);

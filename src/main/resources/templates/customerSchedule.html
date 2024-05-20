@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Weekly Schedule</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h1>Edit Weekly Schedule</h1>
+    <form action="/updateSchedule" method="post">
+      <input type="hidden" id="customerId" name="customerId" th:value="${schedule.customerId}">
+      <div>
+        <h3>Monday</h3>
+        <label for="mondayMorning">Morning:</label>
+        <input type="checkbox" id="mondayMorning" name="mondayMorning" th:checked="${schedule.mondayMorning}">
+        <label for="mondayEvening">Evening:</label>
+        <input type="checkbox" id="mondayEvening" name="mondayEvening" th:checked="${schedule.mondayEvening}">
+      </div>
+      <div>
+        <h3>Tuesday</h3>
+        <label for="tuesdayMorning">Morning:</label>
+        <input type="checkbox" id="tuesdayMorning" name="tuesdayMorning" th:checked="${schedule.tuesdayMorning}">
+        <label for="tuesdayEvening">Evening:</label>
+        <input type="checkbox" id="tuesdayEvening" name="tuesdayEvening" th:checked="${schedule.tuesdayEvening}">
+      </div>
+      <div>
+        <h3>Wednesday</h3>
+        <label for="wednesdayMorning">Morning:</label>
+        <input type="checkbox" id="wednesdayMorning" name="wednesdayMorning" th:checked="${schedule.wednesdayMorning}">
+        <label for="wednesdayEvening">Evening:</label>
+        <input type="checkbox" id="wednesdayEvening" name="wednesdayEvening" th:checked="${schedule.wednesdayEvening}">
+      </div>
+      <div>
+        <h3>Thursday</h3>
+        <label for="thursdayMorning">Morning:</label>
+        <input type="checkbox" id="thursdayMorning" name="thursdayMorning" th:checked="${schedule.thursdayMorning}">
+        <label for="thursdayEvening">Evening:</label>
+        <input type="checkbox" id="thursdayEvening" name="thursdayEvening" th:checked="${schedule.thursdayEvening}">
+      </div>
+      <div>
+        <h3>Friday</h3>
+        <label for="fridayMorning">Morning:</label>
+        <input type="checkbox" id="fridayMorning" name="fridayMorning" th:checked="${schedule.fridayMorning}">
+        <label for="fridayEvening">Evening:</label>
+        <input type="checkbox" id="fridayEvening" name="fridayEvening" th:checked="${schedule.fridayEvening}">
+      </div>
+      <button type="submit">Save</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
