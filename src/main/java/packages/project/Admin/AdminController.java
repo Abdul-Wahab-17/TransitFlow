@@ -334,10 +334,23 @@ class AdminController {
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
+
+        Schedule schedule = new Schedule();
+        schedule.setMondayMorning(false);
+        schedule.setMondayEvening(false);
+        schedule.setTuesdayMorning(false);
+        schedule.setTuesdayEvening(false);
+        schedule.setWednesdayMorning(false);
+        schedule.setWednesdayEvening(false);
+        schedule.setThursdayMorning(false);
+        schedule.setThursdayEvening(false);
+        schedule.setFridayMorning(false);
+        schedule.setFridayEvening(false);
+        scheduleService.save(schedule);
+
         Area area = areaService.getArea(areaId);
         Fee fee = feeService.getFee(area.getAreaId());
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
-
         Customer customer = new Customer();
         customer.setName(customerName);
         customer.setPhone(Integer.parseInt(customerPhone));
@@ -348,24 +361,14 @@ class AdminController {
         customer.setFee(fee);
         customer.setPaidStatus(paidStatus);
         customer.setVehicle(vehicle);
+        customer.setSchedule(schedule);
         customerService.save(customer);
-        try {
-            // Ensure that the customer is saved properly and has a valid ID
-            if (customer.getCustomerId() + "" != null) {
-                Schedule schedule = new Schedule();
+
+         
+
                 schedule.setCustomer(customer); // Link schedule to the customer
                 // Set default values, adjust as necessary
-                schedule.setMondayMorning(false);
-                schedule.setMondayEvening(false);
-                schedule.setTuesdayMorning(false);
-                schedule.setTuesdayEvening(false);
-                schedule.setWednesdayMorning(false);
-                schedule.setWednesdayEvening(false);
-                schedule.setThursdayMorning(false);
-                schedule.setThursdayEvening(false);
-                schedule.setFridayMorning(false);
-                schedule.setFridayEvening(false);
-                scheduleService.save(schedule); // Save the schedule
+               // Save the schedule
 
                 // Step 5: Add attributes for the view
                 model.addAttribute("loginId", login.getLoginId());
@@ -373,14 +376,7 @@ class AdminController {
 
                 // Step 6: Redirect to the customer added page
                 return "customerAdded";
-            } else {
-                throw new IllegalStateException("Customer ID is null after saving customer.");
-            }
-        } catch (Exception ex) {
-            // Handle exception
-            ex.printStackTrace(); // Print exception for debugging
-            return "errorPage"; // Return an error page or message
-        }
+  
     }
 
     @GetMapping("/getVehiclesByArea")
