@@ -10,6 +10,7 @@ import packages.project.Admin.Admin;
 import packages.project.Vehicle.Vehicle;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -25,6 +26,7 @@ public class CustomerService {
         Customer customer = customerRepository.getCustomerByCustomerId(customerRepository.getCustomerIdByLoginId(loginId));
         return customer;
     }
+
 
 
     public int getloginId(int customerId){

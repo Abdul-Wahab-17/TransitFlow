@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Fee Customers</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav>
+    <a href="/" th:href="@{/}">Home</a>
+    <a href="/about" th:href="@{/about}">About Us</a>
+    <a href="/contact" th:href="@{/contact}">Contact Us</a>
+    <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+</nav>
+<header>
+    <h1>Pending Fee Customers</h1>
+</header>
+<div class="container">
+    <div class="card">
+        <h2>Pending Fee Customers</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Area</th>
+                <th>Vehicle</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="customer : ${pendingFeeCustomers}">
+                <td th:text="${customer.name}"></td>
+                <td th:text="${customer.phone}"></td>
+                <td th:text="${customer.email}"></td>
+                <td th:text="${customer.area.areaName}"></td>
+                <td th:text="${customer.vehicle.vehicleType + ' - ' + customer.vehicle.number}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

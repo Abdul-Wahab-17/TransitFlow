@@ -29,5 +29,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Query("select C.login.loginId from Customer C where C.customerId = :customerId" )
     Integer getCustomerLoginId(int customerId);
 
+    @Query("SELECT c.area.areaName AS areaName, COUNT(c) AS customerCount " +
+            "FROM Customer c " +
+            "GROUP BY c.area.areaName")
+    List<Object[]> countCustomersPerArea();
 }
 

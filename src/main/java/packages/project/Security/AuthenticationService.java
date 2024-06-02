@@ -1,40 +1,30 @@
-/*
 package packages.project.Security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import packages.project.Login.Login;
-import packages.project.Login.LoginService;
+import packages.project.Login.LoginRepository;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class AuthenticationService {
+    private final LoginRepository loginRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
 
-    @Autowired
-    LoginService loginService;
+        Login user = loginRepository.findByLoginId(Integer.parseInt(request.getUsername()));
+        String token = jwtService.generateToken(user);
 
-
-    public String authenticateUser(String username, String password) {
-        Login user = loginService.findByLoginId(Integer.parseInt(username));
-        if (user == null || !(user.getPin()==(Integer.parseInt(password)))) {
-            throw new UsernameNotFoundException("not found");
-        }
-
-        // Assuming the user has a role stored in the database
-        String role = user.getRole();
-
-        // Generate a JWT token
-        String token = jwtTokenUtil.generateToken(username, role);
-        System.out.println("The token12345: " + token );
-
-        // Include the token in the response
-        return token;
+        return AuthenticationResponse.builder().token(token).build();
     }
 }
-*/

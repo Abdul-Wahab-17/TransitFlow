@@ -24,42 +24,77 @@
       <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
       <input type="tel" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>
       <input type="email" id="customerEmail" name="customerEmail" placeholder="Customer Email" required>
-      <label>Fees Paid:</label>
+      <label for="paidStatus">Fees Paid:</label>
       <label for="paidStatusTrue">True</label>
       <input type="radio" id="paidStatusTrue" name="paidStatus" value="true" required>
       <label for="paidStatusFalse">False</label>
       <input type="radio" id="paidStatusFalse" name="paidStatus" value="false" required>
-      <select id="areaId" name="areaId" required onchange="updateVehicleOptionsForCustomer()">
+      <select id="areaId" name="areaId" required onchange="updateOptions()">
         <option value="">Select Area</option>
         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
       </select>
       <select id="vehicleId" name="vehicleId" required>
         <option value="">Select Vehicle</option>
       </select>
+      <select id="feeId" name="feeId" required>
+        <option value="">Select Fee</option>
+      </select>
       <button type="submit">Add Customer</button>
     </form>
   </div>
   <script>
-    function updateVehicleOptionsForCustomer() {
+    function updateOptions() {
       var areaId = document.getElementById("areaId").value;
       var vehicleDropdown = document.getElementById("vehicleId");
+      var feeDropdown = document.getElementById("feeId");
+
       vehicleDropdown.innerHTML = "";
-      var defaultOption = document.createElement("option");
-      defaultOption.value = "";
-      defaultOption.text = "Select Vehicle";
-      vehicleDropdown.appendChild(defaultOption);
+      feeDropdown.innerHTML = "";
+
+      var defaultVehicleOption = document.createElement("option");
+      defaultVehicleOption.value = "";
+      defaultVehicleOption.text = "Select Vehicle";
+      vehicleDropdown.appendChild(defaultVehicleOption);
+
+      var defaultFeeOption = document.createElement("option");
+      defaultFeeOption.value = "";
+      defaultFeeOption.text = "Select Fee";
+      feeDropdown.appendChild(defaultFeeOption);
+
       if (areaId !== "") {
         fetch("/getVehiclesByArea?areaId=" + areaId)
-                .then(response => response.json())
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+                })
                 .then(data => {
                   data.forEach(vehicle => {
                     var option = document.createElement("option");
                     option.value = vehicle.vehicleId;
-                    option.text = vehicle.vehicleType + " - " + vehicle.number;
+                    option.text = vehicle.vehicleType + ' - ' + vehicle.number;
                     vehicleDropdown.appendChild(option);
                   });
                 })
                 .catch(error => console.error('Error fetching vehicles:', error));
+
+        fetch("/getFeesByArea?areaId=" + areaId)
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+                })
+                .then(data => {
+                  data.forEach(fee => {
+                    var option = document.createElement("option");
+                    option.value = fee.feeId;
+                    option.text = fee.amount;
+                    feeDropdown.appendChild(option);
+                  });
+                })
+                .catch(error => console.error('Error fetching fees:', error));
       }
     }
   </script>

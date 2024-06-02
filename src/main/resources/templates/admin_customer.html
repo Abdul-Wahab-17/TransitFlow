@@ -3,43 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Customer</title>
+    <title>Edit Customer</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>Customer Information</h1>
+        <h1>Edit Customer Information</h1>
         <div id="viewMode">
             <p><strong>Name:</strong> <span th:text="${customer.name}"></span></p>
             <p><strong>Phone:</strong> <span th:text="${customer.phone}"></span></p>
             <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
             <p><strong>Address:</strong> <span th:text="${customer.address}"></span></p>
             <p><strong>Area:</strong> <span th:text="${customer.area.areaName}"></span></p>
-            <p><strong>Vehicle:</strong> <span th:text="${customer.vehicle.vehicleType}"></span></p>
+            <p><strong>Vehicle:</strong> <span th:text="${customer.vehicle.vehicleType + ' - ' + customer.vehicle.number}"></span></p>
             <p><strong>Fee:</strong> <span th:text="${customer.fee.amount}"></span></p>
             <p><strong>Paid Status:</strong> <span th:text="${customer.paidStatus ? 'Yes' : 'No'}"></span></p>
             <button onclick="toggleEditMode()">Edit</button>
             <button onclick="confirmPasswordReset()">Reset Password</button>
         </div>
         <div id="editMode" style="display: none;">
-            <form id="editCustomerForm" action="/editCustomer" method="post">
+            <form id="editCustomerForm"  action="/admin/editCustomer" method="post">
                 <input type="hidden" id="loginId" name="loginId" th:value="${customer.login.loginId}">
                 <div>
                     <label for="areaId">Area:</label>
-                    <select id="areaId" name="areaId" required>
+                    <select id="areaId" name="areaId" required onchange="updateOptions()">
                         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}" th:selected="${area.areaId == customer.area.areaId}"></option>
                     </select>
                 </div>
                 <div>
                     <label for="vehicleId">Vehicle:</label>
                     <select id="vehicleId" name="vehicleId" required>
-                        <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.vehicleType}" th:selected="${vehicle.vehicleId == customer.vehicle.vehicleId}"></option>
+                        <option value="">Select Vehicle</option>
+                        <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.vehicleType + ' - ' + vehicle.number}" th:selected="${vehicle.vehicleId == customer.vehicle.vehicleId}"></option>
                     </select>
                 </div>
                 <div>
                     <label for="feeId">Fee:</label>
                     <select id="feeId" name="feeId" required>
+                        <option value="">Select Fee</option>
                         <option th:each="fee : ${fees}" th:value="${fee.feeId}" th:text="${fee.amount}" th:selected="${fee.feeId == customer.fee.feeId}"></option>
                     </select>
                 </div>
@@ -57,7 +59,8 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
     function toggleEditMode() {
         document.getElementById("viewMode").style.display = "none";
         document.getElementById("editMode").style.display = "block";
@@ -84,6 +87,63 @@
             form.submit();
         }
     }
+
+    function updateOptions() {
+        var areaId = document.getElementById("areaId").value;
+        var vehicleDropdown = document.getElementById("vehicleId");
+        var feeDropdown = document.getElementById("feeId");
+
+        vehicleDropdown.innerHTML = "";
+        feeDropdown.innerHTML = "";
+
+        var defaultVehicleOption = document.createElement("option");
+        defaultVehicleOption.value = "";
+        defaultVehicleOption.text = "Select Vehicle";
+        vehicleDropdown.appendChild(defaultVehicleOption);
+
+        var defaultFeeOption = document.createElement("option");
+        defaultFeeOption.value = "";
+        defaultFeeOption.text = "Select Fee";
+        feeDropdown.appendChild(defaultFeeOption);
+
+        if (areaId !== "") {
+            fetch("/getVehiclesByArea?areaId=" + areaId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(vehicle => {
+                        var option = document.createElement("option");
+                        option.value = vehicle.vehicleId;
+                        option.text = vehicle.vehicleType + ' - ' + vehicle.number;
+                        vehicleDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching vehicles:', error));
+
+            fetch("/getFeesByArea?areaId=" + areaId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(fee => {
+                        var option = document.createElement("option");
+                        option.value = fee.feeId;
+                        option.text = fee.amount;
+                        feeDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching fees:', error));
+        }
+    }
+    /*]]>*/
 </script>
+
 </body>
 </html>

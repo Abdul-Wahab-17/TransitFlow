@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import packages.project.Admin.Admin;
 import packages.project.Vehicle.Vehicle;
 
+import java.util.List;
+
 @Service
 public class DriverService {
 
@@ -31,6 +33,10 @@ public class DriverService {
         Vehicle vehicle = driverRepository.getVehicleByDriverId(driverId);
         return vehicle;
     }
+    public List<Driver> findPendingSalary(){
+        return driverRepository.getDriverByPendingSalary();
+    }
+
 
     public Driver getDriverByVehicleId(Integer vehicleId){
         return driverRepository.getDriverByVehicleId(vehicleId);

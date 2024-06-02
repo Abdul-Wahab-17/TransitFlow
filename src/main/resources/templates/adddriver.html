@@ -24,33 +24,52 @@
       <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
       <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>
       <input type="email" id="driverEmail" name="driverEmail" placeholder="Driver Email" required>
+
       <label>Salary Paid:</label>
       <label for="salaryStatusTrue">True</label>
       <input type="radio" id="salaryStatusTrue" name="salaryStatus" value="true" required>
       <label for="salaryStatusFalse">False</label>
       <input type="radio" id="salaryStatusFalse" name="salaryStatus" value="false" required>
 
-      <select id="driverAreaId" name="areaId" required onchange="updateVehicleOptionsForDriver()">
+      <select id="driverAreaId" name="areaId" required onchange="updateOptions()">
         <option value="">Select Area</option>
         <!-- Iterate over areas and render options -->
         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>
       </select>
+
       <select id="driverVehicleId" name="vehicleId" required>
         <option value="">Select Vehicle</option>
         <!-- Options will be dynamically populated based on the selected area -->
       </select>
+
+      <select id="driverSalaryId" name="salaryId" required>
+        <option value="">Select Salary</option>
+        <!-- Options will be dynamically populated based on the selected area -->
+      </select>
+
       <button type="submit">Add Driver</button>
     </form>
   </div>
+
   <script>
-    function updateVehicleOptionsForDriver() {
+    function updateOptions() {
       var areaId = document.getElementById("driverAreaId").value;
       var vehicleDropdown = document.getElementById("driverVehicleId");
+      var salaryDropdown = document.getElementById("driverSalaryId");
+
       vehicleDropdown.innerHTML = "";
-      var defaultOption = document.createElement("option");
-      defaultOption.value = "";
-      defaultOption.text = "Select Vehicle";
-      vehicleDropdown.appendChild(defaultOption);
+      salaryDropdown.innerHTML = "";
+
+      var defaultVehicleOption = document.createElement("option");
+      defaultVehicleOption.value = "";
+      defaultVehicleOption.text = "Select Vehicle";
+      vehicleDropdown.appendChild(defaultVehicleOption);
+
+      var defaultSalaryOption = document.createElement("option");
+      defaultSalaryOption.value = "";
+      defaultSalaryOption.text = "Select Salary";
+      salaryDropdown.appendChild(defaultSalaryOption);
+
       if (areaId !== "") {
         fetch("/getVehiclesByArea?areaId=" + areaId)
                 .then(response => response.json())
@@ -63,6 +82,18 @@
                   });
                 })
                 .catch(error => console.error('Error fetching vehicles:', error));
+
+        fetch("/getSalariesByArea?areaId=" + areaId)
+                .then(response => response.json())
+                .then(data => {
+                  data.forEach(salary => {
+                    var option = document.createElement("option");
+                    option.value = salary.salaryId;
+                    option.text = salary.amount;
+                    salaryDropdown.appendChild(option);
+                  });
+                })
+                .catch(error => console.error('Error fetching salaries:', error));
       }
     }
   </script>

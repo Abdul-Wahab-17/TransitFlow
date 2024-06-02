@@ -25,6 +25,11 @@ public class AdminService {
         return admin;
     }
 
+    public void saveAdmin(Admin admin) {
+        // Here you can add logic for hashing passwords, validating data, etc.
+        adminRepository.save(admin);
+    }
+
     @Autowired
     DriverRepository driverRepository;
 

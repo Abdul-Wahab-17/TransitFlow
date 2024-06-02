@@ -11,7 +11,7 @@
   <div class="card">
     <h1>Edit Weekly Schedule</h1>
     <form action="/updateSchedule" method="post">
-      <input type="hidden" id="customerId" name="customerId" th:value="${schedule.customerId}">
+      <input type="hidden" id="customerId" name="customerId" th:value="${schedule.customer.customerId}">
       <div>
         <h3>Monday</h3>
         <label for="mondayMorning">Morning:</label>

@@ -3,83 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Driver</title>
+    <title>Edit Driver</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>Driver Information</h1>
+        <h1>Edit Driver Information</h1>
         <div id="viewMode">
-            <table>
-                <tr>
-                    <th>Name:</th>
-                    <td><span th:text="${driver.name}"></span></td>
-                </tr>
-                <tr>
-                    <th>Phone:</th>
-                    <td><span th:text="${driver.phone}"></span></td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td><span th:text="${driver.email}"></span></td>
-                </tr>
-                <tr>
-                    <th>Address:</th>
-                    <td><span th:text="${driver.address}"></span></td>
-                </tr>
-                <tr>
-                    <th>Area:</th>
-                    <td><span th:text="${driver.area.areaName}"></span></td>
-                </tr>
-                <tr>
-                    <th>Vehicle:</th>
-                    <td><span th:text="${driver.vehicle.vehicleType}"></span></td>
-                </tr>
-                <tr>
-                    <th>Salary:</th>
-                    <td><span th:text="${driver.salary}"></span></td>
-                </tr>
-            </table>
+            <p><strong>Name:</strong> <span th:text="${driver.name}"></span></p>
+            <p><strong>Phone:</strong> <span th:text="${driver.phone}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${driver.email}"></span></p>
+            <p><strong>Address:</strong> <span th:text="${driver.address}"></span></p>
+            <p><strong>Area:</strong> <span th:text="${driver.area.areaName}"></span></p>
+            <p><strong>Vehicle:</strong> <span th:text="${driver.vehicle.vehicleType + ' - ' + driver.vehicle.number}"></span></p>
+            <p><strong>Salary:</strong> <span th:text="${driver.salary.amount}"></span></p>
+            <p><strong>Salary Status:</strong> <span th:text="${driver.salaryStatus ? 'Active' : 'Inactive'}"></span></p>
             <button onclick="toggleEditMode()">Edit</button>
             <button onclick="confirmPasswordReset()">Reset Password</button>
         </div>
         <div id="editMode" style="display: none;">
-            <form id="editDriverForm" action="/editDriver" method="post">
+            <form id="editDriverForm" action="/admin/editDriver" method="post">
                 <input type="hidden" id="loginId" name="loginId" th:value="${driver.login.loginId}">
-                <table>
-                    <tr>
-                        <th><label for="driverArea">Area:</label></th>
-                        <td>
-                            <select id="driverArea" name="areaId" required>
-                                <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}" th:selected="${area.areaId == driver.area.areaId}"></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label for="driverVehicle">Vehicle:</label></th>
-                        <td>
-                            <select id="driverVehicle" name="vehicleId" required>
-                                <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.vehicleType}" th:selected="${vehicle.vehicleId == driver.vehicle.vehicleId}"></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label for="driverSalary">Salary:</label></th>
-                        <td><input type="number" id="driverSalary" name="salary" th:value="${driver.salary}" required></td>
-                    </tr>
-                </table>
+                <div>
+                    <label for="areaId">Area:</label>
+                    <select id="areaId" name="areaId" required onchange="updateOptions()">
+                        <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}" th:selected="${area.areaId == driver.area.areaId}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label for="vehicleId">Vehicle:</label>
+                    <select id="vehicleId" name="vehicleId" required>
+                        <option value="">Select Vehicle</option>
+                        <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.vehicleType + ' - ' + vehicle.number}" th:selected="${vehicle.vehicleId == driver.vehicle.vehicleId}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label for="salaryId">Salary:</label>
+                    <select id="salaryId" name="salaryId" required>
+                        <option value="">Select Salary</option>
+                        <option th:each="salary : ${salaries}" th:value="${salary.salaryId}" th:text="${salary.amount}" th:selected="${salary.salaryId == driver.salary.salaryId}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label>Salary Status:</label>
+                    <label for="salaryStatusTrue">Active</label>
+                    <input type="radio" id="salaryStatusTrue" name="salaryStatus" value="true" th:checked="${driver.salaryStatus}" required>
+                    <label for="salaryStatusFalse">Inactive</label>
+                    <input type="radio" id="salaryStatusFalse" name="salaryStatus" value="false" th:checked="${!driver.salaryStatus}" required>
+                </div>
                 <button type="button" onclick="cancelEdit()">Cancel</button>
                 <button type="submit">Save</button>
             </form>
         </div>
-        <div th:if="${newPassword}">
-            <p><strong>New Password:</strong> <span th:text="${newPassword}"></span></p>
-        </div>
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
     function toggleEditMode() {
         document.getElementById("viewMode").style.display = "none";
         document.getElementById("editMode").style.display = "block";
@@ -106,6 +87,63 @@
             form.submit();
         }
     }
+
+    function updateOptions() {
+        var areaId = document.getElementById("areaId").value;
+        var vehicleDropdown = document.getElementById("vehicleId");
+        var salaryDropdown = document.getElementById("salaryId");
+
+        vehicleDropdown.innerHTML = "";
+        salaryDropdown.innerHTML = "";
+
+        var defaultVehicleOption = document.createElement("option");
+        defaultVehicleOption.value = "";
+        defaultVehicleOption.text = "Select Vehicle";
+        vehicleDropdown.appendChild(defaultVehicleOption);
+
+        var defaultSalaryOption = document.createElement("option");
+        defaultSalaryOption.value = "";
+        defaultSalaryOption.text = "Select Salary";
+        salaryDropdown.appendChild(defaultSalaryOption);
+
+        if (areaId !== "") {
+            fetch("/getVehiclesByArea?areaId=" + areaId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(vehicle => {
+                        var option = document.createElement("option");
+                        option.value = vehicle.vehicleId;
+                        option.text = vehicle.vehicleType + ' - ' + vehicle.number;
+                        vehicleDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching vehicles:', error));
+
+            fetch("/getSalariesByArea?areaId=" + areaId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(salary => {
+                        var option = document.createElement("option");
+                        option.value = salary.salaryId;
+                        option.text = salary.amount;
+                        salaryDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching salaries:', error));
+        }
+    }
+    /*]]>*/
 </script>
+
 </body>
 </html>

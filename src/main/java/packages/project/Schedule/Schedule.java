@@ -13,50 +13,45 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "customer_id", nullable = false)
-    private int customerId;
+    @Column(name = "monday_morning")
+    private boolean mondayMorning;
 
-    @Column(name = "monday_morning", nullable = false)
-    private boolean mondayMorning = false;
+    @Column(name = "monday_evening")
+    private boolean mondayEvening;
 
-    @Column(name = "monday_evening", nullable = false)
-    private boolean mondayEvening = false;
+    @Column(name = "tuesday_morning")
+    private boolean tuesdayMorning;
 
-    @Column(name = "tuesday_morning", nullable = false)
-    private boolean tuesdayMorning = false;
+    @Column(name = "tuesday_evening")
+    private boolean tuesdayEvening;
 
-    @Column(name = "tuesday_evening", nullable = false)
-    private boolean tuesdayEvening = false;
+    @Column(name = "wednesday_morning")
+    private boolean wednesdayMorning;
 
-    @Column(name = "wednesday_morning", nullable = false)
-    private boolean wednesdayMorning = false;
+    @Column(name = "wednesday_evening")
+    private boolean wednesdayEvening;
 
-    @Column(name = "wednesday_evening", nullable = false)
-    private boolean wednesdayEvening = false;
+    @Column(name = "thursday_morning")
+    private boolean thursdayMorning;
 
-    @Column(name = "thursday_morning", nullable = false)
-    private boolean thursdayMorning = false;
+    @Column(name = "thursday_evening")
+    private boolean thursdayEvening;
+    @Column(name = "friday_morning")
+    private boolean fridayMorning;
 
-    @Column(name = "thursday_evening", nullable = false)
-    private boolean thursdayEvening = false;
-
-    @Column(name = "friday_morning", nullable = false)
-    private boolean fridayMorning = false;
-
-    @Column(name = "friday_evening", nullable = false)
-    private boolean fridayEvening = false;
+    @Column(name = "friday_evening")
+    private boolean fridayEvening;
 
     @OneToOne
-    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
 
-    public Schedule(int id, int customerId, boolean mondayMorning, boolean mondayEvening, boolean tuesdayMorning,
+    public Schedule(Integer id, boolean mondayMorning, boolean mondayEvening, boolean tuesdayMorning,
                     boolean tuesdayEvening, boolean wednesdayMorning, boolean wednesdayEvening,
                     boolean thursdayMorning, boolean thursdayEvening, boolean fridayMorning,
                     boolean fridayEvening, Customer customer) {
         this.id = id;
-        this.customerId = customerId;
         this.mondayMorning = mondayMorning;
         this.mondayEvening = mondayEvening;
         this.tuesdayMorning = tuesdayMorning;

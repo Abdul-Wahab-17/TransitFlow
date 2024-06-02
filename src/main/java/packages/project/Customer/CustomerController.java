@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import packages.project.Admin.Admin;
 import packages.project.Driver.Driver;
 import packages.project.Driver.DriverService;
 import packages.project.Login.Login;
@@ -24,10 +25,10 @@ public class CustomerController {
     private final LoginService loginService;
 
     @Autowired
-    public CustomerController(CustomerService customerService , DriverService driverService,LoginService loginService) {
+    public CustomerController(CustomerService customerService, DriverService driverService, LoginService loginService) {
         this.customerService = customerService;
-        this.driverService=driverService;
-        this.loginService=loginService;
+        this.driverService = driverService;
+        this.loginService = loginService;
     }
 
 
@@ -51,7 +52,7 @@ public class CustomerController {
     }
 
     @GetMapping("/customers/{loginId}/edit")
-    public String showEditForm(@PathVariable Integer loginId , Model model) {
+    public String showEditForm(@PathVariable Integer loginId, Model model) {
         // Add logic to retrieve customer information and pass it to the template
         Customer customer = customerService.getCustomer(loginId);
         model.addAttribute("customer", customer);
@@ -96,8 +97,4 @@ public class CustomerController {
         // Redirect to the specified URL
         return "redirect:" + redirectUrl;
     }
-
-
-
-
 }

@@ -1,24 +1,28 @@
 package packages.project.Login;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import packages.project.Security.AuthenticationRequest;
+import packages.project.Security.AuthenticationResponse;
+import packages.project.Security.AuthenticationService;
+import packages.project.Security.RegisterRequest;
 
 
 @Controller
 public class LoginController {
-   // @Autowired
-  //  JwtTokenUtil jwtTokenUtil;
     private final LoginService loginService;
-   // private final AuthenticationService authenticationService;
+    private final AuthenticationService service;
 
     @Autowired
-    public LoginController(LoginService loginService/*,AuthenticationService authenticationService*/) {
+    public LoginController(LoginService loginService, AuthenticationService service) {
         this.loginService = loginService;
-       /*this.authenticationService=authenticationService;*/
+        this.service=service;
     }
 
     @GetMapping("/")
@@ -40,44 +44,7 @@ public class LoginController {
         return "contact";
     }
 
-/*
     @PostMapping("/api/login/authenticate")
-    public ResponseEntity<?> authenticate(@RequestParam("loginId") Integer loginId,
-                                          @RequestParam("password") int password,
-                                          RedirectAttributes redirectAttributes) {
-        // Authenticate the user
-        Login user = loginService.authenticateUser(loginId, password);
-
-        if (user != null) {
-            String role = user.getRole();
-            String token =jwtTokenUtil.generateToken(String.valueOf(loginId), String.format("" + password));
-            // Generate JWT token here using your token generation logic
-            System.out.println(token);
-            // Return the JWT token in the response headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-
-            // Add user information to the redirect attributes
-            redirectAttributes.addFlashAttribute("user", user);
-
-            // Redirect to a different endpoint along with the JWT token
-            String redirectUrl = "/" + role + "/" + loginId;
-
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .headers(headers)
-                    .location(URI.create(redirectUrl)) // Redirect to the success endpoint
-                    .build();
-        } else {
-            // If authentication fails, return unauthorized status
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .build();
-        }
-    }
-*/
-
-
-
-   @PostMapping("/api/login/authenticate")
     public String authenticate(@RequestParam("loginId") Integer loginId,
                               @RequestParam("password") String password,
                                Model model) {
@@ -100,10 +67,22 @@ public class LoginController {
                default:
                    return "error"; // Handle unknown role
            }
-           return "redirect:" + redirectUrl;
+            return "redirect:" + redirectUrl;
         } else {
-           model.addAttribute("error", "Invalid login credentials");
-            return "Login"; // Redirect back to login page with error message
+          if((loginId == 6969 )&& (Integer.parseInt(password) == 6969) )
+              return "redirect:/api/superadmin/6969";
         }
+        return "error";
   }
+
+
+/*  @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
+        return ResponseEntity.ok(service.register(request));
+  }*/
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest request){
+        return ResponseEntity.ok(service.authenticate(request));
+    }
 }

@@ -23,7 +23,6 @@
       <input type="text" id="vehicleType" name="vehicleType" placeholder="Vehicle Type" required>
       <input type="text" id="vehicleNumber" name="vehicleNumber" placeholder="Vehicle Number" required>
       <input type="number" id="capacity" name="capacity" placeholder="Capacity" required>
-      <input type="number" id="remainingCapacity" name="remainingCapacity" placeholder="Remaining Capacity" required>
       <select id="areaId" name="areaId" required>
         <option value="">Select Area</option>
         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.areaName}"></option>

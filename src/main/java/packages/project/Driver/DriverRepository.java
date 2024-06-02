@@ -4,7 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import packages.project.Customer.Customer;
 import packages.project.Vehicle.Vehicle;
+
+import java.util.List;
 
 @Repository
 public interface DriverRepository extends JpaRepository <Driver , Integer> {
@@ -20,5 +23,8 @@ public interface DriverRepository extends JpaRepository <Driver , Integer> {
 
     @Query("select D from Driver D where D.vehicle.vehicleId = :vehicleId")
     Driver getDriverByVehicleId(Integer vehicleId);
+
+    @Query("select D from Driver D where D.salaryStatus=false")
+    List<Driver> getDriverByPendingSalary();
 
 }

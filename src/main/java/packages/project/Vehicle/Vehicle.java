@@ -17,8 +17,6 @@ public class Vehicle {
     @Column(name = "vehicle_type")
     String vehicleType;
 
-    @Column(name = "maintenance_costs")
-    int maintenanceCost;
 
     @Column(name= "number")
     String number;
@@ -26,20 +24,15 @@ public class Vehicle {
     @Column(name="capacity")
     int capacity;
 
-    @Column(name = "rem_cap")
-    int remainingCapacity;
-
     @ManyToOne
     @JoinColumn(name = "areaId")
     Area area;
 
-    public Vehicle(int vehicleId, String vehicleType, int maintenanceCost, String number, int capacity, int remainingCapacity, Area area) {
+    public Vehicle(int vehicleId, String vehicleType, String number, int capacity,Area area) {
         this.vehicleId = vehicleId;
         this.vehicleType = vehicleType;
-        this.maintenanceCost = maintenanceCost;
         this.number = number;
         this.capacity = capacity;
-        this.remainingCapacity = remainingCapacity;
         this.area = area;
     }
 

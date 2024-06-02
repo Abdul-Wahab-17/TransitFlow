@@ -1,6 +1,7 @@
 package packages.project.Customer;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import packages.project.Area.Area;
 import packages.project.Fee.Fee;
 import packages.project.Login.Login;
@@ -11,6 +12,7 @@ import packages.project.Vehicle.Vehicle;
 import javax.persistence.*;
 import java.sql.Time;
 
+@RequiredArgsConstructor
 @Data
 @Entity
 @Table
@@ -55,20 +57,5 @@ public class Customer {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Schedule schedule;
 
-    public Customer() {
-    }
 
-    public Customer(int customerId, String address, String name, int phone, String email, Area area, Fee fee, Vehicle vehicle, Login login, boolean paidStatus, Schedule schedule) {
-        this.customerId = customerId;
-        this.address = address;
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.area = area;
-        this.fee = fee;
-        this.vehicle = vehicle;
-        this.login = login;
-        this.paidStatus = paidStatus;
-        this.schedule = schedule;
-    }
 }

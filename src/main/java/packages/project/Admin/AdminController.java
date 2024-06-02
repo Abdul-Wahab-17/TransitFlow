@@ -17,6 +17,7 @@ import packages.project.Fee.Fee;
 import packages.project.Fee.FeeService;
 import packages.project.Login.Login;
 import packages.project.Login.LoginService;
+import packages.project.Salary.Salary;
 import packages.project.Salary.SalaryService;
 import packages.project.Schedule.Schedule;
 import packages.project.Schedule.ScheduleService;
@@ -160,7 +161,11 @@ class AdminController {
     public String editDriver(@RequestParam String loginId, Model model) {
         // Retrieve driver information by loginId
         Driver driver = driverService.getDriver(Integer.parseInt(loginId));
+        List <Vehicle> vehicles = adminService.getAllVehicles();
+        List<Area> areas = areaService.getAllAreas();
         // Pass driver object to the view for admin editing
+        model.addAttribute("vehicles" , vehicles);
+        model.addAttribute("areas" , areas);
         model.addAttribute("driver", driver);
         return "admin_driver";
     }
@@ -169,7 +174,12 @@ class AdminController {
     public String editCustomer(@RequestParam String loginId, Model model) {
         // Retrieve customer information by loginId
         Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
-        // Pass customer object to the view for admin editing
+        List <Vehicle> vehicles = adminService.getAllVehicles();
+        List<Area> areas = areaService.getAllAreas();
+        List<Fee> fees = feeService.getAllFees();
+        model.addAttribute("fees" , fees);
+        model.addAttribute("vehicles" , vehicles);
+        model.addAttribute("areas" , areas);
         model.addAttribute("customer", customer);
         return "admin_customer";
     }
@@ -217,6 +227,8 @@ class AdminController {
         return Integer.parseInt(String.valueOf(random.nextInt(10000)));
     }
 
+
+
     @PostMapping("/toggleVehicles")
     public String toggleVehicles(Model model){
         boolean vehicleVisible = !(boolean) model.getAttribute("vehicleVisible");
@@ -246,46 +258,58 @@ class AdminController {
         return String.valueOf(random.nextInt(10000));
     }
 
-
-
     @PostMapping("/addDriver")
-    public String addDriver(@RequestParam String driverName, @RequestParam int driverPhone,
-                            @RequestParam String driverAddress, @RequestParam String driverEmail,
+    public String addDriver(@RequestParam String driverName,
+                            @RequestParam String driverPhone,
+                            @RequestParam String driverAddress,
+                            @RequestParam String driverEmail,
                             @RequestParam int areaId,
-                            @RequestParam int vehicleId,@RequestParam boolean salaryStatus,  Model model) {
+                            @RequestParam int vehicleId,
+                            @RequestParam int salaryId,
+                            @RequestParam boolean salaryStatus,
+                            Model model) {
 
+        // Generate a random pin for login
         String pin = generatePin();
 
+        // Create a new Login entity
         Login login = new Login();
         login.setRole("driver");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
+        // Retrieve Area and Vehicle entities from their respective services
         Area area = areaService.getArea(areaId);
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
+        Salary salary = salaryService.getSalaryById(salaryId);
 
+        // Create a new Driver entity
         Driver driver = new Driver();
         driver.setName(driverName);
-        driver.setPhone(driverPhone);
+        driver.setPhone(Integer.parseInt(driverPhone));
         driver.setAddress(driverAddress);
         driver.setEmail(driverEmail);
         driver.setArea(area);
         driver.setSalaryStatus(salaryStatus);
         driver.setVehicle(vehicle);
-        driver.setSalary(salaryService.getSalaryForArea(area.getAreaId()));
+        driver.setSalary(salary);
         driver.setLogin(login);
 
+        // Save the Driver entity
         driverService.save(driver);
+
+        // Add attributes to the model for the view
         model.addAttribute("loginId", login.getLoginId());
         model.addAttribute("password", pin);
-      //  String redirectUrl = "redirect:/admin/" + loginId;
+
+        // Return the view name
         return "driverAdded";
     }
 
     @PostMapping("/addVehicle")
     public String addVehicle(@RequestParam String vehicleType, @RequestParam String vehicleNumber,
-                             @RequestParam int capacity, @RequestParam int remainingCapacity,
-                             @RequestParam int areaId, Model model) {
+                             @RequestParam int capacity,
+                             @RequestParam int areaId) {
 
         Area area = areaService.getArea(areaId);
 
@@ -293,7 +317,6 @@ class AdminController {
         vehicle.setVehicleType(vehicleType);
         vehicle.setNumber(vehicleNumber);
         vehicle.setCapacity(capacity);
-        vehicle.setRemainingCapacity(remainingCapacity);
         vehicle.setArea(area);
 
         vehicleService.save(vehicle);
@@ -317,24 +340,40 @@ class AdminController {
         return "resetPasswordSuccess";
     }
 
-
-
     @PostMapping("/addCustomer")
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
-                              @RequestParam String customerAddress, @RequestParam String customerEmail, @RequestParam int areaId , @RequestParam int vehicleId ,@RequestParam boolean paidStatus, Model model) {
+                              @RequestParam String customerAddress, @RequestParam String customerEmail,
+                              @RequestParam int areaId, @RequestParam int vehicleId,
+                              @RequestParam int feeId, @RequestParam boolean paidStatus, Model model) {
 
-
-
-
-
+        // Step 1: Generate PIN
         String pin = generatePin();
 
+        // Step 2: Save Login
         Login login = new Login();
         login.setRole("customer");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
+        // Step 3: Fetch Area, Fee, and Vehicle
+        Area area = areaService.getArea(areaId);
+        Fee fee = feeService.getFeeById(feeId);
+        Vehicle vehicle = vehicleService.getVehicle(vehicleId);
 
+        // Step 4: Save Customer
+        Customer customer = new Customer();
+        customer.setName(customerName);
+        customer.setPhone(Integer.parseInt(customerPhone));
+        customer.setAddress(customerAddress);
+        customer.setEmail(customerEmail);
+        customer.setLogin(login);
+        customer.setArea(area);
+        customer.setFee(fee);
+        customer.setPaidStatus(paidStatus);
+        customer.setVehicle(vehicle);
+        customerService.save(customer);
+
+        // Step 5: Save Schedule
         Schedule schedule = new Schedule();
         schedule.setMondayMorning(false);
         schedule.setMondayEvening(false);
@@ -346,37 +385,15 @@ class AdminController {
         schedule.setThursdayEvening(false);
         schedule.setFridayMorning(false);
         schedule.setFridayEvening(false);
+        schedule.setCustomer(customer);
         scheduleService.save(schedule);
 
-        Area area = areaService.getArea(areaId);
-        Fee fee = feeService.getFee(area.getAreaId());
-        Vehicle vehicle = vehicleService.getVehicle(vehicleId);
-        Customer customer = new Customer();
-        customer.setName(customerName);
-        customer.setPhone(Integer.parseInt(customerPhone));
-        customer.setAddress(customerAddress);
-        customer.setEmail(customerEmail);
-        customer.setLogin(login);
-        customer.setArea(area);
-        customer.setFee(fee);
-        customer.setPaidStatus(paidStatus);
-        customer.setVehicle(vehicle);
-        customer.setSchedule(schedule);
-        customerService.save(customer);
+        // Step 6: Prepare Model
+        model.addAttribute("loginId", login.getLoginId());
+        model.addAttribute("password", pin);
 
-         
-
-                schedule.setCustomer(customer); // Link schedule to the customer
-                // Set default values, adjust as necessary
-               // Save the schedule
-
-                // Step 5: Add attributes for the view
-                model.addAttribute("loginId", login.getLoginId());
-                model.addAttribute("password", pin);
-
-                // Step 6: Redirect to the customer added page
-                return "customerAdded";
-  
+        // Step 7: Redirect to the customer added page
+        return "customerAdded";
     }
 
     @GetMapping("/getVehiclesByArea")
@@ -390,24 +407,99 @@ class AdminController {
         }
     }
 
-    @GetMapping("/getPendingFeeCustomers")
-    public ResponseEntity<?> pendingFeeCustomers(){
+    @GetMapping("/getFeesByArea")
+    public ResponseEntity<?> getFeesByArea(@RequestParam int areaId) {
+        // Fetch fees by areaId
         try {
-            List<Customer> customers =  customerService.findCustomersWithPendingFee();
-            return new ResponseEntity<>(customers , HttpStatus.OK);
+            List<Fee> fees = feeService.getFee(areaId);
+            return new ResponseEntity<>(fees, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to fetch customers", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to fetch fees by area", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/getSalariesByArea")
+    public ResponseEntity<?> getSalariesByArea(@RequestParam int areaId) {
+        try {
+            List<Salary> salaries = salaryService.getSalaryForArea(areaId);
+            return new ResponseEntity<>(salaries, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to fetch salaries by area", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping("/admin/editCustomer")
+    public String editCustomerInfo(@RequestParam String loginId,
+                                   @RequestParam String areaId,
+                                   @RequestParam String vehicleId,
+                                   @RequestParam int feeId,
+                                   @RequestParam boolean paidStatus) {
+
+        // Retrieve the customer and related objects
+        Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
+        Vehicle vehicle = vehicleService.getVehicle(Integer.parseInt(vehicleId));
+        Fee fee = feeService.getFeeById(feeId);
+
+        // Update customer information
+        customer.setArea(areaService.getArea(Integer.parseInt(areaId))); // Set the area based on areaId
+        customer.setVehicle(vehicle);
+        customer.setFee(fee);
+        customer.setPaidStatus(paidStatus);
+
+        // Save updated customer
+        customerService.save(customer);
+
+        // Redirect to the customer details page
+        return "redirect:/customers/" + loginId;
+    }
+
+    @PostMapping("/admin/editDriver")
+    public String editDriverInfo(@RequestParam String  loginId, @RequestParam String areaId, @RequestParam String vehicleId,
+                                 @RequestParam int salaryId , @RequestParam boolean salaryStatus) {
+
+            Driver driver = driverService.getDriver(Integer.parseInt(loginId));
+            Area area = areaService.getArea(Integer.parseInt(areaId));
+            Vehicle vehicle = vehicleService.getVehicle(Integer.parseInt(vehicleId));
+            Salary salary = salaryService.getSalaryById(salaryId);
+
+            // Update driver details
+            driver.setArea(area);
+            driver.setVehicle(vehicle);
+            driver.setSalary(salary);
+            driver.setSalaryStatus(salaryStatus);
+
+            driverService.save(driver);
+
+            return "redirect:/driver/" + loginId;
+    }
+
+    @GetMapping("/admin/pendingFee")
+    public String showPendingFeeCustomers(Model model) {
+        // Get pending fee customers
+        model.addAttribute("pendingFeeCustomers", customerService.findCustomersWithPendingFee());
+        return "pendingFee";
+    }
+
+    @GetMapping("/admin/pendingSalary")
+    public String showPendingSalaryDrivers(Model model) {
+        // Get pending salary drivers
+        model.addAttribute("pendingSalaryDrivers", driverService.findPendingSalary());
+        return "pendingSalary";
     }
 
     @GetMapping("/admin/addcustomer")
     public String getAddCustomerPage(Model model){
         model.addAttribute("areas", areaService.getAllAreas());
+        model.addAttribute( "fees" , feeService.getAllFees());
+        model.addAttribute("vehicles" , vehicleService.getAllVehicles());
         return "addcustomer";
     }
     @GetMapping("/admin/adddriver")
     public String getAddDriverPage(Model model){
         model.addAttribute("areas", areaService.getAllAreas());
+        model.addAttribute("vehicles" , vehicleService.getAllVehicles());
+        model.addAttribute("salaries" , salaryService.getAllSalaries());
         return "adddriver";
     }
     @GetMapping("/admin/addvehicle")

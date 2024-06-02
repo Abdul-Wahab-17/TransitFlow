@@ -14,7 +14,6 @@
         <div>
             <p><strong>Type:</strong> <span th:text="${vehicle.vehicleType}"></span></p>
             <p><strong>Number:</strong> <span th:text="${vehicle.number}"></span></p>
-            <p><strong>Maintenance Cost:</strong> <span th:text="${vehicle.maintenanceCost}"></span></p>
             <p><strong>Area:</strong> <span th:text="${vehicle.area.areaName}"></span></p>
         </div>
         <a href="/editVehicle?vehicleNumber=${vehicle.vehicleNumber}" class="button">Edit</a>

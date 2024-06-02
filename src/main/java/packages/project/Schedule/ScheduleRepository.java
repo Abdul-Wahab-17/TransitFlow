@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface ScheduleRepository extends JpaRepository <Schedule , Integer> {
 
 
-    @Query("select S from Schedule S where S.customerId = :customerId")
+    @Query("select S from Schedule S where S.customer.customerId = :customerId")
     public Schedule getScheduleByCustomerId(Integer customerId);
 }

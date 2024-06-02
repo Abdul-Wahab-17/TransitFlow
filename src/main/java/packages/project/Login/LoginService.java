@@ -1,23 +1,22 @@
 package packages.project.Login;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class LoginService /*implements UserDetailsService */ {
+public class LoginService implements UserDetailsService {
 
     private final LoginRepository loginRepository;
-    // private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
 
     public Login authenticateUser(int loginId, int pin) {
         return loginRepository.findByLoginIdAndPin(loginId, pin);
     }
 
     public void save(Login loginInfo) {
-
-        // loginInfo.setPin(Integer.parseInt(bCryptPasswordEncoder.encode(   String.format("" + loginInfo.getPin() )       )));
         loginRepository.save(loginInfo);
     }
 
@@ -29,17 +28,19 @@ public class LoginService /*implements UserDetailsService */ {
         return loginRepository.findByLoginId(loginId);
     }
 
-  /*  @Override
-    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        // Load user details from the database based on the login ID
-        Login login = loginRepository.findByLoginId(Integer.parseInt(loginId));
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Integer loginId;
+        try {
+            loginId = Integer.parseInt(username);
+        } catch (NumberFormatException e) {
+            throw new UsernameNotFoundException("Invalid username format");
+        }
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(String.format(""+login.getLoginId()))
-                .password(String.valueOf(login.getPin()))
-                .roles(login.getRole())
-                .build();
+        Login user = loginRepository.findByLoginId(loginId);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with loginId: " + username);
+        }
+        return user;
     }
-
-*/
 }

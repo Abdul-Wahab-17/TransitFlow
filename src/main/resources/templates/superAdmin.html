@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Admin</title>
+    <style>
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            background-color: #36393f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-form {
+            background-color: #40444b;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            text-align: center;
+        }
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #b9bbbe;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #72767d;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #36393f;
+            color: #fff;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #7289da;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #7289da;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .form-group button:hover {
+            background-color: #677bc4;
+        }
+    </style>
+</head>
+<body>
+<div class="login-form">
+    <h2>Please enter your login credentials</h2>
+    <form action="/api/superadmin/6969" method="post">
+        <div class="form-group">
+            <label for="loginId">Login ID:</label>
+            <input type="text" id="loginId" name="loginId" required>
+        </div>
+        <div class="form-group">
+            <label for="password">PIN:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Login</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
