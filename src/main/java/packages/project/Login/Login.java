@@ -77,5 +77,27 @@ public class Login implements UserDetails {
     public Login() {
     }
 
+    public int getLoginId() {
+        return loginId;
+    }
 
+    public void setLoginId(int loginId) {
+        this.loginId = loginId;
+    }
+
+    public int getPin() {
+        return pin;
+    }
+
+    public void setPin(int pin) {
+        this.pin = pin;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

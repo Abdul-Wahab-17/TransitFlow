@@ -33,4 +33,28 @@ public class Salary {
         this.amount = amount;
         this.area = area;
     }
+
+    public int getSalaryId() {
+        return salaryId;
+    }
+
+    public void setSalaryId(int salaryId) {
+        this.salaryId = salaryId;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public Area getArea() {
+        return area;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
+    }
 }

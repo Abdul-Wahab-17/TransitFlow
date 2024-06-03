@@ -37,4 +37,44 @@ public class Vehicle {
     }
 
     public Vehicle() {}
+
+    public int getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(int vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public Area getArea() {
+        return area;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
+    }
 }

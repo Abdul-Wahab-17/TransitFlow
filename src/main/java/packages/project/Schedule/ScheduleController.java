@@ -70,23 +70,18 @@ public class ScheduleController {
 
     @GetMapping("/drivers/{loginId}/schedule")
     public String viewCustomersSchedule(@PathVariable int loginId, Model model) {
-        // Get the driver based on loginId
         Driver driver = driverService.getDriver(loginId);
 
         if (driver == null) {
-            // Handle case where driver with given loginId is not found
-            return "error-page"; // Return an error page or appropriate response
+            return "error-page";
         }
 
-        // Get customers associated with the driver
         List<Customer> customers = customerService.getCustomersForDriver(driver.getDriverId());
 
-        // Add driver and customers to the model
         model.addAttribute("driver", driver);
         model.addAttribute("customers", customers);
 
-        // Return the name of the view
-        return "driver_customer"; // Adjust this to your actual view name
+        return "driver_customer";
     }
 
 }

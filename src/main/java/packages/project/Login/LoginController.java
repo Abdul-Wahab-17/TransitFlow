@@ -46,7 +46,7 @@ public class LoginController {
 
     @PostMapping("/api/login/authenticate")
     public String authenticate(@RequestParam("loginId") Integer loginId,
-                              @RequestParam("password") String password,
+                               @RequestParam("password") String password,
                                Model model) {
         Login user = loginService.authenticateUser(loginId, Integer.parseInt(password));
 
@@ -55,33 +55,39 @@ public class LoginController {
             String redirectUrl;
 
             switch (role) {
-               case "driver":
+                case "driver":
                     redirectUrl = "/api/drivers/" + loginId;
                     break;
-               case "customer":
+                case "customer":
                     redirectUrl = "/api/customers/" + loginId;
                     break;
-               case "admin":
-                   redirectUrl = "/api/admin/" + loginId;
-                   break;
-               default:
-                   return "error"; // Handle unknown role
-           }
+                case "admin":
+                    redirectUrl = "/api/admin/" + loginId;
+                    break;
+                default:
+                    return "error";
+            }
             return "redirect:" + redirectUrl;
         } else {
-          if((loginId == 6969 )&& (Integer.parseInt(password) == 6969) )
-              return "redirect:/api/superadmin/6969";
+            if((loginId == 6969 )&& (Integer.parseInt(password) == 6969) )
+                return "redirect:/api/superadmin/6969";
         }
         return "error";
-  }
+    }
 
 
-/*  @PostMapping("/register")
+  /*  @PostMapping("/api/login/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return ResponseEntity.ok(service.authenticate(request));
+    }*/
+
+/*
+  @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(service.register(request));
   }*/
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login/authenticate")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(service.authenticate(request));
     }

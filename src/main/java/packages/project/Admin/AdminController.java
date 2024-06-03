@@ -65,10 +65,9 @@ class AdminController {
 
     @GetMapping("/api/admin/{loginId}")
     public String redirectToAdminDashboard(@PathVariable Long loginId) {
-        // Construct the redirect URL
+
         String redirectUrl = "/admin/" + loginId;
 
-        // Redirect to the specified URL
         return "redirect:" + redirectUrl;
     }
     @GetMapping("/admin/{loginId}")
@@ -76,7 +75,6 @@ class AdminController {
         Admin admin = adminService.getAdmin(loginId);
         model.addAttribute("admin", admin);
 
-        // Fetch driver data from the database
         List<Driver> drivers = adminService.getAllDrivers();
         model.addAttribute("drivers", drivers);
 
@@ -86,8 +84,6 @@ class AdminController {
         List<Vehicle> vehicles = adminService.getAllVehicles();
         model.addAttribute("vehicles" , vehicles);
 
-        //  model.addAttribute("loginId", loginId);
-        // Initialize driversVisible attribute to false initially
         model.addAttribute("driversVisible", false);
         model.addAttribute("customersVisible" , false);
         model.addAttribute("vehiclesVisible" , false);
@@ -140,7 +136,6 @@ class AdminController {
             model.addAttribute("drivers", drivers);
             return "admin_dashboard";
         } catch (NumberFormatException e) {
-            // Handle invalid input
             return "redirect:/admin/{loginId}";
         }
     }
@@ -152,18 +147,15 @@ class AdminController {
             model.addAttribute("customers", customers);
             return "admin_dashboard";
         } catch (NumberFormatException e) {
-            // Handle invalid input
             return "redirect:/admin/{loginId}";
         }
     }
 
     @GetMapping("/editDriver")
     public String editDriver(@RequestParam String loginId, Model model) {
-        // Retrieve driver information by loginId
         Driver driver = driverService.getDriver(Integer.parseInt(loginId));
         List <Vehicle> vehicles = adminService.getAllVehicles();
         List<Area> areas = areaService.getAllAreas();
-        // Pass driver object to the view for admin editing
         model.addAttribute("vehicles" , vehicles);
         model.addAttribute("areas" , areas);
         model.addAttribute("driver", driver);
@@ -172,7 +164,6 @@ class AdminController {
 
     @GetMapping("/editCustomer")
     public String editCustomer(@RequestParam String loginId, Model model) {
-        // Retrieve customer information by loginId
         Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
         List <Vehicle> vehicles = adminService.getAllVehicles();
         List<Area> areas = areaService.getAllAreas();
@@ -186,9 +177,7 @@ class AdminController {
 
     @GetMapping("/editVehicle")
     public String editVehicle(@RequestParam String vehicleNumber, Model model) {
-        // Retrieve vehicle information by vehicleNumber
         Vehicle vehicle = vehicleService.getVehicleByNumber(vehicleNumber);
-        // Pass vehicle object to the view for admin editing
         model.addAttribute("vehicle", vehicle);
         return "admin_vehicle";
     }
@@ -204,7 +193,6 @@ class AdminController {
             model.addAttribute("vehicles", vehicles);
             return "admin_dashboard";
         } catch (Exception e) {
-            // Handle exception
             return "redirect:/admin/{loginId}";
         }
     }
@@ -212,7 +200,6 @@ class AdminController {
 
     @PostMapping("/toggleDrivers")
     public String toggleDrivers(Model model) {
-        // Toggle the visibility flag for drivers table
         boolean driversVisible = !(boolean) model.getAttribute("driversVisible");
         model.addAttribute("driversVisible", driversVisible);
 
@@ -269,21 +256,17 @@ class AdminController {
                             @RequestParam boolean salaryStatus,
                             Model model) {
 
-        // Generate a random pin for login
         String pin = generatePin();
 
-        // Create a new Login entity
         Login login = new Login();
         login.setRole("driver");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
-        // Retrieve Area and Vehicle entities from their respective services
         Area area = areaService.getArea(areaId);
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
         Salary salary = salaryService.getSalaryById(salaryId);
 
-        // Create a new Driver entity
         Driver driver = new Driver();
         driver.setName(driverName);
         driver.setPhone(Integer.parseInt(driverPhone));
@@ -295,14 +278,11 @@ class AdminController {
         driver.setSalary(salary);
         driver.setLogin(login);
 
-        // Save the Driver entity
         driverService.save(driver);
 
-        // Add attributes to the model for the view
         model.addAttribute("loginId", login.getLoginId());
         model.addAttribute("password", pin);
 
-        // Return the view name
         return "driverAdded";
     }
 
@@ -321,7 +301,6 @@ class AdminController {
 
         vehicleService.save(vehicle);
 
-    //    String redirectUrl = "redirect:/admin/" + loginId;
         return "redirect:/admin/addvehicle";
     }
 
@@ -346,21 +325,17 @@ class AdminController {
                               @RequestParam int areaId, @RequestParam int vehicleId,
                               @RequestParam int feeId, @RequestParam boolean paidStatus, Model model) {
 
-        // Step 1: Generate PIN
         String pin = generatePin();
 
-        // Step 2: Save Login
         Login login = new Login();
         login.setRole("customer");
         login.setPin(Integer.parseInt(pin));
         loginService.save(login);
 
-        // Step 3: Fetch Area, Fee, and Vehicle
         Area area = areaService.getArea(areaId);
         Fee fee = feeService.getFeeById(feeId);
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
 
-        // Step 4: Save Customer
         Customer customer = new Customer();
         customer.setName(customerName);
         customer.setPhone(Integer.parseInt(customerPhone));
@@ -373,7 +348,6 @@ class AdminController {
         customer.setVehicle(vehicle);
         customerService.save(customer);
 
-        // Step 5: Save Schedule
         Schedule schedule = new Schedule();
         schedule.setMondayMorning(false);
         schedule.setMondayEvening(false);
@@ -388,17 +362,14 @@ class AdminController {
         schedule.setCustomer(customer);
         scheduleService.save(schedule);
 
-        // Step 6: Prepare Model
         model.addAttribute("loginId", login.getLoginId());
         model.addAttribute("password", pin);
 
-        // Step 7: Redirect to the customer added page
         return "customerAdded";
     }
 
     @GetMapping("/getVehiclesByArea")
     public ResponseEntity<?> getVehiclesByArea(@RequestParam int areaId) {
-        // Fetch vehicles by areaId
         try {
             List<Vehicle> vehicles = vehicleService.getVehiclesForArea(areaId);
             return new ResponseEntity<>(vehicles, HttpStatus.OK);
@@ -409,7 +380,6 @@ class AdminController {
 
     @GetMapping("/getFeesByArea")
     public ResponseEntity<?> getFeesByArea(@RequestParam int areaId) {
-        // Fetch fees by areaId
         try {
             List<Fee> fees = feeService.getFee(areaId);
             return new ResponseEntity<>(fees, HttpStatus.OK);
@@ -436,21 +406,17 @@ class AdminController {
                                    @RequestParam int feeId,
                                    @RequestParam boolean paidStatus) {
 
-        // Retrieve the customer and related objects
         Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
         Vehicle vehicle = vehicleService.getVehicle(Integer.parseInt(vehicleId));
         Fee fee = feeService.getFeeById(feeId);
 
-        // Update customer information
-        customer.setArea(areaService.getArea(Integer.parseInt(areaId))); // Set the area based on areaId
+        customer.setArea(areaService.getArea(Integer.parseInt(areaId)));
         customer.setVehicle(vehicle);
         customer.setFee(fee);
         customer.setPaidStatus(paidStatus);
 
-        // Save updated customer
         customerService.save(customer);
 
-        // Redirect to the customer details page
         return "redirect:/customers/" + loginId;
     }
 
@@ -463,7 +429,6 @@ class AdminController {
             Vehicle vehicle = vehicleService.getVehicle(Integer.parseInt(vehicleId));
             Salary salary = salaryService.getSalaryById(salaryId);
 
-            // Update driver details
             driver.setArea(area);
             driver.setVehicle(vehicle);
             driver.setSalary(salary);
@@ -476,14 +441,12 @@ class AdminController {
 
     @GetMapping("/admin/pendingFee")
     public String showPendingFeeCustomers(Model model) {
-        // Get pending fee customers
         model.addAttribute("pendingFeeCustomers", customerService.findCustomersWithPendingFee());
         return "pendingFee";
     }
 
     @GetMapping("/admin/pendingSalary")
     public String showPendingSalaryDrivers(Model model) {
-        // Get pending salary drivers
         model.addAttribute("pendingSalaryDrivers", driverService.findPendingSalary());
         return "pendingSalary";
     }

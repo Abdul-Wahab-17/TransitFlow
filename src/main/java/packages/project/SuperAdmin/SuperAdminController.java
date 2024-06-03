@@ -67,7 +67,6 @@ public class SuperAdminController {
             this.message = message;
         }
 
-        // Getters and Setters
     }
 
 }

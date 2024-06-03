@@ -32,4 +32,36 @@ public class Area {
         this.distanceFromNust = distanceFromNust;
         this.customerPopulation = customerPopulation;
     }
+
+    public int getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(int areaId) {
+        this.areaId = areaId;
+    }
+
+    public String getAreaName() {
+        return areaName;
+    }
+
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
+
+    public int getDistanceFromNust() {
+        return distanceFromNust;
+    }
+
+    public void setDistanceFromNust(int distanceFromNust) {
+        this.distanceFromNust = distanceFromNust;
+    }
+
+    public Integer getCustomerPopulation() {
+        return customerPopulation;
+    }
+
+    public void setCustomerPopulation(Integer customerPopulation) {
+        this.customerPopulation = customerPopulation;
+    }
 }

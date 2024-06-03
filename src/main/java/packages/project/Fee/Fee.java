@@ -33,4 +33,36 @@ public class Fee {
         this.dueDate = dueDate;
         this.area = area;
     }
+
+    public int getFeeId() {
+        return feeId;
+    }
+
+    public void setFeeId(int feeId) {
+        this.feeId = feeId;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Area getArea() {
+        return area;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
+    }
 }
