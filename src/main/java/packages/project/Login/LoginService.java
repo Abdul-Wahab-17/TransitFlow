@@ -1,6 +1,7 @@
 package packages.project.Login;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class LoginService implements UserDetailsService {
+public class LoginService  implements UserDetailsService{
 
     private final LoginRepository loginRepository;
 
@@ -30,17 +31,12 @@ public class LoginService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Integer loginId;
-        try {
-            loginId = Integer.parseInt(username);
-        } catch (NumberFormatException e) {
-            throw new UsernameNotFoundException("Invalid username format");
+        Login user = loginRepository.findByLoginId(Integer.parseInt(username));
+        if (user == null){
+            throw new UsernameNotFoundException("not fount");
         }
-
-        Login user = loginRepository.findByLoginId(loginId);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with loginId: " + username);
-        }
-        return user;
+        return new User(user);
     }
+
+  
 }

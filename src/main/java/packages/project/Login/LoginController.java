@@ -8,21 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import packages.project.Security.AuthenticationRequest;
-import packages.project.Security.AuthenticationResponse;
-import packages.project.Security.AuthenticationService;
-import packages.project.Security.RegisterRequest;
-
 
 @Controller
 public class LoginController {
     private final LoginService loginService;
-    private final AuthenticationService service;
 
     @Autowired
-    public LoginController(LoginService loginService, AuthenticationService service) {
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
-        this.service=service;
     }
 
     @GetMapping("/")
@@ -87,8 +80,8 @@ public class LoginController {
         return ResponseEntity.ok(service.register(request));
   }*/
 
-    @PostMapping("/login/authenticate")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest request){
-        return ResponseEntity.ok(service.authenticate(request));
-    }
+//     @PostMapping("/login/authenticate")
+//     public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest request){
+//         return ResponseEntity.ok(service.authenticate(request));
+//     }
 }
