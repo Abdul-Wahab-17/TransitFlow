@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import packages.project.Security.AuthSession;
+import packages.project.Security.SuperAdminCredentials;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,10 +15,12 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class LoginController {
     private final LoginService loginService;
+    private final SuperAdminCredentials superAdmin;
 
     @Autowired
-    public LoginController(LoginService loginService) {
+    public LoginController(LoginService loginService, SuperAdminCredentials superAdmin) {
         this.loginService = loginService;
+        this.superAdmin = superAdmin;
     }
 
     @GetMapping("/")
@@ -64,9 +67,9 @@ public class LoginController {
             return "redirect:/dashboard";
         }
 
-        if (loginId == 6969 && pin == 6969) {
+        if (superAdmin.matches(loginId, pin)) {
             AuthSession.signIn(request, loginId, "superadmin");
-            return "redirect:/api/superadmin/6969";
+            return "redirect:/superadmin";
         }
 
         return "redirect:/login?error";
@@ -84,7 +87,7 @@ public class LoginController {
             return "redirect:/admin/dashboard";
         }
         if (AuthSession.isSuperAdmin(session)) {
-            return "redirect:/api/superadmin/6969";
+            return "redirect:/superadmin";
         }
         return "redirect:/login?error";
     }

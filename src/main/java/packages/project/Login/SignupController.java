@@ -137,11 +137,7 @@ public class SignupController {
     }
 
     private Login createLogin(String role, int pin) {
-        Login login = new Login();
-        login.setRole(role);
-        login.setPin(pin);
-        loginService.save(login);
-        return login;
+        return loginService.createLogin(role, pin);
     }
 
     private void addSignupOptions(Model model) {

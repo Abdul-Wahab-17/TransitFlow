@@ -133,7 +133,7 @@ public class DriverController {
         driver.setEmail(email);
         driver.setAddress(address);
 
-        login.setPin(pin);
+        loginService.setPin(login, pin);
         loginService.save(login);
 
         driverService.save(driver);

@@ -121,7 +121,7 @@ public class CustomerController {
         customer.setEmail(email);
         customer.setAddress(address);
 
-        login.setPin(pin);
+        loginService.setPin(login, pin);
         loginService.save(login);
 
         customerService.save(customer);

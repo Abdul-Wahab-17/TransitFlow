@@ -29,7 +29,7 @@ public class SuperAdminController {
     AdminRepository adminRepository;
 
 
-    @GetMapping("/api/superadmin/6969")
+    @GetMapping("/superadmin")
     public String getSuperAdminPage(HttpSession session){
         if (!AuthSession.isSuperAdmin(session)) {
             return "redirect:/login?error";
@@ -38,7 +38,7 @@ public class SuperAdminController {
         return "superAdmin";
     }
 
-    @PostMapping("/api/superadmin/6969")
+    @PostMapping("/superadmin")
     public ResponseEntity<?> insertAdmin(@RequestParam String password, @RequestParam String name, @RequestParam int phone,
                                          @RequestParam String email, @RequestParam String address,
                                          HttpSession session) {
@@ -47,10 +47,7 @@ public class SuperAdminController {
         }
 
         try {
-            Login login = new Login();
-            login.setPin(Integer.parseInt(password));
-            login.setRole("admin");
-            loginService.save(login);
+            Login login = loginService.createLogin("admin", Integer.parseInt(password));
 
             Admin admin = new Admin();
             admin.setName(name);

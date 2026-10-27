@@ -28,7 +28,7 @@ import packages.project.Vehicle.VehicleService;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 
 @Controller
@@ -334,9 +334,10 @@ class AdminController {
         return "admin_dashboard";
     }
 
+    private static final SecureRandom RANDOM = new SecureRandom();
+
     private String generatePin() {
-        Random random = new Random();
-        return String.valueOf(random.nextInt(10000));
+        return String.format("%04d", RANDOM.nextInt(10000));
     }
 
     @PostMapping("/addDriver")
@@ -356,10 +357,7 @@ class AdminController {
 
         String pin = generatePin();
 
-        Login login = new Login();
-        login.setRole("driver");
-        login.setPin(Integer.parseInt(pin));
-        loginService.save(login);
+        Login login = loginService.createLogin("driver", Integer.parseInt(pin));
 
         Area area = areaService.getArea(areaId);
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
@@ -417,7 +415,7 @@ class AdminController {
 
         String newPassword = generatePin();
         Login login = loginService.findByLoginId(loginId);
-        login.setPin(Integer.parseInt(newPassword));
+        loginService.setPin(login, Integer.parseInt(newPassword));
         loginService.save(login);
         redirectAttributes.addFlashAttribute("newPassword", newPassword);
         model.addAttribute("newPassword", newPassword);
@@ -436,10 +434,7 @@ class AdminController {
 
         String pin = generatePin();
 
-        Login login = new Login();
-        login.setRole("customer");
-        login.setPin(Integer.parseInt(pin));
-        loginService.save(login);
+        Login login = loginService.createLogin("customer", Integer.parseInt(pin));
 
         Area area = areaService.getArea(areaId);
         Fee fee = feeService.getFeeById(feeId);

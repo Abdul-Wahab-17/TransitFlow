@@ -5,6 +5,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import packages.project.Security.AuthSession;
+import packages.project.Security.SuperAdminCredentials;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -15,7 +16,8 @@ import static org.mockito.Mockito.when;
 class LoginControllerTest {
 
     private final LoginService loginService = mock(LoginService.class);
-    private final LoginController loginController = new LoginController(loginService);
+    private final SuperAdminCredentials superAdmin = new SuperAdminCredentials("9001", "4321");
+    private final LoginController loginController = new LoginController(loginService, superAdmin);
 
     @Test
     void showLoginPageUsesExistingLowercaseTemplate() {
@@ -59,12 +61,23 @@ class LoginControllerTest {
     }
 
     @Test
-    void authenticateAllowsSuperAdminFallback() {
+    void authenticateSignsInConfiguredSuperAdmin() {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        String view = loginController.authenticate(6969, "6969", new ExtendedModelMap(), request);
+        String view = loginController.authenticate(9001, "4321", new ExtendedModelMap(), request);
 
-        assertThat(view).isEqualTo("redirect:/api/superadmin/6969");
+        assertThat(view).isEqualTo("redirect:/superadmin");
         assertThat(request.getSession().getAttribute(AuthSession.ROLE)).isEqualTo("superadmin");
+    }
+
+    @Test
+    void superAdminIsDisabledWhenNotConfigured() {
+        LoginController controller = new LoginController(loginService, new SuperAdminCredentials("", ""));
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String view = controller.authenticate(6969, "6969", new ExtendedModelMap(), request);
+
+        assertThat(view).isEqualTo("redirect:/login?error");
+        assertThat(request.getSession().getAttribute(AuthSession.ROLE)).isNull();
     }
 }

@@ -20,8 +20,9 @@ public class Login  {
     @Column(name = "login_id")
     private int loginId;
 
-    @Column(name = "pin")
-    private int pin;
+    // BCrypt hash of the numeric PIN; never store the PIN itself
+    @Column(name = "pin_hash")
+    private String pinHash;
 
     @Column(name = "role")
     private String role;
@@ -39,12 +40,12 @@ public class Login  {
         this.loginId = loginId;
     }
 
-    public int getPin() {
-        return pin;
+    public String getPinHash() {
+        return pinHash;
     }
 
-    public void setPin(int pin) {
-        this.pin = pin;
+    public void setPinHash(String pinHash) {
+        this.pinHash = pinHash;
     }
 
     public String getRole() {
