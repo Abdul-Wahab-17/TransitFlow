@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Complete</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="auth-shell">
+    <section class="auth-panel">
+        <p class="eyebrow">Account Created</p>
+        <h1>Your TransitFlow account is ready</h1>
+        <p class="muted">Use this login ID with the PIN you entered during signup.</p>
+        <div class="credential-box">
+            <span>Login ID</span>
+            <strong th:text="${loginId}"></strong>
+        </div>
+        <a class="button" href="/login" th:href="@{/login}">Go to Login</a>
+    </section>
+</main>
+</body>
+</html>

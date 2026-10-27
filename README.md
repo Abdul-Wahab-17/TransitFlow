@@ -44,9 +44,10 @@ Default local configuration is in `src/main/resources/application.properties`:
 
 - `server.port=8080`
 - `spring.datasource.url=jdbc:mysql://localhost:3306/tms`
-- `spring.datasource.username=root`
-- `spring.datasource.password=letmein`
-- `spring.jpa.hibernate.ddl-auto=update`
+- `spring.datasource.username=${DB_USERNAME:root}`
+- `spring.datasource.password=${DB_PASSWORD:}`
+- `spring.jpa.hibernate.ddl-auto=${DB_DDL_AUTO:update}`
+- `spring.jpa.show-sql=${JPA_SHOW_SQL:false}`
 
 Update these values for your local machine before running.
 
@@ -59,13 +60,13 @@ CREATE DATABASE tms;
 ```
 
 2. Ensure MySQL is running.
-3. Update `spring.datasource.username` and `spring.datasource.password` as needed.
+3. Set `DB_USERNAME` and `DB_PASSWORD` as needed, or edit `application.properties` for local-only use.
 4. Start the app once; Hibernate will create/update tables automatically (`ddl-auto=update`).
 
 ## Run Locally
 
 ```bash
-mvn spring-boot:run
+DB_USERNAME=root DB_PASSWORD=your-password mvn spring-boot:run
 ```
 
 Application URL: `http://localhost:8080`
@@ -84,7 +85,7 @@ mvn test
 
 ## Authentication and Access
 
-- Spring Security is enabled and requires authentication for all requests.
+- The app uses a custom login form and role redirect flow.
 - App login endpoint: `POST /api/login/authenticate`
 - Main pages: `/`, `/login`, `/about`, `/contact`
 
@@ -104,7 +105,7 @@ Role redirects from login:
 ## Notes
 
 - Password handling currently includes a hardcoded superadmin fallback path in `LoginController`.
-- Database credentials are currently plain text in `application.properties`; for production, move these to environment variables or an external secrets manager.
+- Database credentials are read from environment variables by default; for production, use managed secrets and replace the demo superadmin fallback.
 
 ## License
 

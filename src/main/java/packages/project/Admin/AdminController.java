@@ -21,9 +21,11 @@ import packages.project.Salary.Salary;
 import packages.project.Salary.SalaryService;
 import packages.project.Schedule.Schedule;
 import packages.project.Schedule.ScheduleService;
+import packages.project.Security.AuthSession;
 import packages.project.Vehicle.Vehicle;
 import packages.project.Vehicle.VehicleService;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -63,15 +65,38 @@ class AdminController {
 
 
     @GetMapping("/api/admin/{loginId}")
-    public String redirectToAdminDashboard(@PathVariable Long loginId) {
+    public String redirectToAdminDashboard(@PathVariable Integer loginId, HttpSession session) {
+        if (!AuthSession.isAdmin(session) || !AuthSession.isSameLogin(session, loginId)) {
+            return "redirect:/login?error";
+        }
 
-        String redirectUrl = "/admin/" + loginId;
+        String redirectUrl = "/admin/dashboard";
 
         return "redirect:" + redirectUrl;
     }
+
+    @GetMapping("/admin/dashboard")
+    public String getCurrentAdminDashboard(HttpSession session, Model model) {
+        Integer loginId = AuthSession.loginId(session);
+        if (!AuthSession.isAdmin(session) || loginId == null) {
+            return "redirect:/login?error";
+        }
+        return renderAdminDashboard(loginId, model);
+    }
+
     @GetMapping("/admin/{loginId}")
-    public String getAdminDashboard(@PathVariable Integer loginId, Model model) {
+    public String getAdminDashboard(@PathVariable Integer loginId, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session) || !AuthSession.isSameLogin(session, loginId)) {
+            return "redirect:/login?error";
+        }
+        return "redirect:/admin/dashboard";
+    }
+
+    private String renderAdminDashboard(Integer loginId, Model model) {
         Admin admin = adminService.getAdmin(loginId);
+        if (admin == null) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("admin", admin);
 
         List<Driver> drivers = adminService.getAllDrivers();
@@ -129,41 +154,82 @@ class AdminController {
 
 
     @GetMapping("/searchDrivers")
-    public String searchDrivers(@RequestParam String loginId, Model model) {
+    public String searchDrivers(@RequestParam String loginId, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         try {
-            List<Driver> drivers = (List<Driver>) driverService.getDriver(Integer.parseInt(loginId));
+            List<Driver> drivers = new ArrayList<>();
+            Driver driver = driverService.getDriver(Integer.parseInt(loginId));
+            if (driver != null) {
+                drivers.add(driver);
+            }
             model.addAttribute("drivers", drivers);
             return "admin_dashboard";
         } catch (NumberFormatException e) {
-            return "redirect:/admin/{loginId}";
+            return "redirect:/";
         }
     }
 
     @GetMapping("/searchCustomers")
-    public String searchCustomers(@RequestParam String loginId, Model model) {
+    public String searchCustomers(@RequestParam String loginId, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         try {
-            List<Customer> customers = (List<Customer>) customerService.getCustomer(Integer.parseInt(loginId));
+            List<Customer> customers = new ArrayList<>();
+            Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
+            if (customer != null) {
+                customers.add(customer);
+            }
             model.addAttribute("customers", customers);
             return "admin_dashboard";
         } catch (NumberFormatException e) {
-            return "redirect:/admin/{loginId}";
+            return "redirect:/";
         }
     }
 
-    @GetMapping("/editDriver")
-    public String editDriver(@RequestParam String loginId, Model model) {
-        Driver driver = driverService.getDriver(Integer.parseInt(loginId));
+    @GetMapping("/admin/drivers/{loginId}/edit")
+    public String editDriver(@PathVariable Integer loginId, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+
+        Driver driver = driverService.getDriver(loginId);
+        if (driver == null) {
+            return "redirect:/";
+        }
+
         List <Vehicle> vehicles = adminService.getAllVehicles();
         List<Area> areas = areaService.getAllAreas();
+        List<Salary> salaries = salaryService.getAllSalaries();
         model.addAttribute("vehicles" , vehicles);
         model.addAttribute("areas" , areas);
+        model.addAttribute("salaries", salaries);
         model.addAttribute("driver", driver);
         return "admin_driver";
     }
 
-    @GetMapping("/editCustomer")
-    public String editCustomer(@RequestParam String loginId, Model model) {
-        Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
+    @GetMapping("/editDriver")
+    public String legacyEditDriver(@RequestParam String loginId, HttpSession session) {
+        Integer parsedLoginId = parseInteger(loginId);
+        if (parsedLoginId == null || !AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+        return "redirect:/admin/drivers/" + parsedLoginId + "/edit";
+    }
+
+    @GetMapping("/admin/customers/{loginId}/edit")
+    public String editCustomer(@PathVariable Integer loginId, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+
+        Customer customer = customerService.getCustomer(loginId);
+        if (customer == null) {
+            return "redirect:/";
+        }
+
         List <Vehicle> vehicles = adminService.getAllVehicles();
         List<Area> areas = areaService.getAllAreas();
         List<Fee> fees = feeService.getAllFees();
@@ -174,15 +240,42 @@ class AdminController {
         return "admin_customer";
     }
 
-    @GetMapping("/editVehicle")
-    public String editVehicle(@RequestParam String vehicleNumber, Model model) {
+    @GetMapping("/editCustomer")
+    public String legacyEditCustomer(@RequestParam String loginId, HttpSession session) {
+        Integer parsedLoginId = parseInteger(loginId);
+        if (parsedLoginId == null || !AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+        return "redirect:/admin/customers/" + parsedLoginId + "/edit";
+    }
+
+    @GetMapping("/admin/vehicles/{vehicleNumber}/edit")
+    public String editVehicle(@PathVariable String vehicleNumber, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+
         Vehicle vehicle = vehicleService.getVehicleByNumber(vehicleNumber);
+        if (vehicle == null) {
+            return "redirect:/";
+        }
         model.addAttribute("vehicle", vehicle);
         return "admin_vehicle";
     }
 
+    @GetMapping("/editVehicle")
+    public String legacyEditVehicle(@RequestParam String vehicleNumber, HttpSession session) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+        return "redirect:/admin/vehicles/" + vehicleNumber + "/edit";
+    }
+
     @GetMapping("/searchVehicles")
-    public String searchVehicles(@RequestParam String vehicleNumber, Model model) {
+    public String searchVehicles(@RequestParam String vehicleNumber, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         try {
             Vehicle vehicle = vehicleService.getVehicleByNumber(vehicleNumber);
             List<Vehicle> vehicles = new ArrayList<>();
@@ -192,14 +285,17 @@ class AdminController {
             model.addAttribute("vehicles", vehicles);
             return "admin_dashboard";
         } catch (Exception e) {
-            return "redirect:/admin/{loginId}";
+            return "redirect:/";
         }
     }
 
 
     @PostMapping("/toggleDrivers")
-    public String toggleDrivers(Model model) {
-        boolean driversVisible = !(boolean) model.getAttribute("driversVisible");
+    public String toggleDrivers(HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+        boolean driversVisible = !Boolean.TRUE.equals(model.getAttribute("driversVisible"));
         model.addAttribute("driversVisible", driversVisible);
 
         List<Driver> drivers = adminService.getAllDrivers();
@@ -208,17 +304,13 @@ class AdminController {
 
         return "admin_dashboard";
     }
-    private int generateLoginId() {
-        Random random = new Random(System.currentTimeMillis());
-        return Integer.parseInt(String.valueOf(random.nextInt(10000)));
-    }
-
-
-
     @PostMapping("/toggleVehicles")
-    public String toggleVehicles(Model model){
-        boolean vehicleVisible = !(boolean) model.getAttribute("vehicleVisible");
-        model.addAttribute("vehicleVisible", vehicleVisible);
+    public String toggleVehicles(HttpSession session, Model model){
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+        boolean vehiclesVisible = !Boolean.TRUE.equals(model.getAttribute("vehiclesVisible"));
+        model.addAttribute("vehiclesVisible", vehiclesVisible);
 
         List<Vehicle> vehicles = adminService.getAllVehicles();
 
@@ -228,8 +320,11 @@ class AdminController {
     }
 
     @PostMapping("/toggleCustomers")
-    public String toggleCustomers(Model model) {
-        boolean customersVisible = !(boolean) model.getAttribute("customersVisible");
+    public String toggleCustomers(HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+        boolean customersVisible = !Boolean.TRUE.equals(model.getAttribute("customersVisible"));
         model.addAttribute("customersVisible", customersVisible);
 
         List<Customer> customers = adminService.getAllCustomers();
@@ -253,7 +348,11 @@ class AdminController {
                             @RequestParam int vehicleId,
                             @RequestParam int salaryId,
                             @RequestParam boolean salaryStatus,
+                            HttpSession session,
                             Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
 
         String pin = generatePin();
 
@@ -288,7 +387,11 @@ class AdminController {
     @PostMapping("/addVehicle")
     public String addVehicle(@RequestParam String vehicleType, @RequestParam String vehicleNumber,
                              @RequestParam int capacity,
-                             @RequestParam int areaId) {
+                             @RequestParam int areaId,
+                             HttpSession session) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
 
         Area area = areaService.getArea(areaId);
 
@@ -307,7 +410,11 @@ class AdminController {
 
 
     @PostMapping("/resetPassword")
-    public String resetPassword(@RequestParam int loginId, RedirectAttributes redirectAttributes , Model model) {
+    public String resetPassword(@RequestParam int loginId, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
+
         String newPassword = generatePin();
         Login login = loginService.findByLoginId(loginId);
         login.setPin(Integer.parseInt(newPassword));
@@ -322,7 +429,10 @@ class AdminController {
     public String addCustomer(@RequestParam String customerName, @RequestParam String customerPhone,
                               @RequestParam String customerAddress, @RequestParam String customerEmail,
                               @RequestParam int areaId, @RequestParam int vehicleId,
-                              @RequestParam int feeId, @RequestParam boolean paidStatus, Model model) {
+                              @RequestParam int feeId, @RequestParam boolean paidStatus, HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
 
         String pin = generatePin();
 
@@ -403,7 +513,11 @@ class AdminController {
                                    @RequestParam String areaId,
                                    @RequestParam String vehicleId,
                                    @RequestParam int feeId,
-                                   @RequestParam boolean paidStatus) {
+                                   @RequestParam boolean paidStatus,
+                                   HttpSession session) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
 
         Customer customer = customerService.getCustomer(Integer.parseInt(loginId));
         Vehicle vehicle = vehicleService.getVehicle(Integer.parseInt(vehicleId));
@@ -416,12 +530,16 @@ class AdminController {
 
         customerService.save(customer);
 
-        return "redirect:/customers/" + loginId;
+        return "redirect:/admin/customers/" + loginId + "/edit";
     }
 
     @PostMapping("/admin/editDriver")
     public String editDriverInfo(@RequestParam String  loginId, @RequestParam String areaId, @RequestParam String vehicleId,
-                                 @RequestParam int salaryId , @RequestParam boolean salaryStatus) {
+                                 @RequestParam int salaryId, @RequestParam boolean salaryStatus,
+                                 HttpSession session) {
+            if (!AuthSession.isAdmin(session)) {
+                return "redirect:/login?error";
+            }
 
             Driver driver = driverService.getDriver(Integer.parseInt(loginId));
             Area area = areaService.getArea(Integer.parseInt(areaId));
@@ -435,39 +553,62 @@ class AdminController {
 
             driverService.save(driver);
 
-            return "redirect:/driver/" + loginId;
+            return "redirect:/admin/drivers/" + loginId + "/edit";
     }
 
     @GetMapping("/admin/pendingFee")
-    public String showPendingFeeCustomers(Model model) {
+    public String showPendingFeeCustomers(HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("pendingFeeCustomers", customerService.findCustomersWithPendingFee());
         return "pendingFee";
     }
 
     @GetMapping("/admin/pendingSalary")
-    public String showPendingSalaryDrivers(Model model) {
+    public String showPendingSalaryDrivers(HttpSession session, Model model) {
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("pendingSalaryDrivers", driverService.findPendingSalary());
         return "pendingSalary";
     }
 
     @GetMapping("/admin/addcustomer")
-    public String getAddCustomerPage(Model model){
+    public String getAddCustomerPage(HttpSession session, Model model){
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("areas", areaService.getAllAreas());
         model.addAttribute( "fees" , feeService.getAllFees());
         model.addAttribute("vehicles" , vehicleService.getAllVehicles());
         return "addcustomer";
     }
     @GetMapping("/admin/adddriver")
-    public String getAddDriverPage(Model model){
+    public String getAddDriverPage(HttpSession session, Model model){
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("areas", areaService.getAllAreas());
         model.addAttribute("vehicles" , vehicleService.getAllVehicles());
         model.addAttribute("salaries" , salaryService.getAllSalaries());
         return "adddriver";
     }
     @GetMapping("/admin/addvehicle")
-    public String getAddVehiclePage(Model model){
+    public String getAddVehiclePage(HttpSession session, Model model){
+        if (!AuthSession.isAdmin(session)) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("areas", areaService.getAllAreas());
         return "addvehicle";
+    }
+
+    private Integer parseInteger(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 

@@ -24,6 +24,6 @@ public class SalaryService {
     }
 
     public Salary getSalaryById(int salaryId) {
-        return salaryRepository.getById(salaryId);
+        return salaryRepository.findById(salaryId).orElse(null);
     }
 }

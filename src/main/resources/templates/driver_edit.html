@@ -10,7 +10,7 @@
 <div class="container">
     <div class="card">
         <h1>Edit Driver Information</h1>
-        <form action="#" th:action="@{'/drivers/' + ${driver.login.loginId} + '/edit'}" method="post">
+        <form action="#" th:action="@{/drivers/me/edit}" method="post">
             <div>
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" th:value="${driver.name}" required>
@@ -32,7 +32,7 @@
                 <input type="text" id="pin" name="pin" th:value="${driver.login.pin}" required>
             </div>
             <button type="submit" class="button">Save Changes</button>
-            <a th:href="@{'/drivers/' + ${driver.login.loginId}}" class="button">Cancel</a>
+            <a th:href="@{/drivers/me}" class="button">Cancel</a>
         </form>
     </div>
 </div>

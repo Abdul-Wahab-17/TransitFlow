@@ -31,8 +31,8 @@
             </tr>
             <!-- Add more customer details here if needed -->
         </table>
-        <a th:href="@{'/customers/' + ${customer.login.loginId} + '/schedule'}" class="button">Edit Schedule</a>
-        <a th:href="@{'/customers/' + ${customer.login.loginId} + '/edit'}" class="button">Edit Info</a>
+        <a th:href="@{/customers/me/schedule}" class="button">Edit Schedule</a>
+        <a th:href="@{/customers/me/edit}" class="button">Edit Info</a>
     </div>
 
     <!-- Driver Information Table -->
@@ -41,19 +41,19 @@
         <table class="table">
             <tr>
                 <th>Name</th>
-                <td th:text="${driver.name}"></td>
+                <td th:text="${driver != null ? driver.name : 'Not assigned'}"></td>
             </tr>
             <tr>
                 <th>Phone Number</th>
-                <td th:text="${driver.phone}"></td>
+                <td th:text="${driver != null ? driver.phone : 'Not assigned'}"></td>
             </tr>
             <tr>
                 <th>Email Address</th>
-                <td th:text="${driver.email}"></td>
+                <td th:text="${driver != null ? driver.email : 'Not assigned'}"></td>
             </tr>
             <tr>
                 <th>Address</th>
-                <td th:text="${driver.address}"></td>
+                <td th:text="${driver != null ? driver.address : 'Not assigned'}"></td>
             </tr>
             <!-- Add more driver details here if needed -->
         </table>
@@ -65,15 +65,15 @@
         <table class="table">
             <tr>
                 <th>Vehicle Type</th>
-                <td th:text="${vehicle.vehicleType}"></td>
+                <td th:text="${vehicle != null ? vehicle.vehicleType : 'Not assigned'}"></td>
             </tr>
             <tr>
                 <th>Vehicle Number</th>
-                <td th:text="${vehicle.number}"></td>
+                <td th:text="${vehicle != null ? vehicle.number : 'Not assigned'}"></td>
             </tr>
             <tr>
                 <th>Capacity</th>
-                <td th:text="${vehicle.capacity}"></td>
+                <td th:text="${vehicle != null ? vehicle.capacity : 'Not assigned'}"></td>
             </tr>
             <!-- Add more vehicle details here if needed -->
         </table>

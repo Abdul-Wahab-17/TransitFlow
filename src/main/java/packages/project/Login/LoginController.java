@@ -1,13 +1,15 @@
 package packages.project.Login;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import packages.project.Security.AuthSession;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
@@ -24,8 +26,11 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String showLoginPage() {
-        return "Login";
+    public String showLoginPage(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "Invalid login ID or PIN.");
+        }
+        return "login";
     }
 
     @GetMapping("/about")
@@ -40,32 +45,62 @@ public class LoginController {
     @PostMapping("/api/login/authenticate")
     public String authenticate(@RequestParam("loginId") Integer loginId,
                                @RequestParam("password") String password,
-                               Model model) {
-        Login user = loginService.authenticateUser(loginId, Integer.parseInt(password));
+                               Model model,
+                               HttpServletRequest request) {
+        Integer pin = parsePin(password);
+        if (loginId == null || pin == null) {
+            return "redirect:/login?error";
+        }
+
+        Login user = loginService.authenticateUser(loginId, pin);
 
         if (user != null) {
-            String role = user.getRole();
-            String redirectUrl;
-
-            switch (role) {
-                case "driver":
-                    redirectUrl = "/api/drivers/" + loginId;
-                    break;
-                case "customer":
-                    redirectUrl = "/api/customers/" + loginId;
-                    break;
-                case "admin":
-                    redirectUrl = "/api/admin/" + loginId;
-                    break;
-                default:
-                    return "error";
+            String role = AuthSession.normalizeRole(user.getRole());
+            if (!role.equals("driver") && !role.equals("customer") && !role.equals("admin")) {
+                return "redirect:/login?error";
             }
-            return "redirect:" + redirectUrl;
-        } else {
-            if((loginId == 6969 )&& (Integer.parseInt(password) == 6969) )
-                return "redirect:/api/superadmin/6969";
+
+            AuthSession.signIn(request, loginId, role);
+            return "redirect:/dashboard";
         }
-        return "error";
+
+        if (loginId == 6969 && pin == 6969) {
+            AuthSession.signIn(request, loginId, "superadmin");
+            return "redirect:/api/superadmin/6969";
+        }
+
+        return "redirect:/login?error";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session) {
+        if (AuthSession.isRole(session, "driver")) {
+            return "redirect:/drivers/me";
+        }
+        if (AuthSession.isRole(session, "customer")) {
+            return "redirect:/customers/me";
+        }
+        if (AuthSession.isRole(session, "admin")) {
+            return "redirect:/admin/dashboard";
+        }
+        if (AuthSession.isSuperAdmin(session)) {
+            return "redirect:/api/superadmin/6969";
+        }
+        return "redirect:/login?error";
+    }
+
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        AuthSession.signOut(session);
+        return "redirect:/login";
+    }
+
+    private Integer parsePin(String password) {
+        try {
+            return Integer.parseInt(password);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 

@@ -21,8 +21,11 @@ public class AdminService {
     }
 
     public Admin getAdmin( Integer loginId){
-        Admin admin = adminRepository.getAdminByAdminId(adminRepository.getAdminIdByLoginId(loginId));
-        return admin;
+        Integer adminId = adminRepository.getAdminIdByLoginId(loginId);
+        if (adminId == null) {
+            return null;
+        }
+        return adminRepository.getAdminByAdminId(adminId);
     }
 
     public void saveAdmin(Admin admin) {

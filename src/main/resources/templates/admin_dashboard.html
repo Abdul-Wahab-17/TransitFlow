@@ -75,21 +75,21 @@
     function searchDrivers(event) {
         if (event.key === 'Enter') {
             var loginId = document.getElementById("driverSearchBar").value;
-            window.location.href = "/editDriver?loginId=" + loginId;
+            window.location.href = "/admin/drivers/" + encodeURIComponent(loginId) + "/edit";
         }
     }
 
     function searchCustomers(event) {
         if (event.key === 'Enter') {
             var loginId = document.getElementById("customerSearchBar").value;
-            window.location.href = "/editCustomer?loginId=" + loginId;
+            window.location.href = "/admin/customers/" + encodeURIComponent(loginId) + "/edit";
         }
     }
 
     function searchVehicles(event) {
         if (event.key === 'Enter') {
             var vehicleNumber = document.getElementById("vehicleSearchBar").value;
-            window.location.href = "/editVehicle?vehicleNumber=" + vehicleNumber;
+            window.location.href = "/admin/vehicles/" + encodeURIComponent(vehicleNumber) + "/edit";
         }
     }
 </script>

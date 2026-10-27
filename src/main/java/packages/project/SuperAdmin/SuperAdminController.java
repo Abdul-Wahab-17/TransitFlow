@@ -13,8 +13,9 @@ import packages.project.Admin.AdminRepository;
 import packages.project.Admin.AdminService;
 import packages.project.Login.Login;
 import packages.project.Login.LoginService;
+import packages.project.Security.AuthSession;
 
-import java.util.Map;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class SuperAdminController {
@@ -29,13 +30,22 @@ public class SuperAdminController {
 
 
     @GetMapping("/api/superadmin/6969")
-    public String getSuperAdminPage(){
+    public String getSuperAdminPage(HttpSession session){
+        if (!AuthSession.isSuperAdmin(session)) {
+            return "redirect:/login?error";
+        }
 
         return "superAdmin";
     }
 
     @PostMapping("/api/superadmin/6969")
-    public ResponseEntity<?> insertAdmin(@RequestParam String password , @RequestParam String name, @RequestParam int phone , @RequestParam String email , @RequestParam String address) {
+    public ResponseEntity<?> insertAdmin(@RequestParam String password, @RequestParam String name, @RequestParam int phone,
+                                         @RequestParam String email, @RequestParam String address,
+                                         HttpSession session) {
+        if (!AuthSession.isSuperAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse(false, "Super admin login required."));
+        }
+
         try {
             Login login = new Login();
             login.setPin(Integer.parseInt(password));
