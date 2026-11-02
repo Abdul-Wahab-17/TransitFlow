@@ -11,7 +11,7 @@
   <a href="/" th:href="@{/}">Home</a>
   <a href="/about" th:href="@{/about}">About Us</a>
   <a href="/contact" th:href="@{/contact}">Contact Us</a>
-  <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+  <a href="/admin/dashboard" th:href="@{/admin/dashboard}">Admin Dashboard</a>
 </nav>
 <header>
   <h1>Add Driver</h1>
@@ -19,7 +19,7 @@
 <div class="container">
   <div class="card">
     <h2>Add Driver</h2>
-    <form id="addDriverForm" action="/addDriver" method="post">
+    <form id="addDriverForm" th:action="@{/addDriver}" method="post">
       <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
       <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
       <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>

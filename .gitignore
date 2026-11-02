@@ -47,11 +47,9 @@ lombok.config
 *.tmp
 *.swp
 
-# Spring Boot environment and application files
+# Local environment overrides (config itself is committed and reads env vars)
 .env
-*.properties
-*.yml
-*.yaml
+application-local.properties
 
 # Dependencies
 mvnw

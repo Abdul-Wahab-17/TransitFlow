@@ -15,6 +15,7 @@
 <header>
     <h1>NUST Transport Services - Admin Dashboard</h1>
 </header>
+<form th:action="@{/logout}" method="post" class="logout-form"><button type="submit">Log out</button></form>
 <div class="container">
     <div class="card">
         <h2>Admin Info</h2>
@@ -75,21 +76,21 @@
     function searchDrivers(event) {
         if (event.key === 'Enter') {
             var loginId = document.getElementById("driverSearchBar").value;
-            window.location.href = "/editDriver?loginId=" + loginId;
+            window.location.href = "/admin/drivers/" + encodeURIComponent(loginId) + "/edit";
         }
     }
 
     function searchCustomers(event) {
         if (event.key === 'Enter') {
             var loginId = document.getElementById("customerSearchBar").value;
-            window.location.href = "/editCustomer?loginId=" + loginId;
+            window.location.href = "/admin/customers/" + encodeURIComponent(loginId) + "/edit";
         }
     }
 
     function searchVehicles(event) {
         if (event.key === 'Enter') {
             var vehicleNumber = document.getElementById("vehicleSearchBar").value;
-            window.location.href = "/editVehicle?vehicleNumber=" + vehicleNumber;
+            window.location.href = "/admin/vehicles/" + encodeURIComponent(vehicleNumber) + "/edit";
         }
     }
 </script>

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -12,9 +13,32 @@ import org.springframework.stereotype.Service;
 public class LoginService  implements UserDetailsService{
 
     private final LoginRepository loginRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    // Returns the login if the PIN matches its stored hash, otherwise null
     public Login authenticateUser(int loginId, int pin) {
-        return loginRepository.findByLoginIdAndPin(loginId, pin);
+        Login login = loginRepository.findByLoginId(loginId);
+        if (login == null || login.getPinHash() == null) {
+            return null;
+        }
+        return passwordEncoder.matches(String.valueOf(pin), login.getPinHash()) ? login : null;
+    }
+
+    // Create and save a login with a hashed PIN
+    public Login createLogin(String role, int pin) {
+        Login login = new Login();
+        login.setRole(role);
+        setPin(login, pin);
+        return loginRepository.save(login);
+    }
+
+    public static boolean isValidPin(String pin) {
+        return pin != null && pin.matches("\\d{4}");
+    }
+
+    // Replace the PIN of an existing login (not saved)
+    public void setPin(Login login, int pin) {
+        login.setPinHash(passwordEncoder.encode(String.valueOf(pin)));
     }
 
     public void save(Login loginInfo) {

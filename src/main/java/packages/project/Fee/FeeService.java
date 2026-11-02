@@ -24,6 +24,6 @@ public class FeeService {
     }
 
     public Fee getFeeById(Integer feeId){
-        return feeRepository.getById(feeId);
+        return feeRepository.findById(feeId).orElse(null);
     }
 }

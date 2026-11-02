@@ -19,7 +19,7 @@ public class Admin {
      String name;
 
     @Column(name = "phone")
-    int phone;
+    String phone;
 
     @Column(name = "email")
     String email;
@@ -47,11 +47,11 @@ public class Admin {
         this.name = name;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -82,7 +82,7 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(int adminId, String name, int phone, String email, String address, Login login) {
+    public Admin(int adminId, String name, String phone, String email, String address, Login login) {
         this.adminId = adminId;
         this.name = name;
         this.phone = phone;

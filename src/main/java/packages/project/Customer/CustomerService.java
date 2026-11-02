@@ -3,14 +3,11 @@ package packages.project.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.logging.logback.LogbackLoggingSystem;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import packages.project.Admin.Admin;
 import packages.project.Vehicle.Vehicle;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -23,8 +20,11 @@ public class CustomerService {
     }
 
     public Customer getCustomer(Integer loginId){
-        Customer customer = customerRepository.getCustomerByCustomerId(customerRepository.getCustomerIdByLoginId(loginId));
-        return customer;
+        Integer customerId = customerRepository.getCustomerIdByLoginId(loginId);
+        if (customerId == null) {
+            return null;
+        }
+        return customerRepository.getCustomerByCustomerId(customerId);
     }
 
 

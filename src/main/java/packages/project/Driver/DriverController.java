@@ -8,8 +8,9 @@ import packages.project.Customer.Customer;
 import packages.project.Customer.CustomerService;
 import packages.project.Login.Login;
 import packages.project.Login.LoginService;
+import packages.project.Security.AuthSession;
 
-import java.text.SimpleDateFormat;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -26,12 +27,24 @@ public class DriverController {
         this.loginService=loginService;
     }
 
+    @GetMapping("/drivers/me")
+    public String showMyDriverDashboard(HttpSession session, Model model) {
+        Integer loginId = AuthSession.loginId(session);
+        if (!AuthSession.isRole(session, "driver") || loginId == null) {
+            return "redirect:/login?error";
+        }
+        return showDriverDashboard(loginId, session, model);
+    }
+
     @GetMapping("/drivers/{loginId}")
-    public String showDriverDashboard(@PathVariable Integer loginId, Model model) {
+    public String showDriverDashboard(@PathVariable Integer loginId, HttpSession session, Model model) {
+        if (!canViewDriver(session, loginId)) {
+            return "redirect:/login?error";
+        }
+
         Driver driver = driverService.getDriver(loginId);
 
         if (driver != null) {
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             List<Customer> customers = customerService.getCustomersForDriver(driverService.findDriverId(loginId));
 
             if (customers != null && !customers.isEmpty()) {
@@ -48,17 +61,52 @@ public class DriverController {
     }
 
     @GetMapping("/api/drivers/{loginId}")
-    public String redirectToDriverDashboard(@PathVariable Long loginId) {
+    public String redirectToDriverDashboard(@PathVariable Integer loginId, HttpSession session) {
+        if (!canViewDriver(session, loginId)) {
+            return "redirect:/login?error";
+        }
 
-        String redirectUrl = "/drivers/" + loginId;
+        String redirectUrl = AuthSession.isAdmin(session) ? "/drivers/" + loginId : "/drivers/me";
 
         return "redirect:" + redirectUrl;
     }
+
+    @GetMapping("/drivers/me/edit")
+    public String showMyEditForm(HttpSession session, Model model) {
+        Integer loginId = AuthSession.loginId(session);
+        if (!AuthSession.isRole(session, "driver") || loginId == null) {
+            return "redirect:/login?error";
+        }
+        return showEditForm(loginId, session, model);
+    }
+
     @GetMapping("/drivers/{loginId}/edit")
-    public String showEditForm(@PathVariable Integer loginId , Model model) {
+    public String showEditForm(@PathVariable Integer loginId, HttpSession session, Model model) {
+        if (!canEditDriver(session, loginId)) {
+            return "redirect:/login?error";
+        }
+
         Driver driver = driverService.getDriver(loginId);
+        if (driver == null) {
+            return "redirect:/login?error";
+        }
         model.addAttribute("driver", driver);
         return "driver_edit";
+    }
+
+    @PostMapping("/drivers/me/edit")
+    public String editMyDriverInfo(@RequestParam String name,
+                                   @RequestParam String phone,
+                                   @RequestParam String email,
+                                   @RequestParam String address,
+                                   @RequestParam(required = false) String pin,
+                                   HttpSession session,
+                                   Model model) {
+        Integer loginId = AuthSession.loginId(session);
+        if (!AuthSession.isRole(session, "driver") || loginId == null) {
+            return "redirect:/login?error";
+        }
+        return editDriverInfo(loginId, name, phone, email, address, pin, session, model);
     }
 
     @PostMapping("/drivers/{loginId}/edit")
@@ -67,22 +115,45 @@ public class DriverController {
                                  @RequestParam String phone,
                                  @RequestParam String email,
                                  @RequestParam String address,
-                                 @RequestParam int pin,
+                                 @RequestParam(required = false) String pin,
+                                 HttpSession session,
                                  Model model) {
+        if (!canEditDriver(session, loginId)) {
+            return "redirect:/login?error";
+        }
 
         Driver driver = driverService.getDriver(loginId);
+        if (driver == null) {
+            return "redirect:/login?error";
+        }
         Login login = driver.getLogin();
 
         driver.setName(name);
-        driver.setPhone(Integer.parseInt(phone));
+        driver.setPhone(phone.trim());
         driver.setEmail(email);
         driver.setAddress(address);
 
-        login.setPin(pin);
-        loginService.save(login);
+        if (pin != null && !pin.isBlank()) {
+            if (!LoginService.isValidPin(pin.trim())) {
+                return "redirect:/drivers/" + (AuthSession.isAdmin(session) ? loginId : "me") + "/edit?pinError";
+            }
+            loginService.setPin(login, Integer.parseInt(pin.trim()));
+            loginService.save(login);
+        }
 
         driverService.save(driver);
 
-        return "redirect:/drivers/" + loginId;
+        if (AuthSession.isAdmin(session)) {
+            return "redirect:/drivers/" + loginId;
+        }
+        return "redirect:/drivers/me";
+    }
+
+    private boolean canViewDriver(HttpSession session, Integer loginId) {
+        return AuthSession.isAdmin(session) || AuthSession.canAccessOwnRole(session, "driver", loginId);
+    }
+
+    private boolean canEditDriver(HttpSession session, Integer loginId) {
+        return canViewDriver(session, loginId);
     }
 }

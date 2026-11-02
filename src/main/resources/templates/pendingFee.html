@@ -11,7 +11,7 @@
     <a href="/" th:href="@{/}">Home</a>
     <a href="/about" th:href="@{/about}">About Us</a>
     <a href="/contact" th:href="@{/contact}">Contact Us</a>
-    <a href="/admin" th:href="@{/admin}">Admin Dashboard</a>
+    <a href="/admin/dashboard" th:href="@{/admin/dashboard}">Admin Dashboard</a>
 </nav>
 <header>
     <h1>Pending Fee Customers</h1>
@@ -19,6 +19,7 @@
 <div class="container">
     <div class="card">
         <h2>Pending Fee Customers</h2>
+        <div class="table-wrap">
         <table>
             <thead>
             <tr>
@@ -39,6 +40,7 @@
             </tr>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 </body>

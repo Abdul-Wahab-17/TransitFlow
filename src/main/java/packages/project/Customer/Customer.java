@@ -30,7 +30,7 @@ public class Customer {
     String name;
 
     @Column(name = "phone_number")
-    int phone;
+    String phone;
 
 
     @Column(name = "email_address")
@@ -81,11 +81,11 @@ public class Customer {
         this.name = name;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

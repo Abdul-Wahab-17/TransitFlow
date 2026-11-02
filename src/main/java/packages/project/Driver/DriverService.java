@@ -17,8 +17,11 @@ public class DriverService {
         this.driverRepository=driverRepository;
     }
     public Driver getDriver(Integer loginId){
-        Driver driver = driverRepository.getDriverByDriverId(driverRepository.getDriverIdByLoginId(loginId));
-        return driver;
+        Integer driverId = driverRepository.getDriverIdByLoginId(loginId);
+        if (driverId == null) {
+            return null;
+        }
+        return driverRepository.getDriverByDriverId(driverId);
     }
     public void save(Driver existingDriver) {
         driverRepository.save(existingDriver);

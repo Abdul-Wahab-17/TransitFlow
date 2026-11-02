@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+<form th:action="@{/logout}" method="post" class="logout-form"><button type="submit">Log out</button></form>
 <div class="container">
     <!-- Driver Information Table -->
     <div class="card">
@@ -45,13 +46,9 @@
                 <th>Vehicle</th>
                 <td th:text="${driver.vehicle.number}"></td>
             </tr>
-            <tr>
-                <th>Login ID</th>
-                <td th:text="${driver.login.loginId}"></td>
-            </tr>
         </table>
-        <a th:href="@{'/drivers/' + ${driver.login.loginId} + '/schedule'}" class="button">Schedule</a>
-        <a th:href="@{'/drivers/' + ${driver.login.loginId} + '/edit'}" class="button">Edit Info</a>
+        <a th:href="@{/drivers/me/schedule}" class="button">Schedule</a>
+        <a th:href="@{/drivers/me/edit}" class="button">Edit Info</a>
     </div>
 
     <!-- Vehicle Information Table -->

@@ -10,7 +10,7 @@
 <div class="container">
   <div class="card">
     <h1>Edit Customer Information</h1>
-    <form action="#" th:action="@{'/customers/' + ${customer.login.loginId} + '/edit'}" method="post">
+    <form action="#" th:action="@{/customers/me/edit}" method="post">
       <div>
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" th:value="${customer.name}" required>
@@ -29,10 +29,11 @@
       </div>
       <div>
         <label for="pin">PIN:</label>
-        <input type="text" id="pin" name="pin" th:value="${customer.login.pin}" required>
+        <input type="password" id="pin" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="Leave blank to keep your PIN" autocomplete="new-password">
+                <p th:if="${param.pinError}" class="error-message" role="alert">A PIN is exactly 4 digits.</p>
       </div>
       <button type="submit" class="button">Save Changes</button>
-      <a th:href="@{'/customers/' + ${customer.login.loginId}}" class="button">Cancel</a>
+      <a th:href="@{/customers/me}" class="button">Cancel</a>
     </form>
   </div>
 </div>

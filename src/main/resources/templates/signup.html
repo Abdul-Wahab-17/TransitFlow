@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav class="top-nav">
+    <a href="/" th:href="@{/}">TransitFlow</a>
+    <a href="/login" th:href="@{/login}">Login</a>
+</nav>
+<main class="auth-shell">
+    <section class="auth-panel">
+        <p class="eyebrow">New account</p>
+        <h1>Join TransitFlow</h1>
+        <p class="muted">Choose the account type that matches how you use the transport service.</p>
+        <div class="choice-grid">
+            <a class="choice-card" href="/signup/customer" th:href="@{/signup/customer}">
+                <span>Customer</span>
+                <small>Book transport, manage fee status, and update weekly schedules.</small>
+            </a>
+            <a class="choice-card" href="/signup/driver" th:href="@{/signup/driver}">
+                <span>Driver</span>
+                <small>View assigned riders, vehicle details, schedules, and salary status.</small>
+            </a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

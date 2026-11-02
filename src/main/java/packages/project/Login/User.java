@@ -23,7 +23,7 @@ public class User implements UserDetails{
 
     @Override
     public String getPassword() {
-        return user.getPin() + "";
+        return user.getPinHash();
     }
 
     @Override
