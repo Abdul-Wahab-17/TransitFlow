@@ -338,3 +338,7 @@ footer {
     color: var(--danger);
     border-color: var(--danger);
 }
+
+/* Wide tables scroll sideways inside their card instead of stretching the page */
+.table-wrap { overflow-x: auto; }
+.table-wrap table { min-width: 560px; }

@@ -32,6 +32,10 @@ public class LoginService  implements UserDetailsService{
         return loginRepository.save(login);
     }
 
+    public static boolean isValidPin(String pin) {
+        return pin != null && pin.matches("\\d{4}");
+    }
+
     // Replace the PIN of an existing login (not saved)
     public void setPin(Login login, int pin) {
         login.setPinHash(passwordEncoder.encode(String.valueOf(pin)));

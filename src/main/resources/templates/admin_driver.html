@@ -83,6 +83,16 @@
             input.value = document.getElementById("loginId").value;
             form.appendChild(input);
 
+            // a form built in script needs the CSRF token the server rendered for this page
+            var csrf = /*[[${_csrf}]]*/ null;
+            if (csrf) {
+                var token = document.createElement("input");
+                token.type = "hidden";
+                token.name = csrf.parameterName;
+                token.value = csrf.token;
+                form.appendChild(token);
+            }
+
             document.body.appendChild(form);
             form.submit();
         }

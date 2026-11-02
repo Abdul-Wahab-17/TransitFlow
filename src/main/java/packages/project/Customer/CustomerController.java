@@ -87,7 +87,7 @@ public class CustomerController {
                                      @RequestParam String phone,
                                      @RequestParam String email,
                                      @RequestParam String address,
-                                     @RequestParam int pin,
+                                     @RequestParam(required = false) String pin,
                                      HttpSession session,
                                      Model model) {
         Integer loginId = AuthSession.loginId(session);
@@ -103,7 +103,7 @@ public class CustomerController {
                                    @RequestParam String phone,
                                    @RequestParam String email,
                                    @RequestParam String address,
-                                   @RequestParam int pin,
+                                   @RequestParam(required = false) String pin,
                                    HttpSession session,
                                    Model model) {
         if (!canEditCustomer(session, loginId)) {
@@ -121,8 +121,13 @@ public class CustomerController {
         customer.setEmail(email);
         customer.setAddress(address);
 
-        loginService.setPin(login, pin);
-        loginService.save(login);
+        if (pin != null && !pin.isBlank()) {
+            if (!LoginService.isValidPin(pin.trim())) {
+                return "redirect:/customers/" + (AuthSession.isAdmin(session) ? loginId : "me") + "/edit?pinError";
+            }
+            loginService.setPin(login, Integer.parseInt(pin.trim()));
+            loginService.save(login);
+        }
 
         customerService.save(customer);
 

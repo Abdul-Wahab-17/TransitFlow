@@ -99,7 +99,7 @@ public class DriverController {
                                    @RequestParam String phone,
                                    @RequestParam String email,
                                    @RequestParam String address,
-                                   @RequestParam int pin,
+                                   @RequestParam(required = false) String pin,
                                    HttpSession session,
                                    Model model) {
         Integer loginId = AuthSession.loginId(session);
@@ -115,7 +115,7 @@ public class DriverController {
                                  @RequestParam String phone,
                                  @RequestParam String email,
                                  @RequestParam String address,
-                                 @RequestParam int pin,
+                                 @RequestParam(required = false) String pin,
                                  HttpSession session,
                                  Model model) {
         if (!canEditDriver(session, loginId)) {
@@ -133,8 +133,13 @@ public class DriverController {
         driver.setEmail(email);
         driver.setAddress(address);
 
-        loginService.setPin(login, pin);
-        loginService.save(login);
+        if (pin != null && !pin.isBlank()) {
+            if (!LoginService.isValidPin(pin.trim())) {
+                return "redirect:/drivers/" + (AuthSession.isAdmin(session) ? loginId : "me") + "/edit?pinError";
+            }
+            loginService.setPin(login, Integer.parseInt(pin.trim()));
+            loginService.save(login);
+        }
 
         driverService.save(driver);
 

@@ -29,7 +29,8 @@
             </div>
             <div>
                 <label for="pin">PIN:</label>
-                <input type="text" id="pin" name="pin" th:value="${driver.login.pin}" required>
+                <input type="password" id="pin" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="Leave blank to keep your PIN" autocomplete="new-password">
+                <p th:if="${param.pinError}" class="error-message" role="alert">A PIN is exactly 4 digits.</p>
             </div>
             <button type="submit" class="button">Save Changes</button>
             <a th:href="@{/drivers/me}" class="button">Cancel</a>
