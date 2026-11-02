@@ -39,7 +39,7 @@ public class SuperAdminController {
     }
 
     @PostMapping("/superadmin")
-    public ResponseEntity<?> insertAdmin(@RequestParam String password, @RequestParam String name, @RequestParam int phone,
+    public ResponseEntity<?> insertAdmin(@RequestParam String password, @RequestParam String name, @RequestParam String phone,
                                          @RequestParam String email, @RequestParam String address,
                                          HttpSession session) {
         if (!AuthSession.isSuperAdmin(session)) {

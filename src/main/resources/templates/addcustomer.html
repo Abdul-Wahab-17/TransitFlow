@@ -19,7 +19,7 @@
 <div class="container">
   <div class="card">
     <h2>Add Customer</h2>
-    <form id="addCustomerForm" action="/addCustomer" method="post">
+    <form id="addCustomerForm" th:action="@{/addCustomer}" method="post">
       <input type="text" id="customerName" name="customerName" placeholder="Customer Name" required>
       <input type="text" id="customerAddress" name="customerAddress" placeholder="Customer Address" required>
       <input type="tel" id="customerPhone" name="customerPhone" placeholder="Customer Phone" required>

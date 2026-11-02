@@ -19,7 +19,7 @@
 <div class="container">
   <div class="card">
     <h2>Add Driver</h2>
-    <form id="addDriverForm" action="/addDriver" method="post">
+    <form id="addDriverForm" th:action="@{/addDriver}" method="post">
       <input type="text" id="driverName" name="driverName" placeholder="Driver Name" required>
       <input type="number" id="driverPhone" name="driverPhone" placeholder="Driver Phone" required>
       <input type="text" id="driverAddress" name="driverAddress" placeholder="Driver Address" required>

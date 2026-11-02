@@ -129,7 +129,7 @@ public class DriverController {
         Login login = driver.getLogin();
 
         driver.setName(name);
-        driver.setPhone(Integer.parseInt(phone));
+        driver.setPhone(phone.trim());
         driver.setEmail(email);
         driver.setAddress(address);
 

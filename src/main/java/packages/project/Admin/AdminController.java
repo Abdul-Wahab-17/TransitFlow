@@ -365,7 +365,7 @@ class AdminController {
 
         Driver driver = new Driver();
         driver.setName(driverName);
-        driver.setPhone(Integer.parseInt(driverPhone));
+        driver.setPhone(driverPhone.trim());
         driver.setAddress(driverAddress);
         driver.setEmail(driverEmail);
         driver.setArea(area);
@@ -442,7 +442,7 @@ class AdminController {
 
         Customer customer = new Customer();
         customer.setName(customerName);
-        customer.setPhone(Integer.parseInt(customerPhone));
+        customer.setPhone(customerPhone.trim());
         customer.setAddress(customerAddress);
         customer.setEmail(customerEmail);
         customer.setLogin(login);

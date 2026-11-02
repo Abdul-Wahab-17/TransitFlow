@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+<form th:action="@{/logout}" method="post" class="logout-form"><button type="submit">Log out</button></form>
 <div class="container">
     <!-- Customer Information Table -->
     <div class="card">
@@ -89,7 +90,7 @@
             </tr>
             <tr>
                 <th>Due Date</th>
-                <td th:text="${customer.fee.dueDate}"></td>
+                <td th:text="${#dates.format(customer.fee.dueDate, 'dd MMM yyyy')}"></td>
             </tr>
             <tr>
                 <th>Paid Status</th>

@@ -16,7 +16,7 @@
         <p class="eyebrow">Secure Access</p>
         <h1>Sign in</h1>
         <p class="muted">Use your login ID and PIN to open your dashboard.</p>
-        <form action="/api/login/authenticate" method="post">
+        <form th:action="@{/api/login/authenticate}" method="post">
             <p th:if="${errorMessage}" th:text="${errorMessage}" class="error-message"></p>
             <div class="form-group">
                 <label for="loginId">Login ID</label>

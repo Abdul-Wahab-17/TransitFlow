@@ -23,7 +23,7 @@
             <button onclick="confirmPasswordReset()">Reset Password</button>
         </div>
         <div id="editMode" style="display: none;">
-            <form id="editDriverForm" action="/admin/editDriver" method="post">
+            <form id="editDriverForm" th:action="@{/admin/editDriver}" method="post">
                 <input type="hidden" id="loginId" name="loginId" th:value="${driver.login.loginId}">
                 <div>
                     <label for="areaId">Area:</label>

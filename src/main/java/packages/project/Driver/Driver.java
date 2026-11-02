@@ -22,7 +22,7 @@ public class Driver {
     String name;
 
     @Column(name = "phone_number")
-    int phone;
+    String phone;
 
     @Column(name = "email_address")
     String email;
@@ -45,7 +45,7 @@ public class Driver {
     @JoinColumn(name = "login_id")
     Login login;
 
-    public Driver(int driverId, String name, int phone, String email, String address, Area area, Salary salary, Vehicle vehicle,boolean salaryStatus, Login login) {
+    public Driver(int driverId, String name, String phone, String email, String address, Area area, Salary salary, Vehicle vehicle,boolean salaryStatus, Login login) {
         this.driverId = driverId;
         this.name = name;
         this.phone = phone;
@@ -77,11 +77,11 @@ public class Driver {
         this.name = name;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

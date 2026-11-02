@@ -1,112 +1,79 @@
 # TransitFlow
 
-TransitFlow is a Spring Boot based transport management system for handling customers, drivers, vehicles, schedules, fees, and salaries.
+A web app for running a university transport service. Admins manage customers, drivers, vehicles, fees and salaries; drivers see their vehicle and details; customers see their driver, vehicle, fee and weekly pick-up schedule.
+
+[![CI](https://github.com/Abdul-Wahab-17/TransitFlow/actions/workflows/ci.yml/badge.svg)](https://github.com/Abdul-Wahab-17/TransitFlow/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+![Admin dashboard](docs/screenshots/admin-dashboard.png)
 
 ## Features
 
-- Role-oriented flow for `admin`, `driver`, `customer`, and `superadmin`
-- Customer and driver dashboards
-- Admin dashboard for adding customers, drivers, and vehicles
-- Search and edit workflows for operational records
-- Active/inactive toggles for key entities
-- Pending fee and salary views
-- Schedule views for both customers and drivers
-- MySQL persistence with Spring Data JPA
-- Thymeleaf UI templates and Spring Security authentication
+- **Three roles** (admin, driver, customer) with session login using a numeric login ID and PIN. PINs are stored as BCrypt hashes.
+- **Admin:** add, edit and search customers, drivers and vehicles; list customers with a pending fee and drivers with a pending salary; reset a user's PIN.
+- **Customer:** self-signup, see assigned driver, vehicle and fee, edit the weekly morning/evening schedule.
+- **Driver:** self-signup, see vehicle details, edit contact details.
+- **Optional super admin** (set through environment variables) who creates admin accounts.
+- CSRF protection on every form, role checks on every route, and a log-out button on each dashboard.
 
-## Tech Stack
+| Customer | Pending fees |
+|---|---|
+| ![Customer dashboard](docs/screenshots/customer-dashboard.png) | ![Pending fees](docs/screenshots/admin-pending-fees.png) |
 
-- Java 16
-- Spring Boot `2.7.18`
-- Spring Web
-- Spring Data JPA
-- Spring Security
-- Thymeleaf
-- MySQL
-- Maven
+## Quick start
 
-## Project Structure
+```bash
+docker compose up --build
+```
 
-- `src/main/java/packages/project` - application source code
-- `src/main/resources/templates` - Thymeleaf templates
-- `src/main/resources/static` - static assets
-- `src/main/resources/application.properties` - runtime configuration
+Open **http://localhost:8080**. The `demo` profile (on by default in Docker) fills an empty database with sample areas, vehicles, drivers and customers, and prints the demo logins:
 
-## Prerequisites
+```bash
+docker compose logs app | grep -A5 "demo accounts"
+```
 
-- JDK 16
-- Maven 3.8+
-- MySQL 8+
+```text
+Admin    login ID 4   PIN 1111
+Driver   login IDs 6, 8, 10   PIN 2222
+Customer login IDs 12, 15, 18  PIN 3333
+```
+
+The login IDs depend on the database, so use the ones in your own log. To start with an empty database instead, run `SPRING_PROFILES_ACTIVE=default docker compose up --build`.
+
+## Run without Docker
+
+You need JDK 17, Maven, and MySQL 8 with an empty `tms` database.
+
+```bash
+export DB_PASSWORD=<your password>          # DB_USERNAME defaults to root
+mvn spring-boot:run -Dspring-boot.run.profiles=demo
+```
 
 ## Configuration
 
-Default local configuration is in `src/main/resources/application.properties`:
+All settings are environment variables; see `.env.example` and `src/main/resources/application.properties`.
 
-- `server.port=8080`
-- `spring.datasource.url=jdbc:mysql://localhost:3306/tms`
-- `spring.datasource.username=${DB_USERNAME:root}`
-- `spring.datasource.password=${DB_PASSWORD:}`
-- `spring.jpa.hibernate.ddl-auto=${DB_DDL_AUTO:update}`
-- `spring.jpa.show-sql=${JPA_SHOW_SQL:false}`
+| Variable | Default | Purpose |
+|---|---|---|
+| `DB_URL` | `jdbc:mysql://localhost:3306/tms` | JDBC URL |
+| `DB_USERNAME`, `DB_PASSWORD` | `root`, empty | Database login |
+| `DB_DDL_AUTO` | `update` | Hibernate schema management |
+| `SPRING_PROFILES_ACTIVE` | none | `demo` seeds sample data into an empty database |
+| `SUPERADMIN_LOGIN_ID`, `SUPERADMIN_PIN` | empty | Enables a super admin at `/superadmin`. Disabled unless both are set. |
+| `PORT` | `8080` | HTTP port |
 
-Update these values for your local machine before running.
-
-## Database Setup
-
-1. Create the database:
-
-```sql
-CREATE DATABASE tms;
-```
-
-2. Ensure MySQL is running.
-3. Set `DB_USERNAME` and `DB_PASSWORD` as needed, or edit `application.properties` for local-only use.
-4. Start the app once; Hibernate will create/update tables automatically (`ddl-auto=update`).
-
-## Run Locally
-
-```bash
-DB_USERNAME=root DB_PASSWORD=your-password mvn spring-boot:run
-```
-
-Application URL: `http://localhost:8080`
-
-## Build
-
-```bash
-mvn clean package
-```
-
-## Test
+## Tests
 
 ```bash
 mvn test
 ```
 
-## Authentication and Access
+The tests use an in-memory H2 database, so no MySQL is needed. They cover PIN hashing and login, the super admin being disabled by default, admin search and access checks, CSRF protection, and application start-up.
 
-- The app uses a custom login form and role redirect flow.
-- App login endpoint: `POST /api/login/authenticate`
-- Main pages: `/`, `/login`, `/about`, `/contact`
+## Architecture
 
-Role redirects from login:
-
-- driver -> `/api/drivers/{loginId}`
-- customer -> `/api/customers/{loginId}`
-- admin -> `/api/admin/{loginId}`
-- special superadmin fallback -> `/api/superadmin/6969`
-
-## Key Routes (High Level)
-
-- Admin area: `/api/admin/{loginId}`, `/admin/pendingFee`, `/admin/pendingSalary`, `/addDriver`, `/addCustomer`, `/addVehicle`
-- Driver area: `/api/drivers/{loginId}`, `/drivers/{loginId}/schedule`
-- Customer area: `/api/customers/{loginId}`, `/customers/{loginId}/schedule`
-
-## Notes
-
-- Password handling currently includes a hardcoded superadmin fallback path in `LoginController`.
-- Database credentials are read from environment variables by default; for production, use managed secrets and replace the demo superadmin fallback.
+Spring Boot 2.7 (Java 17) with Spring MVC and Thymeleaf templates, Spring Data JPA on MySQL, and Spring Security for CSRF and password hashing. Each domain (`Admin`, `Customer`, `Driver`, `Vehicle`, `Fee`, `Salary`, `Schedule`, `Area`, `Login`) has an entity, repository, service and controller under `src/main/java/packages/project`. `Security/AuthSession` holds the session role checks used by every controller.
 
 ## License
 
-No license file is currently included in this repository.
+[MIT](LICENSE) © 2026 Abdul Wahab

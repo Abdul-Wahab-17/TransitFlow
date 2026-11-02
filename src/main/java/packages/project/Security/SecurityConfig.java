@@ -21,7 +21,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
-        .csrf(customizer -> customizer.disable())
+        // Session-based login: every state-changing form carries a CSRF token (Thymeleaf th:action adds it)
+        .csrf(customizer -> {})
         .authorizeHttpRequests(request -> request.anyRequest().permitAll())
         .build();
     }

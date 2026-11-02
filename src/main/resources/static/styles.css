@@ -317,3 +317,24 @@ footer {
         width: 100%;
     }
 }
+
+.logout-form {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 24px 0;
+}
+
+.logout-form button {
+    padding: 8px 16px;
+    border: 1px solid var(--muted);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-form button:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}

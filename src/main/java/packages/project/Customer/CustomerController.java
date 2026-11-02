@@ -117,7 +117,7 @@ public class CustomerController {
         Login login = customer.getLogin();
 
         customer.setName(name);
-        customer.setPhone(Integer.parseInt(phone));
+        customer.setPhone(phone.trim());
         customer.setEmail(email);
         customer.setAddress(address);
 

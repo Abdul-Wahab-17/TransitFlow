@@ -79,7 +79,7 @@ public class SignupController {
 
         Customer customer = new Customer();
         customer.setName(name);
-        customer.setPhone(Integer.parseInt(phone));
+        customer.setPhone(phone.trim());
         customer.setEmail(email);
         customer.setAddress(address);
         customer.setLogin(login);
@@ -121,7 +121,7 @@ public class SignupController {
 
         Driver driver = new Driver();
         driver.setName(name);
-        driver.setPhone(Integer.parseInt(phone));
+        driver.setPhone(phone.trim());
         driver.setEmail(email);
         driver.setAddress(address);
         driver.setLogin(login);

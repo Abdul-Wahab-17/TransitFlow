@@ -1,0 +1,35 @@
+# One command to try the app:  docker compose up --build   ->  http://localhost:8080
+# The demo profile fills an empty database with sample areas, vehicles, drivers and customers
+# and prints the demo login IDs and PINs in the app log.
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: tms
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-transitflow}
+    volumes:
+      - tms-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_PASSWORD:-transitflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  app:
+    build: .
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/tms
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-transitflow}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-demo}
+      SUPERADMIN_LOGIN_ID: ${SUPERADMIN_LOGIN_ID:-}
+      SUPERADMIN_PIN: ${SUPERADMIN_PIN:-}
+    ports:
+      - "8080:8080"
+
+volumes:
+  tms-data:

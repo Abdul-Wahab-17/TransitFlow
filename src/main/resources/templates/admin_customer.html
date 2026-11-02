@@ -23,7 +23,7 @@
             <button onclick="confirmPasswordReset()">Reset Password</button>
         </div>
         <div id="editMode" style="display: none;">
-            <form id="editCustomerForm"  action="/admin/editCustomer" method="post">
+            <form id="editCustomerForm"  th:action="@{/admin/editCustomer}" method="post">
                 <input type="hidden" id="loginId" name="loginId" th:value="${customer.login.loginId}">
                 <div>
                     <label for="areaId">Area:</label>
